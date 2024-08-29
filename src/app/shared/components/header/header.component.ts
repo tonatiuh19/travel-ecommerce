@@ -7,6 +7,7 @@ import { Component, HostListener } from '@angular/core';
 })
 export class HeaderComponent {
   public isColorDark = true;
+
   @HostListener('window:scroll', [])
   onWindowScroll() {
     const navbar = document.getElementById('navbar');
