@@ -17895,10 +17895,10 @@ ul {
     left top,
     right top,
     from(#3011bc),
-    to(#7e11bc)
+    to(#212529)
   );
-  background: -o-linear-gradient(left, #3011bc, #7e11bc);
-  background: linear-gradient(90deg, #3011bc, #7e11bc);
+  background: -o-linear-gradient(left, #3011bc, #212529);
+  background: linear-gradient(90deg, #3011bc, #212529);
 }
 
 .bg-secondary-gradient {
@@ -17931,7 +17931,7 @@ ul {
 
 .bg-offcanvas::before {
   position: absolute;
-  background: #3011bc;
+  background: #212529;
   content: "";
   height: 100%;
   width: 1000%;
@@ -17948,11 +17948,11 @@ ul {
     linear,
     left top,
     right top,
-    from(#7e11bc),
-    to(#7e11bc)
+    from(#212529),
+    to(#212529)
   );
-  background: -o-linear-gradient(left, #7e11bc, #7e11bc);
-  background: linear-gradient(90deg, #7e11bc, #7e11bc);
+  background: -o-linear-gradient(left, #212529, #212529);
+  background: linear-gradient(90deg, #212529, #212529);
   content: "";
   height: 100%;
   width: 1000%;
@@ -17979,7 +17979,7 @@ ul {
 
 .bg-offcanvas-gray-right::before {
   position: absolute;
-  background: #f5f3fc;
+  background: #fff;
   content: "";
   height: 100%;
   width: 1000%;
