@@ -19,10 +19,10 @@ export class HeaderComponent {
 
       if (targetPosition <= navbarHeight) {
         this.isColorDark = false;
-        navbar.classList.add('bg-dark');
+        navbar.classList.add('bg-primary');
       } else {
         this.isColorDark = true;
-        navbar.classList.remove('bg-dark');
+        navbar.classList.remove('bg-primary');
       }
     }
   }
