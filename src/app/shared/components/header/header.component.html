@@ -1,6 +1,10 @@
 <nav
   id="navbar"
-  class="navbar navbar-expand-lg fixed-top py-3 d-block"
+  [class]="
+    isMain
+      ? 'navbar navbar-expand-lg fixed-top py-3 d-block'
+      : 'navbar navbar-expand-lg bg-primary fixed-top py-3 d-block'
+  "
   data-navbar-on-scroll="data-navbar-on-scroll"
 >
   <div class="container">

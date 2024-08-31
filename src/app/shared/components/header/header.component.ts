@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, Input } from '@angular/core';
 
 @Component({
   selector: 'app-header',
@@ -6,6 +6,7 @@ import { Component, HostListener } from '@angular/core';
   styleUrl: './header.component.css',
 })
 export class HeaderComponent {
+  @Input() isMain = true;
   public isColorDark = true;
 
   @HostListener('window:scroll', [])
@@ -13,17 +14,22 @@ export class HeaderComponent {
     const navbar = document.getElementById('navbar');
 
     const targetElement = document.getElementById('target-element');
-    if (navbar && targetElement) {
-      const targetPosition = targetElement.getBoundingClientRect().top;
-      const navbarHeight = navbar.offsetHeight;
 
-      if (targetPosition <= navbarHeight) {
-        this.isColorDark = false;
-        navbar.classList.add('bg-primary');
-      } else {
-        this.isColorDark = true;
-        navbar.classList.remove('bg-primary');
+    if (this.isMain) {
+      if (navbar && targetElement) {
+        const targetPosition = targetElement.getBoundingClientRect().top;
+        const navbarHeight = navbar.offsetHeight;
+
+        if (targetPosition <= navbarHeight) {
+          this.isColorDark = false;
+          navbar.classList.add('bg-primary');
+        } else {
+          this.isColorDark = true;
+          navbar.classList.remove('bg-primary');
+        }
       }
+    } else {
+      navbar ? navbar.classList.add('bg-primary') : null;
     }
   }
 }
