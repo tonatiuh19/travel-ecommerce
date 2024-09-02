@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { fromLanding } from './store/selectors';
 
 @Component({
   selector: 'app-landing',
@@ -6,12 +8,17 @@ import { Component, OnInit } from '@angular/core';
   styleUrl: './landing.component.css',
 })
 export class LandingComponent implements OnInit {
-  quotes: string[] = [
+  public selectPackages$ = this.store.select(fromLanding.selectPackages);
+
+  public quotes: string[] = [
     'Descubre lo hermoso',
     'Descubre la belleza',
     'Descubre el mundo',
   ];
-  currentQuoteIndex: number = 0;
+
+  public currentQuoteIndex: number = 0;
+
+  constructor(private store: Store) {}
 
   ngOnInit() {
     this.typeQuote();

@@ -7,6 +7,7 @@ import { ReviewCardModule } from '../shared/components/review-card/review-card.m
 import { PackageCardModule } from '../shared/components/package-card/package-card.module';
 import { PlaceCardModule } from '../shared/components/place-card/place-card.module';
 import { PackageImageCardModule } from '../shared/components/package-image-card/package-image-card.module';
+import { LandingStoreModule } from './store/landing.store.module';
 
 @NgModule({
   declarations: [LandingComponent],
@@ -18,6 +19,7 @@ import { PackageImageCardModule } from '../shared/components/package-image-card/
     PackageCardModule,
     PlaceCardModule,
     PackageImageCardModule,
+    LandingStoreModule,
   ],
   exports: [LandingComponent],
 })
