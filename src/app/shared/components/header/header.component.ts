@@ -13,7 +13,7 @@ export class HeaderComponent {
   onWindowScroll() {
     const navbar = document.getElementById('navbar');
 
-    const targetElement = document.getElementById('target-element');
+    const targetElement = document.getElementById('van-transfers');
 
     if (this.isMain) {
       if (navbar && targetElement) {

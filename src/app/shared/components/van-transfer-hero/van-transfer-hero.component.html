@@ -1,0 +1,776 @@
+<!-- Hero Section for Van Transfers -->
+<section class="van-hero-section position-relative overflow-hidden">
+  <!-- Background Video/Image -->
+  <div class="hero-background">
+    <div class="hero-overlay"></div>
+    <img
+      src="https://garbrix.com/assets/img/gallery/cta-bg.png"
+      alt="Van Transfer Background"
+      class="hero-bg-image"
+    />
+  </div>
+
+  <!-- Main Hero Content -->
+  <div class="container-fluid position-relative z-3">
+    <div class="row min-vh-100 align-items-center">
+      <div class="col-lg-6 col-xl-5 px-4 px-lg-5">
+        <div class="hero-content text-white">
+          <!-- Badge -->
+          <div class="hero-badge mb-4">
+            <span
+              class="badge px-4 py-2 rounded-pill fs-6 fw-bold"
+              style="
+                background-color: rgba(187, 101, 87, 0.2);
+                color: #bb6557;
+                border: 1px solid rgba(187, 101, 87, 0.3);
+              "
+            >
+              <i class="fas fa-bolt me-2"></i>Reserva Instantánea
+            </span>
+          </div>
+
+          <!-- Main Title -->
+          <h1 class="hero-title display-3 fw-bold mb-4">
+            Transfers VIP en
+            <span style="color: #bb6557">Van Premium</span>
+          </h1>
+
+          <!-- Subtitle -->
+          <p class="hero-subtitle fs-4 mb-4 text-light opacity-90">
+            Viaja con comodidad y estilo. Servicio puerta a puerta con los
+            mejores vehículos y conductores profesionales.
+          </p>
+
+          <!-- Key Features -->
+          <div class="key-features mb-5">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="feature-item d-flex align-items-center">
+                  <div
+                    class="feature-icon rounded-circle p-2 me-3"
+                    style="background-color: #9db4c2"
+                  >
+                    <i class="fas fa-wifi text-white"></i>
+                  </div>
+                  <span class="text-light">WiFi Gratis</span>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="feature-item d-flex align-items-center">
+                  <div
+                    class="feature-icon rounded-circle p-2 me-3"
+                    style="background-color: #6a8fa7"
+                  >
+                    <i class="fas fa-leaf text-white"></i>
+                  </div>
+                  <span class="text-light">Eco-Friendly</span>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="feature-item d-flex align-items-center">
+                  <div
+                    class="feature-icon rounded-circle p-2 me-3"
+                    style="background-color: #9db4c2"
+                  >
+                    <i class="fas fa-snowflake text-white"></i>
+                  </div>
+                  <span class="text-light">Aire Acondicionado</span>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="feature-item d-flex align-items-center">
+                  <div
+                    class="feature-icon rounded-circle p-2 me-3"
+                    style="background-color: #bb6557"
+                  >
+                    <i class="fas fa-star text-white"></i>
+                  </div>
+                  <span class="text-light">5 Estrellas</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CTA Buttons -->
+          <div class="hero-actions d-flex flex-wrap gap-3">
+            <button
+              (click)="scrollToBooking()"
+              class="btn btn-lg px-5 py-3 rounded-pill fw-bold text-white"
+              style="background-color: #bb6557; border-color: #bb6557"
+            >
+              <i class="fas fa-calendar-check me-2"></i>
+              Reservar Ahora
+            </button>
+            <button
+              class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill fw-bold"
+              style="border-color: #9db4c2; color: #9db4c2"
+            >
+              <i class="fas fa-play me-2"></i>
+              Ver Video
+            </button>
+          </div>
+
+          <!-- Trust Indicators -->
+          <div class="trust-indicators mt-5 pt-4 border-top border-secondary">
+            <div class="row g-4 text-center">
+              <div class="col-4">
+                <div class="trust-item">
+                  <h3 class="mb-1" style="color: #bb6557">2K+</h3>
+                  <small class="text-light opacity-75">Viajes Realizados</small>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="trust-item">
+                  <h3 class="mb-1" style="color: #bb6557">4.9</h3>
+                  <small class="text-light opacity-75">Rating Promedio</small>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="trust-item">
+                  <h3 class="mb-1" style="color: #bb6557">24/7</h3>
+                  <small class="text-light opacity-75">Soporte</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Side - Interactive Elements -->
+      <div class="col-lg-6 col-xl-7 d-none d-lg-block">
+        <div class="hero-interactive px-4">
+          <!-- Quick Booking Card -->
+          <div class="quick-booking-card bg-white rounded-4 shadow-lg p-4 mb-4">
+            <h4 class="text-white mb-3 fw-bold">
+              <i class="fas fa-bolt text-warning me-2"></i>
+              Reserva Rápida
+            </h4>
+
+            <form
+              class="booking-form"
+              (ngSubmit)="onSearchTransfers()"
+              #bookingForm="ngForm"
+            >
+              <!-- Validation Alert -->
+              <div
+                *ngIf="showValidationAlert"
+                class="alert alert-warning alert-dismissible fade show mb-3"
+                role="alert"
+              >
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                {{ validationMessage }}
+                <button
+                  type="button"
+                  class="btn-close"
+                  (click)="hideValidationMessage()"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="row g-3">
+                <div class="col-12">
+                  <label class="form-label text-muted fw-semibold"
+                    >Ciudad de Origen</label
+                  >
+                  <div class="input-group">
+                    <span
+                      class="input-group-text text-white"
+                      style="background-color: #9db4c2"
+                    >
+                      <i class="fas fa-map-marker-alt"></i>
+                    </span>
+                    <select
+                      class="form-select"
+                      [(ngModel)]="selectedOrigin"
+                      name="origin"
+                      (ngModelChange)="onOriginChange()"
+                      required
+                    >
+                      <option value="">Selecciona origen</option>
+                      <option
+                        *ngFor="let origin of getAvailableOrigins()"
+                        [value]="origin"
+                      >
+                        {{ origin }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label text-muted fw-semibold"
+                    >Ciudad de Destino</label
+                  >
+                  <div class="input-group">
+                    <span
+                      class="input-group-text text-white"
+                      style="background-color: #6a8fa7"
+                    >
+                      <i class="fas fa-flag-checkered"></i>
+                    </span>
+                    <select
+                      class="form-select"
+                      [(ngModel)]="selectedDestination"
+                      name="destination"
+                      (ngModelChange)="onDestinationChange()"
+                      [disabled]="!selectedOrigin"
+                      required
+                    >
+                      <option value="">Selecciona destino</option>
+                      <option
+                        *ngFor="let destination of getAvailableDestinations()"
+                        [value]="destination"
+                      >
+                        {{ destination }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Round Trip Toggle -->
+                <div class="col-12">
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      [(ngModel)]="isRoundTrip"
+                      name="roundTrip"
+                      id="roundTripCheck"
+                      (change)="onRoundTripToggle()"
+                    />
+                    <label
+                      class="form-check-label text-muted fw-semibold"
+                      for="roundTripCheck"
+                    >
+                      <i class="fas fa-exchange-alt me-2"></i>
+                      Viaje de Ida y Vuelta (5% descuento)
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Date and Time Selection -->
+                <div class="col-12" *ngIf="!isRoundTrip">
+                  <div class="row">
+                    <div class="col-12">
+                      <label class="form-label text-muted fw-semibold"
+                        >Fecha y Hora</label
+                      >
+                      <div class="datetime-wrapper">
+                        <div class="row g-2">
+                          <div class="col-7">
+                            <div class="input-group">
+                              <span
+                                class="input-group-text text-white"
+                                style="background-color: #9db4c2"
+                              >
+                                <i class="fas fa-calendar"></i>
+                              </span>
+                              <input
+                                type="date"
+                                class="form-control"
+                                [(ngModel)]="selectedDate"
+                                name="date"
+                                [min]="minDateString"
+                                (change)="onDepartureDateChange()"
+                                required
+                              />
+                            </div>
+                          </div>
+                          <div class="col-5">
+                            <div class="input-group">
+                              <span
+                                class="input-group-text text-white"
+                                style="background-color: #6a8fa7"
+                              >
+                                <i class="fas fa-clock"></i>
+                              </span>
+                              <input
+                                type="time"
+                                class="form-control"
+                                [(ngModel)]="selectedTime"
+                                name="time"
+                                [min]="getMinTimeForDate(selectedDate)"
+                                (change)="onDepartureTimeChange()"
+                                required
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Round Trip Date Range -->
+                <div class="col-12" *ngIf="isRoundTrip">
+                  <label class="form-label text-muted fw-semibold"
+                    >Fechas de Viaje</label
+                  >
+                  <div class="datetime-wrapper">
+                    <!-- Departure Date -->
+                    <div class="row g-2 mb-3">
+                      <div class="col-12">
+                        <label class="small text-muted mb-2"
+                          ><i class="fas fa-plane-departure me-1"></i>Fecha de
+                          Salida</label
+                        >
+                      </div>
+                      <div class="col-7">
+                        <div class="input-group">
+                          <span
+                            class="input-group-text text-white"
+                            style="background-color: #9db4c2"
+                          >
+                            <i class="fas fa-calendar"></i>
+                          </span>
+                          <input
+                            type="date"
+                            class="form-control"
+                            [(ngModel)]="selectedDate"
+                            name="departureDate"
+                            [min]="minDateString"
+                            (change)="onDepartureDateChange()"
+                            required
+                          />
+                        </div>
+                      </div>
+                      <div class="col-5">
+                        <div class="input-group">
+                          <span
+                            class="input-group-text text-white"
+                            style="background-color: #6a8fa7"
+                          >
+                            <i class="fas fa-clock"></i>
+                          </span>
+                          <input
+                            type="time"
+                            class="form-control"
+                            [(ngModel)]="selectedTime"
+                            name="departureTime"
+                            [min]="getMinTimeForDate(selectedDate)"
+                            (change)="onDepartureTimeChange()"
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Return Date -->
+                    <div class="row g-2">
+                      <div class="col-12">
+                        <label class="small text-muted mb-2"
+                          ><i class="fas fa-plane-arrival me-1"></i>Fecha de
+                          Regreso</label
+                        >
+                      </div>
+                      <div class="col-7">
+                        <div class="input-group">
+                          <span
+                            class="input-group-text text-white"
+                            style="background-color: #bb6557"
+                          >
+                            <i class="fas fa-calendar"></i>
+                          </span>
+                          <input
+                            type="date"
+                            class="form-control"
+                            [(ngModel)]="selectedReturnDate"
+                            name="returnDate"
+                            [min]="selectedDate || minDateString"
+                            (change)="onReturnDateChange()"
+                            required
+                          />
+                        </div>
+                      </div>
+                      <div class="col-5">
+                        <div class="input-group">
+                          <span
+                            class="input-group-text text-white"
+                            style="background-color: #bb6557"
+                          >
+                            <i class="fas fa-clock"></i>
+                          </span>
+                          <input
+                            type="time"
+                            class="form-control"
+                            [(ngModel)]="selectedReturnTime"
+                            name="returnTime"
+                            [min]="getMinReturnTime()"
+                            (change)="onReturnTimeChange()"
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label text-muted fw-semibold"
+                    >Número de Pasajeros</label
+                  >
+                  <select
+                    class="form-select"
+                    [(ngModel)]="selectedPassengers"
+                    name="passengers"
+                    required
+                  >
+                    <option [value]="1">1 persona</option>
+                    <option [value]="2">2 personas</option>
+                    <option [value]="3">3 personas</option>
+                    <option [value]="4">4 personas</option>
+                    <option [value]="5">5 personas</option>
+                    <option [value]="6">6 personas</option>
+                    <option [value]="7">7 personas</option>
+                    <option [value]="8">8 personas</option>
+                    <option [value]="9">9 personas</option>
+                    <option [value]="10">10 personas</option>
+                    <option [value]="12">12 personas</option>
+                  </select>
+                </div>
+
+                <div class="col-12">
+                  <button
+                    type="submit"
+                    class="btn btn-lg w-100 rounded-pill fw-bold text-white"
+                    style="background-color: #9db4c2; border-color: #9db4c2"
+                    [disabled]="!bookingForm.valid"
+                  >
+                    <i class="fas fa-search me-2"></i>
+                    Buscar Transfers
+                  </button>
+                </div>
+              </div>
+            </form>
+
+            <!-- Popular Routes -->
+            <div class="popular-routes mt-4">
+              <h6 class="text-muted mb-3">Rutas Populares:</h6>
+              <div class="d-flex flex-wrap gap-2">
+                <span
+                  *ngFor="let route of availableRoutes.slice(0, 6)"
+                  (click)="selectPopularRoute(route.id)"
+                  class="badge bg-light text-dark px-3 py-2 rounded-pill border cursor-pointer"
+                >
+                  <i class="fas fa-route me-1"></i>{{ route.origin }} →
+                  {{ route.destination }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Booking Results -->
+          <div
+            *ngIf="showResults && bookingCalculation"
+            class="booking-results bg-white rounded-4 shadow-lg p-4 mb-4"
+          >
+            <h4 class="text-dark mb-3 fw-bold">
+              <i class="fas fa-check-circle me-2" style="color: #bb6557"></i>
+              Opciones Disponibles
+            </h4>
+
+            <!-- Route Info -->
+            <div class="route-info bg-light rounded-3 p-3 mb-4">
+              <div class="row">
+                <div class="col-md-6">
+                  <h6 class="text-muted mb-1">
+                    {{
+                      bookingCalculation.isRoundTrip
+                        ? "Rutas Seleccionadas"
+                        : "Ruta Seleccionada"
+                    }}
+                  </h6>
+                  <p class="mb-0 fw-bold">
+                    <i
+                      class="fas fa-plane-departure me-1"
+                      style="color: #6a8fa7"
+                    ></i>
+                    {{ selectedRoute?.origin }} →
+                    {{ selectedRoute?.destination }}
+                  </p>
+                  <p
+                    class="mb-0 text-muted small"
+                    *ngIf="!bookingCalculation.isRoundTrip"
+                  >
+                    {{ selectedDate }} a las {{ selectedTime }}
+                  </p>
+
+                  <div *ngIf="bookingCalculation.isRoundTrip" class="mt-2">
+                    <p class="mb-1 fw-bold">
+                      <i
+                        class="fas fa-plane-arrival me-1"
+                        style="color: #bb6557"
+                      ></i>
+                      {{ returnRoute?.origin }} → {{ returnRoute?.destination }}
+                    </p>
+                    <div class="small text-muted">
+                      <div>
+                        <strong>Ida:</strong> {{ selectedDate }} a las
+                        {{ selectedTime }}
+                      </div>
+                      <div>
+                        <strong>Vuelta:</strong> {{ selectedReturnDate }} a las
+                        {{ selectedReturnTime }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="row" *ngIf="!bookingCalculation.isRoundTrip">
+                    <div class="col-6">
+                      <h6 class="text-muted mb-1">Duración</h6>
+                      <p class="mb-0">{{ selectedRoute?.duration }}</p>
+                    </div>
+                    <div class="col-6">
+                      <h6 class="text-muted mb-1">Distancia</h6>
+                      <p class="mb-0">{{ selectedRoute?.distance }}</p>
+                    </div>
+                  </div>
+
+                  <div *ngIf="bookingCalculation.isRoundTrip">
+                    <div class="mb-3">
+                      <h6 class="text-muted mb-1">Trayecto de Ida</h6>
+                      <div class="small">
+                        <div>Duración: {{ selectedRoute?.duration }}</div>
+                        <div>Distancia: {{ selectedRoute?.distance }}</div>
+                      </div>
+                    </div>
+                    <div>
+                      <h6 class="text-muted mb-1">Trayecto de Vuelta</h6>
+                      <div class="small">
+                        <div>Duración: {{ returnRoute?.duration }}</div>
+                        <div>Distancia: {{ returnRoute?.distance }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Van Recommendations -->
+            <div class="van-recommendations">
+              <h6 class="text-muted mb-3">
+                Recomendación para
+                {{ bookingCalculation.passengers }} pasajero(s):
+              </h6>
+
+              <div
+                *ngFor="let recommendation of bookingCalculation.vans"
+                class="van-option mb-3"
+              >
+                <div
+                  class="card border-0"
+                  style="background-color: rgba(157, 180, 194, 0.1)"
+                >
+                  <div class="card-body p-3">
+                    <div class="row align-items-center">
+                      <div class="col-md-8">
+                        <h6 class="card-title mb-2">
+                          <i
+                            class="fas fa-van-shuttle me-2"
+                            style="color: #bb6557"
+                          ></i>
+                          {{ recommendation.van.name }}
+                        </h6>
+                        <div class="van-features">
+                          <span
+                            *ngFor="let feature of recommendation.van.features"
+                            class="badge me-2 mb-1"
+                            style="
+                              background-color: rgba(106, 143, 167, 0.2);
+                              color: #6a8fa7;
+                            "
+                          >
+                            {{ feature }}
+                          </span>
+                        </div>
+                        <p class="text-muted mb-0 mt-2">
+                          <strong>Cantidad:</strong>
+                          {{ recommendation.quantity }} van(s) ×
+                          {{ recommendation.van.capacity }} pasajeros
+                        </p>
+                      </div>
+                      <div class="col-md-4 text-end">
+                        <div class="price-info">
+                          <h5 class="mb-1" style="color: #bb6557">
+                            €{{ recommendation.price }}
+                          </h5>
+                          <small class="text-muted"
+                            >{{ recommendation.quantity }} van(s) × €{{
+                              recommendation.van.priceEur
+                            }}</small
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Total Price -->
+              <div
+                class="total-price-card card border-0 mt-3"
+                style="background-color: rgba(187, 101, 87, 0.1)"
+              >
+                <div class="card-body p-3">
+                  <!-- Single Trip Pricing -->
+                  <div *ngIf="!bookingCalculation.isRoundTrip">
+                    <div class="row align-items-center">
+                      <div class="col-md-8">
+                        <h5 class="mb-1">Precio Total - Viaje Sencillo</h5>
+                        <p class="text-muted mb-0">
+                          {{ selectedDate }} a las {{ selectedTime }}
+                        </p>
+                      </div>
+                      <div class="col-md-4 text-end">
+                        <h3 class="mb-0" style="color: #bb6557">
+                          €{{ bookingCalculation.totalPrice }}
+                        </h3>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Round Trip Pricing -->
+                  <div *ngIf="bookingCalculation.isRoundTrip">
+                    <!-- Pricing Breakdown -->
+                    <div class="pricing-breakdown mb-3">
+                      <div
+                        class="d-flex justify-content-between align-items-center mb-2"
+                      >
+                        <span>Viaje de Ida ({{ selectedDate }})</span>
+                        <span class="fw-bold"
+                          >€{{ bookingCalculation.totalPrice }}</span
+                        >
+                      </div>
+                      <div
+                        class="d-flex justify-content-between align-items-center mb-2"
+                      >
+                        <span>Viaje de Vuelta ({{ selectedReturnDate }})</span>
+                        <span class="fw-bold"
+                          >€{{ bookingCalculation.returnTotalPrice }}</span
+                        >
+                      </div>
+                      <hr class="my-2" />
+                      <div
+                        class="d-flex justify-content-between align-items-center mb-2"
+                      >
+                        <span>Subtotal</span>
+                        <span class="fw-bold"
+                          >€{{
+                            (bookingCalculation.totalPrice || 0) +
+                              (bookingCalculation.returnTotalPrice || 0)
+                          }}</span
+                        >
+                      </div>
+                      <div
+                        class="d-flex justify-content-between align-items-center text-success"
+                        *ngIf="bookingCalculation.savings"
+                      >
+                        <span
+                          ><i class="fas fa-tag me-1"></i>Descuento Ida y Vuelta
+                          (5%)</span
+                        >
+                        <span class="fw-bold"
+                          >-€{{
+                            bookingCalculation.savings | number : "1.2-2"
+                          }}</span
+                        >
+                      </div>
+                    </div>
+
+                    <div class="row align-items-center">
+                      <div class="col-md-8">
+                        <h5 class="mb-1">Precio Total - Ida y Vuelta</h5>
+                        <p class="text-muted mb-0">
+                          <small>
+                            <i class="fas fa-plane-departure me-1"></i
+                            >{{ selectedDate }} a las {{ selectedTime }}<br />
+                            <i class="fas fa-plane-arrival me-1"></i
+                            >{{ selectedReturnDate }} a las
+                            {{ selectedReturnTime }}
+                          </small>
+                        </p>
+                      </div>
+                      <div class="col-md-4 text-end">
+                        <h3 class="mb-0" style="color: #bb6557">
+                          €{{
+                            bookingCalculation.grandTotal | number : "1.2-2"
+                          }}
+                        </h3>
+                        <small
+                          class="text-success"
+                          *ngIf="bookingCalculation.savings"
+                        >
+                          ¡Ahorras €{{
+                            bookingCalculation.savings | number : "1.2-2"
+                          }}!
+                        </small>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mt-3">
+                    <button
+                      class="btn btn-lg w-100 rounded-pill fw-bold text-white"
+                      style="background-color: #bb6557; border-color: #bb6557"
+                      (click)="openCheckoutModal()"
+                    >
+                      <i class="fas fa-credit-card me-2"></i>
+                      Continuar con la Reserva
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Benefits Mini Cards -->
+          <div class="benefits-mini row g-3">
+            <div class="col-6" *ngFor="let benefit of benefits">
+              <div
+                class="benefit-card bg-white bg-opacity-10 backdrop-blur rounded-3 p-3 text-center text-white"
+              >
+                <div class="benefit-icon mb-2">
+                  <i
+                    [class]="benefit.icon + ' fa-2x'"
+                    style="color: #bb6557"
+                  ></i>
+                </div>
+                <h6 class="mb-1 fw-bold">{{ benefit.title }}</h6>
+                <small class="opacity-75">{{ benefit.description }}</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Animation Elements -->
+  <div class="floating-elements">
+    <div class="floating-icon floating-1">
+      <i class="fas fa-van-shuttle text-warning"></i>
+    </div>
+    <div class="floating-icon floating-2">
+      <i class="fas fa-map-marked-alt text-primary"></i>
+    </div>
+    <div class="floating-icon floating-3">
+      <i class="fas fa-shield-alt text-success"></i>
+    </div>
+  </div>
+
+  <!-- Scroll Down Indicator -->
+  <div
+    class="scroll-indicator position-absolute bottom-0 start-50 translate-middle-x mb-4"
+  >
+    <div class="scroll-arrow">
+      <i class="fas fa-chevron-down text-white fa-2x opacity-75"></i>
+    </div>
+  </div>
+</section>
+
+<!-- Checkout Modal -->
+<app-checkout-modal
+  [isVisible]="showCheckoutModal"
+  [bookingDetails]="getBookingDetailsForCheckout()"
+  (closeModal)="closeCheckoutModal()"
+  (bookingConfirmed)="onBookingConfirmed($event)"
+></app-checkout-modal>

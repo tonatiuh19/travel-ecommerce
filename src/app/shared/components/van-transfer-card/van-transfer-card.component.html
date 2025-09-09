@@ -1,0 +1,140 @@
+<div
+  class="card van-transfer-card h-100 shadow-lg border-0 overflow-hidden"
+  [class.luxury-card]="transfer.isLuxury"
+  [class.popular-card]="transfer.isPopular"
+>
+  <!-- Popular Badge -->
+  <div class="position-absolute top-0 start-0 z-3" *ngIf="transfer.isPopular">
+    <span class="badge bg-warning text-dark px-3 py-2 rounded-end-3 fw-bold">
+      <fa-icon [icon]="faCrown" class="me-1"></fa-icon>Popular
+    </span>
+  </div>
+
+  <!-- Luxury Badge -->
+  <div class="position-absolute top-0 end-0 z-3" *ngIf="transfer.isLuxury">
+    <span class="badge bg-dark text-light px-3 py-2 rounded-start-3">
+      <fa-icon [icon]="faStar" class="me-1"></fa-icon>Lujo
+    </span>
+  </div>
+
+  <!-- Image Container -->
+  <div class="card-img-container position-relative overflow-hidden">
+    <img
+      [src]="transfer.imageUrl"
+      [alt]="transfer.title"
+      class="card-img-top van-image"
+    />
+
+    <!-- Overlay Gradient -->
+    <div class="image-overlay"></div>
+
+    <!-- Capacity and Duration Info -->
+    <div class="position-absolute bottom-0 start-0 p-3 z-2">
+      <div class="d-flex gap-2">
+        <span class="badge bg-primary bg-opacity-90 px-3 py-2">
+          <fa-icon [icon]="faUsers" class="me-1"></fa-icon
+          >{{ transfer.capacity }} personas
+        </span>
+        <span class="badge bg-info bg-opacity-90 px-3 py-2">
+          <fa-icon [icon]="faClock" class="me-1"></fa-icon
+          >{{ transfer.duration }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card Body -->
+  <div class="card-body p-4">
+    <!-- Title and Rating -->
+    <div class="d-flex justify-content-between align-items-start mb-3">
+      <h5 class="card-title fw-bold mb-0 text-dark">{{ transfer.title }}</h5>
+      <div class="rating-container">
+        <div class="stars d-flex">
+          <fa-icon
+            *ngFor="let star of getStars(transfer.rating)"
+            [icon]="faStar"
+            [class.text-warning]="star === 'full'"
+            [class.text-warning-half]="star === 'half'"
+            [class.text-muted]="star === 'empty'"
+          ></fa-icon>
+        </div>
+        <small class="text-muted ms-1">{{ transfer.rating }}</small>
+      </div>
+    </div>
+
+    <!-- Route -->
+    <p class="route-info text-primary fw-semibold mb-2">
+      <fa-icon [icon]="faRoute" class="me-2"></fa-icon>{{ transfer.route }}
+    </p>
+
+    <!-- Description -->
+    <p class="card-text text-muted mb-3">{{ transfer.description }}</p>
+
+    <!-- Features -->
+    <div class="features-container mb-4">
+      <div class="row g-2">
+        <div
+          class="col-6"
+          *ngFor="let feature of transfer.features.slice(0, 4)"
+        >
+          <small class="feature-badge d-flex align-items-center">
+            <fa-icon [icon]="faCheckCircle" class="text-success me-1"></fa-icon>
+            <span class="text-muted">{{ feature }}</span>
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Price Section -->
+    <div class="price-section mb-3">
+      <div class="d-flex align-items-center justify-content-between">
+        <div class="price-info">
+          <div
+            *ngIf="transfer.originalPrice && transfer.discount"
+            class="d-flex align-items-center gap-2"
+          >
+            <span class="text-decoration-line-through text-muted fs-6">
+              ${{ transfer.originalPrice }}
+            </span>
+            <span class="badge bg-danger px-2 py-1">
+              -{{ transfer.discount }}%
+            </span>
+          </div>
+          <div class="current-price">
+            <span class="fs-3 fw-bold text-primary">${{ transfer.price }}</span>
+            <small class="text-muted">/por viaje</small>
+          </div>
+        </div>
+
+        <!-- Book Button -->
+        <button class="btn btn-primary btn-lg px-4 booking-btn">
+          <fa-icon [icon]="faCalendarCheck" class="me-2"></fa-icon>
+          Reservar
+        </button>
+      </div>
+    </div>
+
+    <!-- Additional Actions -->
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-secondary btn-sm flex-fill">
+        <fa-icon [icon]="faInfoCircle" class="me-1"></fa-icon>Detalles
+      </button>
+      <button class="btn btn-outline-danger btn-sm">
+        <fa-icon [icon]="faHeart"></fa-icon>
+      </button>
+      <button class="btn btn-outline-primary btn-sm">
+        <fa-icon [icon]="faShare"></fa-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Hover Effect Overlay -->
+  <div
+    class="hover-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+  >
+    <div class="text-center text-white">
+      <fa-icon [icon]="faEye" size="2x" class="mb-2"></fa-icon>
+      <p class="mb-0">Ver Detalles</p>
+    </div>
+  </div>
+</div>

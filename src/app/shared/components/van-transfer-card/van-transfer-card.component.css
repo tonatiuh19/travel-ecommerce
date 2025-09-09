@@ -1,0 +1,216 @@
+/* Van Transfer Card Styles */
+.van-transfer-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.van-transfer-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(106, 143, 167, 0.25) !important;
+}
+
+/* Luxury Card Styling */
+.luxury-card {
+  border: 2px solid var(--color-warm-terracotta, #bb6557);
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+.luxury-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--color-warm-terracotta, #bb6557),
+    var(--color-blue-gray, #6a8fa7),
+    var(--color-warm-terracotta, #bb6557)
+  );
+  z-index: 1;
+}
+
+/* Popular Card Styling */
+.popular-card {
+  animation: subtle-glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes subtle-glow {
+  from {
+    box-shadow: 0 4px 20px rgba(187, 101, 87, 0.2);
+  }
+  to {
+    box-shadow: 0 4px 25px rgba(187, 101, 87, 0.4);
+  }
+}
+
+/* Image Container */
+.card-img-container {
+  height: 240px;
+  position: relative;
+}
+
+.van-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.van-transfer-card:hover .van-image {
+  transform: scale(1.05);
+}
+
+/* Image Overlay */
+.image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.1) 40%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+  z-index: 1;
+}
+
+/* Rating Stars */
+.stars {
+  gap: 2px;
+}
+
+.stars i {
+  font-size: 0.875rem;
+}
+
+.text-warning-half {
+  background: linear-gradient(
+    90deg,
+    var(--color-warm-terracotta, #bb6557) 50%,
+    var(--color-blue-gray, #6a8fa7) 50%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Route Info */
+.route-info {
+  font-size: 0.9rem;
+  background-color: rgba(106, 143, 167, 0.1);
+  padding: 8px 12px;
+  border-radius: 20px;
+  border-left: 4px solid var(--bs-primary);
+}
+
+/* Features */
+.feature-badge {
+  font-size: 0.8rem;
+  padding: 4px 0;
+}
+
+/* Price Section */
+.price-section {
+  border-top: 1px solid #e9ecef;
+  padding-top: 1rem;
+}
+
+.current-price {
+  line-height: 1.2;
+}
+
+/* Booking Button */
+.booking-btn {
+  transition: all 0.2s ease;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.booking-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(106, 143, 167, 0.3);
+}
+
+/* Hover Overlay Effect */
+.hover-overlay {
+  background: rgba(13, 110, 253, 0.9);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 10;
+  backdrop-filter: blur(4px);
+}
+
+.van-transfer-card:hover .hover-overlay {
+  opacity: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .van-transfer-card {
+    margin-bottom: 1.5rem;
+  }
+
+  .card-img-container {
+    height: 200px;
+  }
+
+  .booking-btn {
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+  }
+}
+
+/* Badge Styles */
+.badge {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Card Body Enhancements */
+.card-body {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+/* Animation for cards when they come into view */
+.van-transfer-card {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Stagger animation for multiple cards */
+.van-transfer-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.van-transfer-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.van-transfer-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.van-transfer-card:nth-child(4) {
+  animation-delay: 0.4s;
+}
+.van-transfer-card:nth-child(5) {
+  animation-delay: 0.5s;
+}
+.van-transfer-card:nth-child(6) {
+  animation-delay: 0.6s;
+}

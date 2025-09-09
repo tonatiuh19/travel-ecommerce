@@ -1,0 +1,149 @@
+<!-- Video Info Section with Connection-Based Content -->
+<section class="video-info-section py-5 bg-white">
+  <div class="container">
+    <!-- Section Header -->
+    <div class="row mb-5">
+      <div class="col-12 text-center">
+        <div class="section-header">
+          <span
+            class="badge bg-primary bg-opacity-10 px-4 py-2 rounded-pill mb-3 fs-6"
+          >
+            <fa-icon [icon]="faPlayCircle" class="me-2"></fa-icon>Por qué
+            elegirnos
+          </span>
+          <h2 class="display-4 fw-bold mb-4 text-dark">
+            Experiencia Premium en
+            <span class="text-gradient">Cada Detalle</span>
+          </h2>
+          <p class="lead text-muted mb-4 mx-auto" style="max-width: 800px">
+            Descubre lo que nos hace únicos en el mundo del transporte VIP. Cada
+            servicio está diseñado pensando en tu comodidad y satisfacción.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Video/Image Cards Grid -->
+    <div class="row g-4">
+      <div class="col-lg-4 col-md-6" *ngFor="let item of videoInfoItems">
+        <div
+          class="video-info-card h-100 bg-white rounded-4 shadow-hover overflow-hidden border-0"
+        >
+          <!-- Media Container -->
+          <div class="media-container position-relative">
+            <!-- Video Content (for good connections) -->
+            <div *ngIf="showVideos" class="video-wrapper">
+              <video
+                class="w-100 h-100"
+                [attr.poster]="item.imageUrl"
+                autoplay
+                muted
+                loop
+                playsinline
+                (error)="onVideoError(item.id)"
+                (loadeddata)="onVideoLoaded(item.id)"
+              >
+                <source [src]="item.videoUrl" type="video/mp4" />
+                <!-- Fallback image if video fails -->
+                <img
+                  [src]="item.imageUrl"
+                  [alt]="item.title"
+                  class="w-100 h-100 object-fit-cover"
+                />
+              </video>
+            </div>
+
+            <!-- Image Content (for slow connections) -->
+            <div *ngIf="!showVideos" class="image-wrapper">
+              <img
+                [src]="item.imageUrl"
+                [alt]="item.title"
+                class="w-100 h-100 object-fit-cover"
+              />
+            </div>
+
+            <!-- Overlay with Icon -->
+            <div
+              class="media-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+            >
+              <div class="overlay-content text-center text-white">
+                <div
+                  class="icon-circle bg-white bg-opacity-20 rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                  style="width: 80px; height: 80px; backdrop-filter: blur(10px)"
+                >
+                  <fa-icon
+                    [icon]="getIcon(item.icon)"
+                    size="2x"
+                    class="text-white"
+                  ></fa-icon>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stats Badge -->
+            <div class="stats-badge position-absolute top-3 end-3">
+              <span
+                class="badge bg-success bg-opacity-90 text-white px-3 py-2 rounded-pill"
+              >
+                {{ item.stats }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Card Content -->
+          <div class="card-content p-4">
+            <h4 class="card-title fw-bold mb-3 text-dark">{{ item.title }}</h4>
+            <p class="card-description text-muted mb-4 lh-base">
+              {{ item.description }}
+            </p>
+
+            <!-- Learn More Button -->
+            <div class="card-actions"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom CTA Section -->
+    <div class="row mt-5">
+      <div class="col-12 text-center">
+        <div class="cta-section p-5 bg-primary bg-opacity-5 rounded-4">
+          <h3 class="fw-bold mb-3 text-dark">
+            ¿Listo para vivir la experiencia?
+          </h3>
+          <p class="text-muted mb-4">
+            Reserva ahora tu transfer VIP y descubre por qué miles de clientes
+            nos prefieren.
+          </p>
+          <div
+            class="cta-buttons d-flex flex-wrap justify-content-center gap-3"
+          >
+            <a href="#van-transfers" class="btn btn-primary btn-lg px-4">
+              <fa-icon [icon]="faCalendarCheck" class="me-2"></fa-icon>
+              Reservar Ahora
+            </a>
+            <button
+              class="btn btn-outline-primary btn-lg px-4"
+              data-bs-toggle="modal"
+              data-bs-target="#contactModal"
+            >
+              <fa-icon [icon]="faPhone" class="me-2"></fa-icon>
+              Contactar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Connection Status Indicator (for debugging) -->
+  <div
+    class="connection-indicator position-fixed bottom-3 start-3 d-none d-lg-block"
+    *ngIf="!showVideos"
+  >
+    <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">
+      <fa-icon [icon]="faWifi" class="me-2"></fa-icon>
+      Modo conexión lenta
+    </span>
+  </div>
+</section>

@@ -1,0 +1,189 @@
+<section class="enhanced-hero-section" id="enhanced-hero">
+  <!-- Particle Canvas Background -->
+  <canvas id="particleCanvas" class="particle-canvas"></canvas>
+
+  <!-- Video Background (Optional) -->
+  <video
+    #videoBackground
+    class="video-background"
+    autoplay
+    muted
+    loop
+    playsinline
+  >
+    <source src="assets/videos/hero-bg.mp4" type="video/mp4" />
+    <!-- Fallback if video not available -->
+  </video>
+
+  <!-- Gradient Overlay -->
+  <div class="gradient-overlay"></div>
+
+  <!-- Floating Elements -->
+  <div class="floating-elements">
+    <div class="floating-icon floating-icon-1">
+      <fa-icon [icon]="faGlobe" size="2x"></fa-icon>
+    </div>
+    <div class="floating-icon floating-icon-2">
+      <fa-icon [icon]="faRocket" size="3x"></fa-icon>
+    </div>
+    <div class="floating-icon floating-icon-3">
+      <fa-icon [icon]="faCamera" size="2x"></fa-icon>
+    </div>
+    <div class="floating-icon floating-icon-4">
+      <fa-icon [icon]="faRoute" size="2x"></fa-icon>
+    </div>
+    <div class="floating-icon floating-icon-5">
+      <fa-icon [icon]="faPlane" size="3x"></fa-icon>
+    </div>
+  </div>
+
+  <div class="container-fluid h-100">
+    <div class="row h-100 align-items-center justify-content-center">
+      <!-- Centered Main Content -->
+      <div class="col-lg-8 col-xl-6 col-md-10 col-12">
+        <div class="hero-content text-center">
+          <!-- Hero Badge -->
+          <div class="hero-badge mb-4">
+            <span class="badge-premium">
+              <fa-icon [icon]="faVanShuttle" class="me-2"></fa-icon>
+              <span class="badge-text">Transfers Premium VIP</span>
+              <div class="badge-shine"></div>
+            </span>
+          </div>
+
+          <!-- Dynamic Title -->
+          <h1 class="hero-title mb-4">
+            <span class="title-static">Explora Destinos Únicos</span>
+          </h1>
+
+          <!-- Enhanced Subtitle -->
+          <p class="hero-subtitle mb-5">
+            Conectamos destinos extraordinarios con nuestro servicio premium de
+            transfers VIP. Vehículos de lujo, conductores certificados y
+            experiencias que trascienden lo ordinario.
+          </p>
+
+          <!-- CTA Buttons -->
+          <div class="hero-actions mb-5">
+            <button
+              class="btn btn-primary-gradient btn-lg me-3 mb-3"
+              (click)="scrollToSection('van-transfers')"
+            >
+              <fa-icon [icon]="faVanShuttle" class="me-2"></fa-icon>
+              Explorar Transfers VIP
+              <fa-icon [icon]="faArrowRight" class="ms-2"></fa-icon>
+            </button>
+
+            <button
+              class="btn btn-outline-light btn-lg mb-3"
+              (click)="openVideoModal()"
+            >
+              <fa-icon [icon]="faPlay" class="me-2"></fa-icon>
+              Ver Experiencia
+            </button>
+          </div>
+
+          <!-- Trust Indicators -->
+          <div class="trust-indicators">
+            <div class="row justify-content-center">
+              <div class="col-auto">
+                <div
+                  class="trust-badges d-flex flex-wrap justify-content-center"
+                >
+                  <div class="trust-badge">
+                    <fa-icon [icon]="faShieldAlt" class="trust-icon"></fa-icon>
+                    <span>100% Seguro</span>
+                  </div>
+                  <div class="trust-badge">
+                    <fa-icon [icon]="faCheck" class="trust-icon"></fa-icon>
+                    <span>Certificado</span>
+                  </div>
+                  <div class="trust-badge">
+                    <fa-icon [icon]="faInfinity" class="trust-icon"></fa-icon>
+                    <span>Experiencias Únicas</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll Indicator -->
+  <div class="scroll-indicator">
+    <div class="scroll-mouse">
+      <div class="scroll-wheel"></div>
+    </div>
+    <p class="scroll-text">Descubre más abajo</p>
+    <fa-icon [icon]="faChevronDown" class="scroll-arrow"></fa-icon>
+  </div>
+
+  <!-- Decorative Elements -->
+  <div class="decorative-elements">
+    <div class="deco-circle deco-circle-1"></div>
+    <div class="deco-circle deco-circle-2"></div>
+    <div class="deco-circle deco-circle-3"></div>
+  </div>
+</section>
+
+<!-- Enhanced Video Modal -->
+<div
+  class="modal fade"
+  id="videoModal"
+  tabindex="-1"
+  aria-labelledby="videoModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content bg-transparent border-0">
+      <div class="modal-header border-0 bg-transparent">
+        <h5 class="modal-title text-white fw-bold" id="videoModalLabel">
+          <fa-icon [icon]="faPlay" class="me-2 text-primary"></fa-icon>
+          Experiencia de Viaje Premium
+        </h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body p-0">
+        <div class="ratio ratio-16x9">
+          <iframe
+            src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&controls=1&rel=0&modestbranding=1"
+            title="Video de Experiencia de Viaje"
+            allowfullscreen
+            allow="autoplay; encrypted-media"
+            class="rounded"
+          ></iframe>
+        </div>
+      </div>
+      <div class="modal-footer border-0 bg-dark bg-opacity-75 rounded-bottom">
+        <div class="d-flex align-items-center justify-content-between w-100">
+          <div>
+            <h6 class="mb-1 fw-bold text-white">
+              ¿Listo para tu próxima aventura?
+            </h6>
+            <p class="mb-0 text-light small opacity-75">
+              Descubre destinos increíbles con nuestros transfers VIP premium
+            </p>
+          </div>
+          <div>
+            <button
+              type="button"
+              class="btn btn-primary-gradient"
+              data-bs-dismiss="modal"
+              (click)="scrollToSection('van-transfers')"
+            >
+              <fa-icon [icon]="faVanShuttle" class="me-2"></fa-icon>
+              Reservar Ahora
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

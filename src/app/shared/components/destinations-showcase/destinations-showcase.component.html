@@ -1,0 +1,260 @@
+<!-- Destinations Showcase Section -->
+<section class="destinations-showcase-section py-5 bg-gradient">
+  <div class="container">
+    <!-- Section Header -->
+    <div class="row mb-5">
+      <div class="col-12 text-center">
+        <div class="section-header">
+          <span
+            class="badge bg-warning bg-opacity-10 text-warning px-4 py-2 rounded-pill mb-3 fs-6"
+          >
+            <fa-icon [icon]="faMapMarkedAlt" class="me-2"></fa-icon>Destinos Europeos
+          </span>
+          <h2 class="display-4 fw-bold mb-4 text-dark">
+            Explora las Ciudades más
+            <span class="text-gradient">Fascinantes</span>
+          </h2>
+          <p class="lead text-muted mb-4 mx-auto" style="max-width: 800px">
+            Descubre la magia de Europa con nuestros tours exclusivos. Cada
+            destino cuenta una historia única que te cautivará desde el primer
+            momento.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Destinations Cards Grid -->
+    <div class="row g-4 mb-5">
+      <div class="col-lg-4 col-md-6" *ngFor="let destination of destinations">
+        <div
+          class="destination-card h-100 bg-white rounded-4 shadow-hover overflow-hidden border-0"
+        >
+          <!-- Media Container -->
+          <div class="destination-media position-relative">
+            <!-- Video Content (for good connections) -->
+            <div *ngIf="showVideos" class="video-wrapper">
+              <video
+                class="w-100 h-100"
+                [attr.poster]="destination.imageUrl"
+                autoplay
+                muted
+                loop
+                playsinline
+                (error)="onVideoError(destination.id)"
+                (loadeddata)="onVideoLoaded(destination.id)"
+              >
+                <source [src]="destination.videoUrl" type="video/mp4" />
+                <!-- Fallback image if video fails -->
+                <img
+                  [src]="destination.imageUrl"
+                  [alt]="destination.city"
+                  class="w-100 h-100 object-fit-cover"
+                />
+              </video>
+            </div>
+
+            <!-- Image Content (for slow connections) -->
+            <div *ngIf="!showVideos" class="image-wrapper">
+              <img
+                [src]="destination.imageUrl"
+                [alt]="destination.city"
+                class="w-100 h-100 object-fit-cover"
+              />
+            </div>
+
+            <!-- Destination Info Overlay -->
+            <div
+              class="destination-overlay position-absolute bottom-0 start-0 end-0"
+            >
+              <div class="overlay-gradient"></div>
+              <div class="destination-info p-4 text-white position-relative">
+                <div
+                  class="d-flex justify-content-between align-items-center mb-2"
+                >
+                  <div>
+                    <h3 class="destination-city mb-1 fw-bold">
+                      {{ destination.city }}
+                    </h3>
+                    <p class="destination-country mb-0 text-white-50">
+                      <i class="fas fa-map-marker-alt me-1"></i
+                      >{{ destination.country }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Play Icon for Videos -->
+            <div
+              *ngIf="showVideos"
+              class="play-indicator position-absolute top-50 start-50 translate-middle"
+            >
+              <div
+                class="play-circle bg-white bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center"
+                style="width: 60px; height: 60px; backdrop-filter: blur(10px)"
+              >
+                <i class="fas fa-play text-white ms-1"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card Content -->
+          <div class="card-content p-4">
+            <div class="destination-header mb-3">
+              <h4 class="destination-title fw-bold mb-2 text-dark">
+                {{ destination.title }}
+              </h4>
+              <p class="destination-description text-muted mb-3 lh-base">
+                {{ destination.description }}
+              </p>
+            </div>
+
+            <!-- Highlights -->
+            <div class="destination-highlights mb-4">
+              <h6 class="highlights-title fw-semibold mb-2 text-dark">
+                <i class="fas fa-star text-warning me-2"></i>Destacados
+              </h6>
+              <div class="highlights-list">
+                <span
+                  *ngFor="
+                    let highlight of destination.highlights;
+                    let last = last
+                  "
+                  class="highlight-item badge bg-light text-dark me-1 mb-1 px-2 py-1"
+                >
+                  {{ highlight }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Trip Details -->
+            <div
+              class="trip-details d-flex justify-content-between align-items-center mb-4"
+            >
+              <div class="detail-item text-center">
+                <div class="detail-icon mb-1">
+                  <i class="fas fa-clock text-primary"></i>
+                </div>
+                <div class="detail-value small fw-semibold text-dark">
+                  {{ destination.duration }}
+                </div>
+              </div>
+              <div class="detail-item text-center">
+                <div class="detail-icon mb-1">
+                  <i class="fas fa-users text-success"></i>
+                </div>
+                <div class="detail-value small fw-semibold text-dark">
+                  Grupos pequeños
+                </div>
+              </div>
+              <div class="detail-item text-center">
+                <div class="detail-icon mb-1">
+                  <i class="fas fa-van-shuttle text-info"></i>
+                </div>
+                <div class="detail-value small fw-semibold text-dark">
+                  Transfer VIP
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="card-actions d-flex gap-2">
+              <button
+                class="btn btn-primary flex-grow-1 fw-semibold"
+                (click)="bookDestination(destination)"
+              >
+                <i class="fas fa-calendar-check me-2"></i>
+                Reservar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Features Section -->
+    <div class="row">
+      <div class="col-12">
+        <div class="features-showcase bg-white rounded-4 shadow-sm p-4">
+          <div class="row g-4 text-center">
+            <div class="col-lg-3 col-sm-6">
+              <div class="feature-item">
+                <div class="feature-icon mb-3">
+                  <div
+                    class="icon-circle bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center"
+                    style="width: 60px; height: 60px"
+                  >
+                    <i class="fas fa-route text-white fa-lg"></i>
+                  </div>
+                </div>
+                <h6 class="fw-bold mb-2">Rutas Exclusivas</h6>
+                <p class="text-muted small mb-0">
+                  Acceso a lugares únicos que solo conocemos nosotros
+                </p>
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6">
+              <div class="feature-item">
+                <div class="feature-icon mb-3">
+                  <div
+                    class="icon-circle bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center"
+                    style="width: 60px; height: 60px"
+                  >
+                    <i class="fas fa-user-tie text-success fa-lg"></i>
+                  </div>
+                </div>
+                <h6 class="fw-bold mb-2">Guías Expertos</h6>
+                <p class="text-muted small mb-0">
+                  Historiadores locales con años de experiencia
+                </p>
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6">
+              <div class="feature-item">
+                <div class="feature-icon mb-3">
+                  <div
+                    class="icon-circle bg-warning bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center"
+                    style="width: 60px; height: 60px"
+                  >
+                    <i class="fas fa-camera text-warning fa-lg"></i>
+                  </div>
+                </div>
+                <h6 class="fw-bold mb-2">Momentos Únicos</h6>
+                <p class="text-muted small mb-0">
+                  Los mejores spots para fotografías memorables
+                </p>
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6">
+              <div class="feature-item">
+                <div class="feature-icon mb-3">
+                  <div
+                    class="icon-circle bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center"
+                    style="width: 60px; height: 60px"
+                  >
+                    <i class="fas fa-heart text-info fa-lg"></i>
+                  </div>
+                </div>
+                <h6 class="fw-bold mb-2">Experiencias Auténticas</h6>
+                <p class="text-muted small mb-0">
+                  Conecta con la cultura local de cada destino
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Connection Status Indicator -->
+  <div
+    class="connection-indicator position-fixed bottom-3 end-3 d-none d-lg-block"
+    *ngIf="!showVideos"
+  >
+    <span class="badge bg-info text-white px-3 py-2 rounded-pill">
+      <i class="fas fa-image me-2"></i>
+      Modo imágenes
+    </span>
+  </div>
+</section>

@@ -1,0 +1,151 @@
+<div
+  class="enhanced-review-card h-100 bg-white rounded-4 shadow-lg p-4 position-relative overflow-hidden"
+>
+  <!-- Background Pattern -->
+  <div class="card-pattern position-absolute top-0 end-0">
+    <i
+      class="fas fa-quote-right text-primary opacity-10"
+      style="font-size: 4rem"
+    ></i>
+  </div>
+
+  <!-- Verified Badge -->
+  <div class="position-absolute top-0 start-0 m-3" *ngIf="testimonial.verified">
+    <span class="badge bg-success rounded-pill px-3 py-2">
+      <i class="fas fa-shield-check me-1"></i>
+      <small>Verificado</small>
+    </span>
+  </div>
+
+  <!-- Card Content -->
+  <div class="card-content position-relative z-2">
+    <!-- Header with User Info -->
+    <div class="review-header d-flex align-items-center mb-4">
+      <div class="avatar-container me-3 position-relative">
+        <img
+          [src]="testimonial.avatar"
+          [alt]="testimonial.name"
+          class="avatar rounded-circle"
+        />
+        <div
+          class="avatar-ring position-absolute top-0 start-0 w-100 h-100 rounded-circle"
+        ></div>
+      </div>
+
+      <div class="user-info flex-grow-1">
+        <h6 class="mb-1 fw-bold text-dark">{{ testimonial.name }}</h6>
+        <div class="d-flex align-items-center justify-content-between">
+          <small class="text-muted">
+            <i class="fas fa-map-marker-alt me-1"></i>
+            {{ testimonial.location }}
+          </small>
+          <small class="text-muted">{{ formatDate(testimonial.date) }}</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rating Stars -->
+    <div class="rating-section mb-3">
+      <div class="d-flex align-items-center justify-content-between">
+        <div class="stars-container">
+          <div class="stars d-flex">
+            <i
+              *ngFor="let star of getStars(testimonial.rating)"
+              class="fas fa-star"
+              [class.text-warning]="star === 'full'"
+              [class.text-warning-half]="star === 'half'"
+              [class.text-muted]="star === 'empty'"
+            ></i>
+          </div>
+        </div>
+        <span
+          class="rating-badge badge bg-warning bg-opacity-10 text-warning px-3 py-2 rounded-pill"
+        >
+          <strong>{{ testimonial.rating }}/5</strong>
+        </span>
+      </div>
+    </div>
+
+    <!-- Experience Info -->
+    <div class="experience-tag mb-3">
+      <span
+        class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill"
+      >
+        <i class="fas fa-suitcase me-2"></i>
+        {{ testimonial.experience }}
+      </span>
+    </div>
+
+    <!-- Review Comment -->
+    <div class="review-content mb-4">
+      <blockquote class="blockquote mb-0">
+        <p class="text-muted lh-base">
+          <i class="fas fa-quote-left text-primary me-2 opacity-50"></i>
+          {{ testimonial.comment }}
+        </p>
+      </blockquote>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="review-actions">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="helpful-buttons d-flex gap-2">
+          <button
+            class="btn btn-sm btn-outline-success rounded-pill px-3 helpful-btn"
+          >
+            <i class="fas fa-thumbs-up me-1"></i>
+            <small>Útil (12)</small>
+          </button>
+          <button class="btn btn-sm btn-outline-primary rounded-pill px-3">
+            <i class="fas fa-share me-1"></i>
+            <small>Compartir</small>
+          </button>
+        </div>
+
+        <div class="review-meta">
+          <small class="text-muted">
+            <i class="fas fa-eye me-1"></i>
+            234 vistas
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trust Indicators -->
+    <div class="trust-indicators mt-3 pt-3 border-top border-light">
+      <div class="row text-center">
+        <div class="col-4">
+          <div class="trust-item">
+            <div class="trust-icon text-success mb-1">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <small class="text-muted d-block">Viaje Confirmado</small>
+          </div>
+        </div>
+
+        <div class="col-4">
+          <div class="trust-item">
+            <div class="trust-icon text-primary mb-1">
+              <i class="fas fa-medal"></i>
+            </div>
+            <small class="text-muted d-block">Cliente VIP</small>
+          </div>
+        </div>
+
+        <div class="col-4">
+          <div class="trust-item">
+            <div class="trust-icon text-warning mb-1">
+              <i class="fas fa-star"></i>
+            </div>
+            <small class="text-muted d-block">Top Reviewer</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hover Effect -->
+  <div
+    class="hover-glow position-absolute top-0 start-0 w-100 h-100 rounded-4"
+  ></div>
+</div>

@@ -3,11 +3,15 @@ import { CommonModule } from '@angular/common';
 import { LandingComponent } from './landing.component';
 import { HeaderModule } from '../shared/components/header/header.module';
 import { FooterModule } from '../shared/components/footer/footer.module';
-import { ReviewCardModule } from '../shared/components/review-card/review-card.module';
-import { PackageCardModule } from '../shared/components/package-card/package-card.module';
 import { PlaceCardModule } from '../shared/components/place-card/place-card.module';
-import { PackageImageCardModule } from '../shared/components/package-image-card/package-image-card.module';
 import { LandingStoreModule } from './store/landing.store.module';
+import { VanTransferHeroModule } from '../shared/components/van-transfer-hero/van-transfer-hero.module';
+import { VanTransferCardModule } from '../shared/components/van-transfer-card/van-transfer-card.module';
+import { VideoInfoSectionModule } from '../shared/components/video-info-section/video-info-section.module';
+import { DestinationsShowcaseModule } from '../shared/components/destinations-showcase/destinations-showcase.module';
+import { EnhancedHeroModule } from '../shared/components/enhanced-hero/enhanced-hero.module';
+import { EnhancedFooterModule } from '../shared/components/enhanced-footer/enhanced-footer.module';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @NgModule({
   declarations: [LandingComponent],
@@ -15,11 +19,15 @@ import { LandingStoreModule } from './store/landing.store.module';
     CommonModule,
     HeaderModule,
     FooterModule,
-    ReviewCardModule,
-    PackageCardModule,
     PlaceCardModule,
-    PackageImageCardModule,
     LandingStoreModule,
+    VanTransferHeroModule,
+    VanTransferCardModule,
+    VideoInfoSectionModule,
+    DestinationsShowcaseModule,
+    EnhancedHeroModule,
+    EnhancedFooterModule,
+    FontAwesomeModule,
   ],
   exports: [LandingComponent],
 })

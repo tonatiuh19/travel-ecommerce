@@ -1,6 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { fromLanding } from './store/selectors';
+import {
+  faPlane,
+  faCompass,
+  faMapMarkedAlt,
+  faMountain,
+  faVanShuttle,
+  faPlay,
+  faShieldAlt,
+  faClock,
+  faHeart,
+  faDollarSign,
+  faChevronDown,
+  faStar,
+  faHeadset,
+} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-landing',
@@ -9,6 +24,21 @@ import { fromLanding } from './store/selectors';
 })
 export class LandingComponent implements OnInit {
   public selectPackages$ = this.store.select(fromLanding.selectPackages);
+
+  // FontAwesome Icons
+  faPlane = faPlane;
+  faCompass = faCompass;
+  faMapMarkedAlt = faMapMarkedAlt;
+  faMountain = faMountain;
+  faVanShuttle = faVanShuttle;
+  faPlay = faPlay;
+  faShieldAlt = faShieldAlt;
+  faClock = faClock;
+  faHeart = faHeart;
+  faDollarSign = faDollarSign;
+  faChevronDown = faChevronDown;
+  faStar = faStar;
+  faHeadset = faHeadset;
 
   public quotes: string[] = [
     'Descubre lo hermoso',
@@ -44,6 +74,17 @@ export class LandingComponent implements OnInit {
           }, 2000); // Pause before typing the next quote
         }
       }, 100); // Typing speed
+    }
+  }
+
+  scrollToSection(elementId: string) {
+    const element = document.getElementById(elementId);
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+        inline: 'nearest',
+      });
     }
   }
 }
