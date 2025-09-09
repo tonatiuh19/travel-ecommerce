@@ -8,6 +8,7 @@ import { Component, HostListener, Input } from '@angular/core';
 export class HeaderComponent {
   @Input() isMain = true;
   public isColorDark = true;
+  public isLogoSmall = false;
 
   @HostListener('window:scroll', [])
   onWindowScroll() {
@@ -22,9 +23,11 @@ export class HeaderComponent {
 
         if (targetPosition <= navbarHeight) {
           this.isColorDark = false;
+          this.isLogoSmall = true;
           navbar.classList.add('bg-primary');
         } else {
           this.isColorDark = true;
+          this.isLogoSmall = false;
           navbar.classList.remove('bg-primary');
         }
       }

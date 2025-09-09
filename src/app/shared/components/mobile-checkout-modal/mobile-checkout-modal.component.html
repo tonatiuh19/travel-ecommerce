@@ -1,0 +1,469 @@
+<!-- Mobile Checkout Modal Full Screen -->
+<div
+  class="mobile-checkout-overlay"
+  [class.active]="isVisible"
+  *ngIf="isVisible"
+>
+  <div class="mobile-checkout-container">
+    <!-- Mobile Header -->
+    <div class="mobile-header">
+      <div class="header-content">
+        <div class="header-top">
+          <button
+            type="button"
+            class="btn-back"
+            (click)="close()"
+            [disabled]="isProcessingPayment"
+          >
+            <fa-icon [icon]="faArrowLeft"></fa-icon>
+          </button>
+
+          <div class="header-title">
+            <h4 class="title">{{ getStepTitle() }}</h4>
+            <p class="subtitle" *ngIf="!showConfirmation">
+              Paso {{ currentStep }} de {{ totalSteps }}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="btn-close"
+            (click)="close()"
+            [disabled]="isProcessingPayment"
+          >
+            <fa-icon [icon]="faTimes"></fa-icon>
+          </button>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-container" *ngIf="!showConfirmation">
+          <div class="progress">
+            <div
+              class="progress-bar"
+              [style.width.%]="getProgressPercentage()"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Body -->
+    <div class="mobile-body">
+      <!-- Step 1: Personal Information -->
+      <div *ngIf="currentStep === 1" class="step-content">
+        <div class="step-header">
+          <div class="step-icon">
+            <fa-icon [icon]="faUserCircle"></fa-icon>
+          </div>
+          <h5 class="step-title">Información Personal</h5>
+          <p class="step-description">Completa tus datos de contacto</p>
+        </div>
+
+        <form class="mobile-form">
+          <div class="form-group">
+            <label class="form-label">Nombre *</label>
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="userInfo.firstName"
+              name="firstName"
+              placeholder="Tu nombre"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Apellidos *</label>
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="userInfo.lastName"
+              name="lastName"
+              placeholder="Tus apellidos"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Email *</label>
+            <input
+              type="email"
+              class="form-control"
+              [(ngModel)]="userInfo.email"
+              name="email"
+              placeholder="tu@email.com"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Teléfono *</label>
+            <input
+              type="tel"
+              class="form-control"
+              [(ngModel)]="userInfo.phone"
+              name="phone"
+              placeholder="+34 123 456 789"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">País *</label>
+            <select
+              class="form-control"
+              [(ngModel)]="userInfo.nationality"
+              name="nationality"
+              required
+            >
+              <option value="">Selecciona tu país</option>
+              <option *ngFor="let country of countries" [value]="country">
+                {{ country }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Fecha de Nacimiento</label>
+            <input
+              type="date"
+              class="form-control"
+              [(ngModel)]="userInfo.dateOfBirth"
+              name="dateOfBirth"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Solicitudes Especiales</label>
+            <textarea
+              class="form-control"
+              [(ngModel)]="userInfo.specialRequests"
+              name="specialRequests"
+              placeholder="Asientos específicos, asistencia, etc."
+              rows="3"
+            ></textarea>
+          </div>
+        </form>
+      </div>
+
+      <!-- Step 2: Payment Information -->
+      <div *ngIf="currentStep === 2" class="step-content">
+        <div class="step-header">
+          <div class="step-icon">
+            <fa-icon [icon]="faCreditCard"></fa-icon>
+          </div>
+          <h5 class="step-title">Método de Pago</h5>
+          <p class="step-description">Datos de tu tarjeta de crédito</p>
+        </div>
+
+        <form class="mobile-form">
+          <div class="form-group">
+            <label class="form-label">Nombre en la Tarjeta *</label>
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="paymentMethod.cardholderName"
+              name="cardholderName"
+              placeholder="Como aparece en la tarjeta"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Número de Tarjeta *</label>
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="paymentMethod.cardNumber"
+              name="cardNumber"
+              placeholder="1234 5678 9012 3456"
+              maxlength="19"
+              (input)="formatCardNumber()"
+              required
+            />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label class="form-label">Vencimiento *</label>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="paymentMethod.expiryDate"
+                name="expiryDate"
+                placeholder="MM/AA"
+                maxlength="5"
+                (input)="formatExpiryDate()"
+                required
+              />
+            </div>
+            <div class="form-group col-6">
+              <label class="form-label">CVV *</label>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="paymentMethod.cvv"
+                name="cvv"
+                placeholder="123"
+                maxlength="4"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- Security Badge -->
+          <div class="security-badge">
+            <fa-icon [icon]="faShieldAlt" class="security-icon"></fa-icon>
+            <span class="security-text">Transacción 100% segura</span>
+          </div>
+
+          <!-- Terms -->
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="terms"
+              [(ngModel)]="acceptedTerms"
+              name="acceptedTerms"
+              required
+            />
+            <label class="form-check-label" for="terms">
+              Acepto los <a href="#" class="link">términos y condiciones</a> y
+              la <a href="#" class="link">política de privacidad</a> *
+            </label>
+          </div>
+        </form>
+      </div>
+
+      <!-- Step 3: Review & Summary -->
+      <div *ngIf="currentStep === 3" class="step-content">
+        <div class="step-header">
+          <div class="step-icon">
+            <fa-icon [icon]="faReceipt"></fa-icon>
+          </div>
+          <h5 class="step-title">Revisar y Confirmar</h5>
+          <p class="step-description">
+            Verifica todos los datos antes del pago
+          </p>
+        </div>
+
+        <!-- Booking Summary -->
+        <div class="review-section">
+          <!-- Route Information -->
+          <div class="review-card">
+            <h6 class="review-card-title">
+              <fa-icon [icon]="faVanShuttle" class="me-2"></fa-icon>
+              Detalles del Viaje
+            </h6>
+            <div class="review-item">
+              <div class="route-display">
+                <span class="route-city">{{ bookingDetails?.origin }}</span>
+                <fa-icon [icon]="faArrowRight" class="route-arrow"></fa-icon>
+                <span class="route-city">{{
+                  bookingDetails?.destination
+                }}</span>
+              </div>
+              <div class="route-details">
+                {{ bookingDetails?.distance }} • {{ bookingDetails?.duration }}
+              </div>
+            </div>
+
+            <div class="review-item">
+              <div class="trip-details">
+                <div class="trip-date">
+                  <fa-icon
+                    [icon]="faPlaneDeparture"
+                    class="trip-icon"
+                  ></fa-icon>
+                  <span
+                    >{{ formatDate(bookingDetails?.departureDate || "") }} -
+                    {{ bookingDetails?.departureTime }}</span
+                  >
+                </div>
+                <div *ngIf="bookingDetails?.isRoundTrip" class="trip-date">
+                  <fa-icon [icon]="faPlaneArrival" class="trip-icon"></fa-icon>
+                  <span
+                    >{{ formatDate(bookingDetails?.returnDate || "") }} -
+                    {{ bookingDetails?.returnTime }}</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="review-item">
+              <fa-icon [icon]="faUsers" class="me-2"></fa-icon>
+              <span>{{ bookingDetails?.passengers }} pasajero(s)</span>
+            </div>
+          </div>
+
+          <!-- Personal Information -->
+          <div class="review-card">
+            <h6 class="review-card-title">
+              <fa-icon [icon]="faUserCheck" class="me-2"></fa-icon>
+              Información Personal
+            </h6>
+            <div class="review-item">
+              <span class="review-label">Nombre:</span>
+              <span>{{ userInfo.firstName }} {{ userInfo.lastName }}</span>
+            </div>
+            <div class="review-item">
+              <span class="review-label">Email:</span>
+              <span>{{ userInfo.email }}</span>
+            </div>
+            <div class="review-item">
+              <span class="review-label">Teléfono:</span>
+              <span>{{ userInfo.phone }}</span>
+            </div>
+          </div>
+
+          <!-- Payment Information -->
+          <div class="review-card">
+            <h6 class="review-card-title">
+              <fa-icon [icon]="faCreditCard" class="me-2"></fa-icon>
+              Método de Pago
+            </h6>
+            <div class="review-item">
+              <span class="review-label">Tarjeta:</span>
+              <span
+                >**** **** **** {{ paymentMethod.cardNumber.slice(-4) }}</span
+              >
+            </div>
+            <div class="review-item">
+              <span class="review-label">Titular:</span>
+              <span>{{ paymentMethod.cardholderName }}</span>
+            </div>
+          </div>
+
+          <!-- Price Summary -->
+          <div class="review-card price-summary">
+            <h6 class="review-card-title">Resumen de Pago</h6>
+
+            <div class="price-item">
+              <span>Viaje de ida:</span>
+              <span>{{ formatCurrency(bookingDetails?.totalPrice || 0) }}</span>
+            </div>
+
+            <div *ngIf="bookingDetails?.isRoundTrip" class="price-item">
+              <span>Viaje de regreso:</span>
+              <span>{{
+                formatCurrency(bookingDetails?.returnTotalPrice || 0)
+              }}</span>
+            </div>
+
+            <div *ngIf="bookingDetails?.savings" class="price-item discount">
+              <span>Descuento (5%):</span>
+              <span>-{{ formatCurrency(bookingDetails?.savings || 0) }}</span>
+            </div>
+
+            <hr class="price-divider" />
+
+            <div class="price-total">
+              <span class="total-label">Total a Pagar:</span>
+              <span class="total-amount">
+                {{
+                  formatCurrency(
+                    bookingDetails?.grandTotal ||
+                      bookingDetails?.totalPrice ||
+                      0
+                  )
+                }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirmation Step -->
+      <div *ngIf="showConfirmation" class="step-content confirmation-content">
+        <div class="confirmation-success">
+          <div class="success-animation">
+            <fa-icon [icon]="faCheckCircle" class="success-icon"></fa-icon>
+          </div>
+
+          <h3 class="success-title">¡Reserva Confirmada!</h3>
+          <p class="success-subtitle">
+            Tu reserva ha sido procesada exitosamente
+          </p>
+
+          <div class="confirmation-card">
+            <div class="confirmation-item">
+              <span class="confirmation-label">ID de Reserva:</span>
+              <span class="confirmation-value">{{ generateBookingId() }}</span>
+            </div>
+            <div class="confirmation-item">
+              <span class="confirmation-label">Email:</span>
+              <span class="confirmation-value">{{ userInfo.email }}</span>
+            </div>
+            <div class="confirmation-item">
+              <span class="confirmation-label">Fecha:</span>
+              <span class="confirmation-value">{{ getCurrentDate() }}</span>
+            </div>
+          </div>
+
+          <div class="confirmation-actions">
+            <button
+              class="btn btn-primary btn-download"
+              (click)="downloadConfirmation()"
+            >
+              <fa-icon [icon]="faDownload" class="me-2"></fa-icon>
+              Descargar PDF
+            </button>
+            <button class="btn btn-outline btn-home" (click)="close()">
+              <fa-icon [icon]="faHome" class="me-2"></fa-icon>
+              Volver al Inicio
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Footer -->
+    <div class="mobile-footer" *ngIf="!showConfirmation">
+      <!-- Navigation Buttons -->
+      <div class="footer-actions">
+        <button
+          *ngIf="currentStep > 1"
+          type="button"
+          class="btn btn-secondary btn-back"
+          (click)="prevStep()"
+        >
+          <fa-icon [icon]="faStepBackward" class="me-2"></fa-icon>
+          Anterior
+        </button>
+
+        <button
+          *ngIf="currentStep < 3"
+          type="button"
+          class="btn btn-primary btn-next"
+          (click)="nextStep()"
+          [disabled]="!isCurrentStepValid()"
+        >
+          Siguiente
+          <fa-icon [icon]="faStepForward" class="ms-2"></fa-icon>
+        </button>
+
+        <button
+          *ngIf="currentStep === 3"
+          type="button"
+          class="btn btn-success btn-pay"
+          (click)="processPayment()"
+          [disabled]="!validateAllInfo() || isProcessingPayment"
+        >
+          <span *ngIf="!isProcessingPayment">
+            <fa-icon [icon]="faLock" class="me-2"></fa-icon>
+            Pagar
+            {{
+              formatCurrency(
+                bookingDetails?.grandTotal || bookingDetails?.totalPrice || 0
+              )
+            }}
+          </span>
+          <span *ngIf="isProcessingPayment">
+            <fa-icon [icon]="faSpinner" spin class="me-2"></fa-icon>
+            Procesando...
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

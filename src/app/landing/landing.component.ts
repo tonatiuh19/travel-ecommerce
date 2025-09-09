@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { fromLanding } from './store/selectors';
 import {
@@ -24,6 +24,11 @@ import {
 })
 export class LandingComponent implements OnInit {
   public selectPackages$ = this.store.select(fromLanding.selectPackages);
+
+  // Device Detection
+  public isMobile: boolean = false;
+  public isTablet: boolean = false;
+  public isDesktop: boolean = false;
 
   // FontAwesome Icons
   faPlane = faPlane;
@@ -51,7 +56,26 @@ export class LandingComponent implements OnInit {
   constructor(private store: Store) {}
 
   ngOnInit() {
+    this.detectDevice();
     this.typeQuote();
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    this.detectDevice();
+  }
+
+  detectDevice() {
+    const width = window.innerWidth;
+
+    // Mobile: < 768px
+    this.isMobile = width < 768;
+
+    // Tablet: 768px - 1024px
+    this.isTablet = width >= 768 && width < 1024;
+
+    // Desktop: >= 1024px
+    this.isDesktop = width >= 1024;
   }
 
   typeQuote() {

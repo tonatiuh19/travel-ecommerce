@@ -1,11 +1,27 @@
 <main class="main" id="top">
-  <app-header></app-header>
+  <app-header [isMain]="true"></app-header>
 
-  <!-- Enhanced Hero Section -->
-  <app-enhanced-hero></app-enhanced-hero>
+  <!-- Enhanced Hero Section - Desktop & Tablet -->
+  <div *ngIf="!isMobile">
+    <app-enhanced-hero></app-enhanced-hero>
+  </div>
 
-  <!-- Van Transfer Hero Section -->
-  <app-van-transfer-hero id="van-transfers"></app-van-transfer-hero>
+  <!-- Enhanced Hero Section - Mobile -->
+  <div *ngIf="isMobile">
+    <app-mobile-enhanced-hero></app-mobile-enhanced-hero>
+  </div>
+
+  <!-- Van Transfer Hero Section - Desktop & Tablet -->
+  <div *ngIf="!isMobile">
+    <app-van-transfer-hero id="van-transfers"></app-van-transfer-hero>
+  </div>
+
+  <!-- Van Transfer Hero Section - Mobile -->
+  <div *ngIf="isMobile">
+    <app-mobile-van-transfer-hero
+      id="van-transfers"
+    ></app-mobile-van-transfer-hero>
+  </div>
 
   <!-- Video Info Section -->
   <app-video-info-section></app-video-info-section>

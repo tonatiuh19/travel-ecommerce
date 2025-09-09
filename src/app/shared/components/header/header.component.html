@@ -2,18 +2,20 @@
   id="navbar"
   [class]="
     isMain
-      ? 'navbar navbar-expand-lg fixed-top py-3 d-block'
+      ? isLogoSmall
+        ? 'navbar navbar-expand-lg fixed-top d-block navbar-compact'
+        : 'navbar navbar-expand-lg fixed-top py-3 d-block'
       : 'navbar navbar-expand-lg bg-primary fixed-top py-3 d-block'
   "
   data-navbar-on-scroll="data-navbar-on-scroll"
 >
   <div class="container">
-    <a class="navbar-brand" href="#goTop">
+    <a class="navbar-brand" [class.logo-small]="isLogoSmall" href="#goTop">
       <svg
         version="1.0"
         xmlns="http://www.w3.org/2000/svg"
-        width="55.000000pt"
-        height="27.000000pt"
+        width="120.000000pt"
+        height="80.000000pt"
         viewBox="0 0 425.000000 297.000000"
         preserveAspectRatio="xMidYMid meet"
       >
@@ -132,49 +134,14 @@
           />
         </g></svg
     ></a>
-    <button
-      class="navbar-toggler collapsed bg-light"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
-      <span class="navbar-toggler-icon"></span>
-    </button>
     <div
       class="collapse navbar-collapse border-lg-0 mt-4 mt-lg-0"
       id="navbarSupportedContent"
     >
-      <ul class="navbar-nav mx-auto pt-2 ms-2 pt-lg-0 font-base">
-        <li class="nav-item px-2">
-          <a class="nav-link" href="#lugares">
-            <span class="nav-link-icon text-white me-1 fas fa-plane"></span
-            ><span class="nav-link-text text-white" id="lugaresID"
-              >Lugares</span
-            ></a
-          >
-        </li>
-        <li class="nav-item px-2">
-          <a class="nav-link" href="#paquetes"
-            ><span class="nav-link-icon text-white me-1 fas fa-bolt"></span
-            ><span class="nav-link-text text-white" id="paquetesID"
-              >Paquetes</span
-            ></a
-          >
-        </li>
-      </ul>
+      <ul class="navbar-nav mx-auto pt-2 ms-2 pt-lg-0 font-base"></ul>
       <div>
-        <button
-          class="btn btn-sm text-white order-1-0 me-2"
-          type="button"
-          id="btnCrearCuenta"
-        >
-          Crear cuenta
-        </button>
-        <button class="btn btn-sm btn-outline-light order-0" type="submit">
-          Iniciar sesión
+        <button class="btn btn-sm btn-outline-light order-0" type="button">
+          Ver mi reserva
         </button>
       </div>
     </div>

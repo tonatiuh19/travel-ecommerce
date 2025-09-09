@@ -1,0 +1,420 @@
+<section class="mobile-van-hero-section" id="mobile-van-transfers">
+  <!-- Mobile Hero Content -->
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Hero Content -->
+      <div class="col-12">
+        <div class="mobile-hero-content text-center text-white mb-4">
+          <!-- Badge -->
+          <div class="mobile-hero-badge mb-3">
+            <span class="badge-instant">
+              <fa-icon [icon]="faBolt" class="me-2"></fa-icon>
+              Reserva Instantánea
+            </span>
+          </div>
+
+          <!-- Title -->
+          <h1 class="mobile-hero-title mb-3">
+            Transfers VIP en
+            <span class="text-terracotta">Van Premium</span>
+          </h1>
+
+          <!-- Subtitle -->
+          <p class="mobile-hero-subtitle mb-4">
+            Viaja con comodidad y estilo. Servicio puerta a puerta con los
+            mejores vehículos y conductores profesionales.
+          </p>
+
+          <!-- Features -->
+          <div class="mobile-features mb-4">
+            <div class="row g-2">
+              <div class="col-4">
+                <div class="feature-item">
+                  <fa-icon [icon]="faWifi" class="feature-icon mb-1"></fa-icon>
+                  <span>WiFi Gratis</span>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="feature-item">
+                  <fa-icon
+                    [icon]="faSnowflake"
+                    class="feature-icon mb-1"
+                  ></fa-icon>
+                  <span>Eco-Friendly</span>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="feature-item">
+                  <fa-icon
+                    [icon]="faShieldAlt"
+                    class="feature-icon mb-1"
+                  ></fa-icon>
+                  <span>Seguro</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile Booking Form -->
+        <div class="mobile-booking-card">
+          <div class="booking-header mb-3">
+            <h4 class="text-dark fw-bold mb-0">
+              <fa-icon [icon]="faBolt" class="text-warning me-2"></fa-icon>
+              Reserva Rápida
+            </h4>
+          </div>
+
+          <form
+            class="mobile-booking-form"
+            (ngSubmit)="onSearchTransfers()"
+            #bookingForm="ngForm"
+          >
+            <!-- Validation Alert -->
+            <div
+              *ngIf="showValidationAlert"
+              class="alert alert-warning alert-dismissible fade show mb-3"
+              role="alert"
+            >
+              <fa-icon [icon]="faSearch" class="me-2"></fa-icon>
+              {{ validationMessage }}
+              <button
+                type="button"
+                class="btn-close"
+                (click)="hideValidationMessage()"
+                aria-label="Close"
+              ></button>
+            </div>
+
+            <!-- Origin -->
+            <div class="form-group mb-3">
+              <label class="form-label fw-semibold">
+                <fa-icon
+                  [icon]="faMapMarkerAlt"
+                  class="me-2 text-primary"
+                ></fa-icon>
+                Ciudad de Origen
+              </label>
+              <select
+                class="form-select form-select-lg"
+                [(ngModel)]="selectedOrigin"
+                name="origin"
+                (ngModelChange)="onOriginChange()"
+                required
+              >
+                <option value="">Selecciona origen</option>
+                <option
+                  *ngFor="let origin of getAvailableOrigins()"
+                  [value]="origin"
+                >
+                  {{ origin }}
+                </option>
+              </select>
+            </div>
+
+            <!-- Destination -->
+            <div class="form-group mb-3">
+              <label class="form-label fw-semibold">
+                <fa-icon
+                  [icon]="faFlagCheckered"
+                  class="me-2 text-success"
+                ></fa-icon>
+                Destino
+              </label>
+              <select
+                class="form-select form-select-lg"
+                [(ngModel)]="selectedDestination"
+                name="destination"
+                [disabled]="!selectedOrigin"
+                required
+              >
+                <option value="">Selecciona destino</option>
+                <option
+                  *ngFor="let destination of getAvailableDestinations()"
+                  [value]="destination"
+                >
+                  {{ destination }}
+                </option>
+              </select>
+            </div>
+
+            <!-- Date and Time Row -->
+            <div class="row g-3 mb-3">
+              <div class="col-7">
+                <label class="form-label fw-semibold">
+                  <fa-icon
+                    [icon]="faCalendarAlt"
+                    class="me-2 text-info"
+                  ></fa-icon>
+                  Fecha
+                </label>
+                <input
+                  type="date"
+                  class="form-control form-control-lg"
+                  [(ngModel)]="selectedDate"
+                  name="date"
+                  [min]="getCurrentDate()"
+                  required
+                />
+              </div>
+              <div class="col-5">
+                <label class="form-label fw-semibold">
+                  <fa-icon [icon]="faClock" class="me-2 text-warning"></fa-icon>
+                  Hora
+                </label>
+                <select
+                  class="form-select form-select-lg"
+                  [(ngModel)]="selectedTime"
+                  name="time"
+                  required
+                >
+                  <option value="">Hora</option>
+                  <option *ngFor="let time of times" [value]="time">
+                    {{ time }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Passengers -->
+            <div class="form-group mb-3">
+              <label class="form-label fw-semibold">
+                <fa-icon [icon]="faUsers" class="me-2 text-secondary"></fa-icon>
+                Pasajeros
+              </label>
+              <div class="passenger-selector">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  (click)="decrementPassengers()"
+                  [disabled]="selectedPassengers <= 1"
+                >
+                  −
+                </button>
+                <span class="passenger-count">{{ selectedPassengers }}</span>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  (click)="incrementPassengers()"
+                  [disabled]="selectedPassengers >= 8"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            <!-- Round Trip Toggle -->
+            <div class="form-group mb-3">
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="roundTrip"
+                  [(ngModel)]="isRoundTrip"
+                  name="roundTrip"
+                  (ngModelChange)="onRoundTripToggle()"
+                />
+                <label class="form-check-label fw-semibold" for="roundTrip">
+                  <fa-icon
+                    [icon]="faVanShuttle"
+                    class="me-2 text-primary"
+                  ></fa-icon>
+                  Viaje de ida y vuelta (5% descuento)
+                </label>
+              </div>
+            </div>
+
+            <!-- Return Trip Fields -->
+            <div *ngIf="isRoundTrip" class="return-trip-section mb-3">
+              <div class="row g-3">
+                <div class="col-7">
+                  <label class="form-label fw-semibold text-primary">
+                    <fa-icon [icon]="faCalendarAlt" class="me-2"></fa-icon>
+                    Fecha Regreso
+                  </label>
+                  <input
+                    type="date"
+                    class="form-control form-control-lg"
+                    [(ngModel)]="selectedReturnDate"
+                    name="returnDate"
+                    [min]="selectedDate || getCurrentDate()"
+                  />
+                </div>
+                <div class="col-5">
+                  <label class="form-label fw-semibold text-primary">
+                    <fa-icon [icon]="faClock" class="me-2"></fa-icon>
+                    Hora
+                  </label>
+                  <select
+                    class="form-select form-select-lg"
+                    [(ngModel)]="selectedReturnTime"
+                    name="returnTime"
+                  >
+                    <option value="">Hora</option>
+                    <option *ngFor="let time of times" [value]="time">
+                      {{ time }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Search Button -->
+            <button
+              type="submit"
+              class="btn btn-primary btn-lg w-100 mobile-search-btn mb-4"
+            >
+              <fa-icon [icon]="faSearch" class="me-2"></fa-icon>
+              Buscar Transfers
+            </button>
+          </form>
+
+          <!-- Booking Results -->
+          <div
+            *ngIf="showResults && bookingCalculation"
+            class="booking-results mb-4"
+          >
+            <div class="results-header mb-3">
+              <h5 class="text-dark fw-bold">
+                <fa-icon
+                  [icon]="faVanShuttle"
+                  class="text-primary me-2"
+                ></fa-icon>
+                Opciones Disponibles
+              </h5>
+            </div>
+
+            <div class="route-info mb-3 p-3 bg-light rounded">
+              <div
+                class="d-flex justify-content-between align-items-center mb-2"
+              >
+                <span class="text-muted small"
+                  >{{ selectedOrigin }} → {{ selectedDestination }}</span
+                >
+                <span class="badge bg-primary">{{
+                  selectedRoute?.duration
+                }}</span>
+              </div>
+              <div class="text-muted small">
+                <fa-icon [icon]="faMapMarkerAlt" class="me-1"></fa-icon>
+                {{ selectedRoute?.distance }}
+              </div>
+            </div>
+
+            <div class="van-recommendations mb-3">
+              <div
+                *ngFor="let vanRec of bookingCalculation.vans"
+                class="van-option mb-2 p-3 border rounded"
+              >
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 class="mb-1 fw-bold">{{ vanRec.van.name }}</h6>
+                    <small class="text-muted"
+                      >{{ vanRec.quantity }}x van{{
+                        vanRec.quantity > 1 ? "s" : ""
+                      }}</small
+                    >
+                  </div>
+                  <div class="text-end">
+                    <div class="h5 mb-0 text-primary fw-bold">
+                      €{{ vanRec.price }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="pricing-summary p-3 bg-primary bg-opacity-10 rounded mb-3"
+            >
+              <div class="d-flex justify-content-between mb-2">
+                <span>Viaje de ida:</span>
+                <span class="fw-bold"
+                  >€{{ bookingCalculation.totalPrice }}</span
+                >
+              </div>
+              <div
+                *ngIf="
+                  bookingCalculation.isRoundTrip &&
+                  bookingCalculation.returnTotalPrice
+                "
+                class="d-flex justify-content-between mb-2"
+              >
+                <span>Viaje de vuelta:</span>
+                <span class="fw-bold"
+                  >€{{ bookingCalculation.returnTotalPrice }}</span
+                >
+              </div>
+              <div
+                *ngIf="bookingCalculation.savings"
+                class="d-flex justify-content-between mb-2 text-success"
+              >
+                <span>Descuento (5%):</span>
+                <span class="fw-bold"
+                  >-€{{ bookingCalculation.savings.toFixed(2) }}</span
+                >
+              </div>
+              <hr class="my-2" />
+              <div class="d-flex justify-content-between">
+                <span class="h6 mb-0">Total:</span>
+                <span class="h5 mb-0 text-primary fw-bold">
+                  €{{
+                    bookingCalculation.grandTotal ||
+                      bookingCalculation.totalPrice
+                  }}
+                </span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              class="btn btn-success btn-lg w-100"
+              (click)="openCheckoutModal()"
+            >
+              <fa-icon [icon]="faVanShuttle" class="me-2"></fa-icon>
+              Reservar Ahora
+            </button>
+          </div>
+        </div>
+
+        <!-- Trust Indicators -->
+        <div class="mobile-trust-section mt-4">
+          <div class="row g-3 text-center">
+            <div class="col-12">
+              <div class="trust-stats">
+                <div class="row g-2">
+                  <div class="col-4">
+                    <div class="stat-item">
+                      <h3 class="stat-number">25K+</h3>
+                      <p class="stat-label">Clientes</p>
+                    </div>
+                  </div>
+                  <div class="col-4">
+                    <div class="stat-item">
+                      <h3 class="stat-number">500+</h3>
+                      <p class="stat-label">Destinos</p>
+                    </div>
+                  </div>
+                  <div class="col-4">
+                    <div class="stat-item">
+                      <h3 class="stat-number">4.9★</h3>
+                      <p class="stat-label">Rating</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Checkout Modal -->
+  <app-mobile-checkout-modal
+    [isVisible]="showCheckoutModal"
+    [bookingDetails]="getBookingDetailsForCheckout()"
+    (closed)="closeCheckoutModal()"
+    (bookingConfirmed)="onBookingConfirmed($event)"
+  ></app-mobile-checkout-modal>
+</section>

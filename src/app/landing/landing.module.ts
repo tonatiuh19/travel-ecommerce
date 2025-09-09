@@ -11,6 +11,8 @@ import { VideoInfoSectionModule } from '../shared/components/video-info-section/
 import { DestinationsShowcaseModule } from '../shared/components/destinations-showcase/destinations-showcase.module';
 import { EnhancedHeroModule } from '../shared/components/enhanced-hero/enhanced-hero.module';
 import { EnhancedFooterModule } from '../shared/components/enhanced-footer/enhanced-footer.module';
+import { MobileEnhancedHeroModule } from '../shared/components/mobile-enhanced-hero/mobile-enhanced-hero.module';
+import { MobileVanTransferHeroModule } from '../shared/components/mobile-van-transfer-hero/mobile-van-transfer-hero.module';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @NgModule({
@@ -27,6 +29,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     DestinationsShowcaseModule,
     EnhancedHeroModule,
     EnhancedFooterModule,
+    MobileEnhancedHeroModule,
+    MobileVanTransferHeroModule,
     FontAwesomeModule,
   ],
   exports: [LandingComponent],

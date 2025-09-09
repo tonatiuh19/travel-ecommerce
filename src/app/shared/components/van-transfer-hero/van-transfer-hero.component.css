@@ -3,6 +3,7 @@
   min-height: 100vh;
   position: relative;
   overflow: hidden;
+  background-color: #212529;
 }
 
 /* PrimeNG Base Styles - Essential for Calendar Functionality */
@@ -540,5 +541,240 @@
   .form-select:focus {
     background-color: #495057;
     color: white;
+  }
+}
+
+/* =============================================== */
+/* ADDITIONAL MOBILE OPTIMIZATIONS */
+/* =============================================== */
+
+/* Mobile Hero Section */
+@media (max-width: 768px) {
+  .van-hero-section {
+    min-height: 100vh;
+    padding: 1rem 0;
+  }
+
+  .hero-content {
+    padding: 2rem 0;
+    text-align: center;
+  }
+
+  .hero-title {
+    font-size: clamp(1.8rem, 6vw, 2.5rem);
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+
+  .hero-subtitle {
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    max-width: 90%;
+    margin: 0 auto 1.5rem auto;
+  }
+
+  .hero-description {
+    font-size: 0.9rem;
+    max-width: 85%;
+    margin: 0 auto 2rem auto;
+  }
+}
+
+/* Mobile Quick Booking Card */
+@media (max-width: 768px) {
+  .quick-booking-card {
+    margin: 1rem;
+    padding: 1.5rem 1rem;
+    border-radius: 12px;
+    position: relative;
+    top: auto;
+    transform: none;
+    max-width: none;
+    width: auto;
+  }
+
+  .booking-form .row {
+    margin: 0 -0.5rem;
+  }
+
+  .booking-form .col-lg-3,
+  .booking-form .col-lg-6 {
+    padding: 0 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  .form-control,
+  .form-select {
+    font-size: 16px !important; /* Prevent zoom on iOS */
+    padding: 14px 16px;
+    min-height: 48px;
+    border-radius: 8px;
+  }
+
+  .form-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .btn-search {
+    width: 100%;
+    padding: 14px;
+    font-size: 1rem;
+    min-height: 48px;
+    margin-top: 0.5rem;
+  }
+}
+
+/* Mobile Calendar Optimizations */
+@media (max-width: 768px) {
+  ::ng-deep .p-calendar {
+    width: 100% !important;
+  }
+
+  ::ng-deep .p-calendar input {
+    font-size: 16px !important;
+    padding: 14px 16px !important;
+    min-height: 48px !important;
+    border-radius: 8px !important;
+  }
+
+  ::ng-deep .p-datepicker {
+    font-size: 0.9rem;
+  }
+
+  ::ng-deep .p-datepicker table {
+    font-size: 0.9rem;
+  }
+
+  ::ng-deep .p-datepicker-header {
+    padding: 0.5rem;
+  }
+
+  ::ng-deep .p-datepicker .p-datepicker-prev,
+  ::ng-deep .p-datepicker .p-datepicker-next {
+    width: 2rem;
+    height: 2rem;
+  }
+}
+
+/* Mobile Features Grid */
+@media (max-width: 768px) {
+  .features-grid {
+    margin-top: 2rem;
+  }
+
+  .feature-item {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    padding: 1rem 0.5rem;
+  }
+
+  .feature-icon {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 0.75rem auto;
+  }
+
+  .feature-title {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .feature-description {
+    font-size: 0.8rem;
+    line-height: 1.4;
+  }
+}
+
+/* Mobile Statistics Section */
+@media (max-width: 768px) {
+  .stats-section {
+    padding: 2rem 0;
+  }
+
+  .stat-item {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .stat-number {
+    font-size: 2rem;
+  }
+
+  .stat-label {
+    font-size: 0.9rem;
+  }
+}
+
+/* Extra Small Mobile */
+@media (max-width: 480px) {
+  .van-hero-section {
+    padding: 0.5rem 0;
+  }
+
+  .quick-booking-card {
+    margin: 0.5rem;
+    padding: 1rem 0.75rem;
+    border-radius: 8px;
+  }
+
+  .hero-title {
+    font-size: 1.6rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+
+  .booking-form .col-lg-3,
+  .booking-form .col-lg-6 {
+    padding: 0 0.25rem;
+  }
+
+  .form-control,
+  .form-select {
+    padding: 12px 14px;
+    min-height: 44px;
+  }
+
+  .btn-search {
+    padding: 12px;
+    min-height: 44px;
+    font-size: 0.95rem;
+  }
+}
+
+/* iOS Safari specific fixes for van hero */
+@supports (-webkit-touch-callout: none) {
+  .form-control:focus,
+  .form-select:focus {
+    font-size: 16px !important;
+    transform: none;
+  }
+
+  ::ng-deep .p-calendar input:focus {
+    font-size: 16px !important;
+    transform: none;
+  }
+}
+
+/* Landscape orientation mobile fixes */
+@media (max-width: 896px) and (orientation: landscape) {
+  .van-hero-section {
+    min-height: auto;
+    padding: 1rem 0;
+  }
+
+  .hero-content {
+    padding: 1rem 0;
+  }
+
+  .quick-booking-card {
+    margin: 0.5rem;
+    padding: 1rem;
   }
 }

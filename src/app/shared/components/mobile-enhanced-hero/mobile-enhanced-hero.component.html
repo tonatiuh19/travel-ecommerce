@@ -1,0 +1,172 @@
+<section class="mobile-enhanced-hero-section" id="mobile-enhanced-hero">
+  <!-- Mobile Hero Content -->
+  <div class="container-fluid h-100">
+    <div
+      class="row h-100 align-items-center justify-content-center text-center"
+    >
+      <!-- Main Content -->
+      <div class="col-12">
+        <div class="mobile-hero-content">
+          <!-- Hero Badge -->
+          <div class="mobile-hero-badge mb-3">
+            <span class="badge-premium">
+              <fa-icon [icon]="faVanShuttle" class="me-2"></fa-icon>
+              <span class="badge-text">Transfers Premium VIP</span>
+            </span>
+          </div>
+
+          <!-- Dynamic Title -->
+          <h1 class="mobile-hero-title mb-3">
+            <span class="title-static">Tu Aventura</span>
+            <br />
+            <span class="title-dynamic">
+              {{ currentText }}
+              <span class="cursor" [class.blinking]="!isTyping">|</span>
+            </span>
+          </h1>
+
+          <!-- Subtitle -->
+          <p class="mobile-hero-subtitle mb-4">
+            Conectamos destinos extraordinarios con nuestro servicio premium de
+            transfers VIP. Vehículos de lujo, conductores certificados y
+            experiencias que trascienden lo ordinario.
+          </p>
+
+          <!-- CTA Buttons -->
+          <div class="mobile-hero-actions mb-4">
+            <button
+              class="btn btn-primary-gradient btn-lg w-100 mb-3"
+              (click)="scrollToSection('van-transfers')"
+            >
+              <fa-icon [icon]="faVanShuttle" class="me-2"></fa-icon>
+              Explorar Transfers VIP
+              <fa-icon [icon]="faArrowRight" class="ms-2"></fa-icon>
+            </button>
+
+            <button
+              class="btn btn-outline-light btn-lg w-100 mb-3"
+              (click)="openVideoModal()"
+            >
+              <fa-icon [icon]="faPlay" class="me-2"></fa-icon>
+              Ver Experiencia
+            </button>
+          </div>
+
+          <!-- Trust Indicators -->
+          <div class="mobile-trust-indicators">
+            <div class="row g-2">
+              <div class="col-4">
+                <div class="trust-badge">
+                  <fa-icon [icon]="faShieldAlt" class="trust-icon"></fa-icon>
+                  <span>100% Seguro</span>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="trust-badge">
+                  <fa-icon [icon]="faCheck" class="trust-icon"></fa-icon>
+                  <span>Certificado</span>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="trust-badge">
+                  <fa-icon [icon]="faInfinity" class="trust-icon"></fa-icon>
+                  <span>Únicos</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mobile Stats -->
+          <div class="mobile-stats-container mt-4">
+            <div class="row g-3">
+              <div class="col-6" *ngFor="let stat of stats; let i = index">
+                <div class="mobile-stat-item">
+                  <div class="stat-icon mb-2">
+                    <fa-icon [icon]="stat.icon" size="lg"></fa-icon>
+                  </div>
+                  <h3 class="stat-number">
+                    {{
+                      stat.target === 4.9
+                        ? (stat.number | number : "1.1-1")
+                        : (stat.number | number)
+                    }}{{ stat.suffix }}
+                  </h3>
+                  <p class="stat-label">{{ stat.label }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll Indicator -->
+  <div class="mobile-scroll-indicator">
+    <div class="scroll-mouse">
+      <div class="scroll-wheel"></div>
+    </div>
+    <p class="scroll-text">Descubre más</p>
+    <fa-icon [icon]="faChevronDown" class="scroll-arrow"></fa-icon>
+  </div>
+</section>
+
+<!-- Mobile Video Modal -->
+<div
+  class="modal fade"
+  id="videoModal"
+  tabindex="-1"
+  aria-labelledby="videoModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title text-white fw-bold" id="videoModalLabel">
+          <fa-icon [icon]="faPlay" class="me-2 text-primary"></fa-icon>
+          Experiencia de Viaje Premium
+        </h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body p-0">
+        <div class="ratio ratio-16x9">
+          <iframe
+            src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&controls=1&rel=0&modestbranding=1"
+            title="Video de Experiencia de Viaje"
+            allowfullscreen
+            allow="autoplay; encrypted-media"
+            class="rounded"
+          ></iframe>
+        </div>
+      </div>
+      <div class="modal-footer border-0 bg-dark bg-opacity-75">
+        <div class="d-flex align-items-center justify-content-between w-100">
+          <div>
+            <h6 class="mb-1 fw-bold text-white">
+              ¿Listo para tu próxima aventura?
+            </h6>
+            <p class="mb-0 text-light small opacity-75">
+              Descubre destinos increíbles con nuestros transfers VIP premium
+            </p>
+          </div>
+          <div>
+            <button
+              type="button"
+              class="btn btn-primary-gradient"
+              data-bs-dismiss="modal"
+              (click)="scrollToSection('van-transfers')"
+            >
+              <fa-icon [icon]="faVanShuttle" class="me-2"></fa-icon>
+              Reservar Ahora
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

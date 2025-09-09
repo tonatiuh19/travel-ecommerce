@@ -37,32 +37,12 @@
 
         <!-- Quick Links -->
         <div class="col-lg-2 col-md-6">
-          <div class="footer-section animate-fade-in-delay-1">
-            <h4 class="footer-title">Enlaces Rápidos</h4>
-            <ul class="footer-links">
-              <li *ngFor="let link of quickLinks">
-                <a (click)="navigateToLink(link.href)" class="footer-link">
-                  <span class="link-text">{{ link.label }}</span>
-                  <span class="link-hover-effect"></span>
-                </a>
-              </li>
-            </ul>
-          </div>
+          <div class="footer-section animate-fade-in-delay-1"></div>
         </div>
 
         <!-- Services -->
         <div class="col-lg-2 col-md-6">
-          <div class="footer-section animate-fade-in-delay-2">
-            <h4 class="footer-title">Servicios</h4>
-            <ul class="footer-links">
-              <li *ngFor="let service of services">
-                <a (click)="navigateToLink(service.href)" class="footer-link">
-                  <span class="link-text">{{ service.label }}</span>
-                  <span class="link-hover-effect"></span>
-                </a>
-              </li>
-            </ul>
-          </div>
+          <div class="footer-section animate-fade-in-delay-2"></div>
         </div>
 
         <!-- Contact & Newsletter -->
@@ -71,24 +51,7 @@
             <h4 class="footer-title">Mantente Conectado</h4>
 
             <!-- Contact Info -->
-            <div class="contact-info mb-4">
-              <div class="contact-item">
-                <fa-icon [icon]="faPhone" class="contact-icon"></fa-icon>
-                <span>{{ contactInfo.phone }}</span>
-              </div>
-              <div class="contact-item">
-                <fa-icon [icon]="faEnvelope" class="contact-icon"></fa-icon>
-                <span>{{ contactInfo.email }}</span>
-              </div>
-              <div class="contact-item">
-                <fa-icon [icon]="faMapMarkerAlt" class="contact-icon"></fa-icon>
-                <span>{{ contactInfo.address }}</span>
-              </div>
-              <div class="contact-item">
-                <fa-icon [icon]="faClock" class="contact-icon"></fa-icon>
-                <span>{{ contactInfo.hours }}</span>
-              </div>
-            </div>
+            <div class="contact-info mb-4"></div>
 
             <!-- Newsletter Subscription -->
             <div class="newsletter-section">

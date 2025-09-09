@@ -1125,3 +1125,185 @@
     var(--color-blue-gray) 100%
   ) !important;
 }
+
+/* =============================================== */
+/* MOBILE OPTIMIZATIONS FOR LANDING PAGE */
+/* =============================================== */
+
+/* Mobile Van Transfers Section */
+@media (max-width: 768px) {
+  .van-transfers-section {
+    padding: 3rem 0 2rem 0;
+  }
+
+  .section-header {
+    margin-bottom: 2rem;
+  }
+
+  .section-header .badge {
+    font-size: 0.85rem;
+    padding: 8px 16px;
+  }
+
+  .section-header h2 {
+    font-size: clamp(1.5rem, 5vw, 2.2rem);
+    margin-bottom: 1rem;
+  }
+
+  .section-header .lead {
+    font-size: 1rem;
+    max-width: 90%;
+    margin: 0 auto;
+  }
+}
+
+/* Mobile Features Grid */
+@media (max-width: 768px) {
+  .features-grid .row {
+    margin: 0 -0.5rem;
+  }
+
+  .features-grid .col-lg-3,
+  .features-grid .col-md-6 {
+    padding: 0 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .feature-box {
+    padding: 1.5rem 1rem !important;
+    text-align: center;
+    border-radius: 12px !important;
+    height: auto;
+  }
+
+  .feature-box .icon-circle {
+    width: 60px !important;
+    height: 60px !important;
+    margin: 0 auto;
+  }
+
+  .feature-box h5 {
+    font-size: 1.1rem;
+    margin: 1rem 0 0.75rem 0;
+  }
+
+  .feature-box p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .hover-lift {
+    transition: none; /* Disable hover effects on mobile */
+  }
+}
+
+/* Mobile Video Modal */
+@media (max-width: 768px) {
+  .modal-dialog {
+    margin: 1rem;
+    max-width: calc(100vw - 2rem);
+  }
+
+  .modal-content {
+    border-radius: 8px;
+  }
+
+  .modal-header {
+    padding: 1rem;
+  }
+
+  .modal-title {
+    font-size: 1.1rem;
+  }
+
+  .modal-body {
+    padding: 0;
+  }
+
+  .modal-footer {
+    padding: 1rem;
+    flex-direction: column;
+  }
+
+  .modal-footer > div {
+    width: 100%;
+    text-align: center;
+  }
+
+  .modal-footer .btn {
+    width: 100%;
+    margin-top: 0.75rem;
+  }
+}
+
+/* Extra Small Mobile */
+@media (max-width: 480px) {
+  .van-transfers-section {
+    padding: 2rem 0 1.5rem 0;
+  }
+
+  .container {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .features-grid .col-lg-3,
+  .features-grid .col-md-6 {
+    padding: 0 0.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .feature-box {
+    padding: 1rem 0.75rem !important;
+    border-radius: 8px !important;
+  }
+
+  .feature-box .icon-circle {
+    width: 50px !important;
+    height: 50px !important;
+  }
+
+  .feature-box h5 {
+    font-size: 1rem;
+    margin: 0.75rem 0 0.5rem 0;
+  }
+
+  .feature-box p {
+    font-size: 0.85rem;
+  }
+
+  .section-header .badge {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+  }
+
+  .modal-dialog {
+    margin: 0.5rem;
+    max-width: calc(100vw - 1rem);
+  }
+}
+
+/* Touch-friendly hover states */
+@media (hover: none) {
+  .feature-box:hover,
+  .hover-lift:hover {
+    transform: none;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn:hover {
+    transform: none;
+  }
+}
+
+/* Performance optimization for mobile */
+@media (max-width: 768px) {
+  .feature-box,
+  .hover-lift {
+    will-change: auto; /* Reduce GPU usage on mobile */
+  }
+
+  * {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+  }
+}

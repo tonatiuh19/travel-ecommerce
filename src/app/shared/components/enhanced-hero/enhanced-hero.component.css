@@ -7,12 +7,33 @@
   background: linear-gradient(
     135deg,
     var(--color-dark-slate) 0%,
-    #1a2332 25%,
-    var(--color-blue-gray) 75%,
-    var(--color-soft-blue) 100%
+    rgba(26, 35, 50, 0.95) 25%,
+    rgba(106, 143, 167, 0.9) 75%,
+    rgba(157, 180, 194, 0.85) 100%
   );
   overflow: hidden;
   color: white;
+}
+
+/* Enhanced background pattern */
+.enhanced-hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 20% 50%, rgba(187, 101, 87, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(157, 180, 194, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 80%, rgba(106, 143, 167, 0.1) 0%, transparent 50%);
+  z-index: 1;
+}
+
+/* Content should be above the background pattern */
+.enhanced-hero-section .container-fluid {
+  position: relative;
+  z-index: 2;
 }
 
 /* Entrance animations */

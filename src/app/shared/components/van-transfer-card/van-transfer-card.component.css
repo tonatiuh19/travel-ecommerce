@@ -48,6 +48,91 @@
   }
 }
 
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+  .van-transfer-card {
+    margin-bottom: 2rem;
+    border-radius: 12px;
+  }
+
+  .van-transfer-card:hover {
+    transform: none; /* Disable hover transforms on mobile */
+    box-shadow: 0 8px 24px rgba(106, 143, 167, 0.2) !important;
+  }
+
+  .card-body {
+    padding: 1.25rem !important;
+  }
+
+  .card-title {
+    font-size: 1.3rem !important;
+    line-height: 1.3;
+  }
+
+  .card-text {
+    font-size: 0.9rem !important;
+    line-height: 1.5;
+  }
+
+  .price-section h3 {
+    font-size: 1.6rem !important;
+  }
+
+  .price-section small {
+    font-size: 0.8rem !important;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 14px;
+    font-size: 1rem;
+    margin-top: 10px;
+  }
+
+  .features-list {
+    margin-bottom: 1rem;
+  }
+
+  .features-list li {
+    font-size: 0.85rem;
+    padding: 4px 0;
+  }
+}
+
+/* Extra small mobile devices */
+@media (max-width: 480px) {
+  .van-transfer-card {
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+  }
+
+  .card-body {
+    padding: 1rem !important;
+  }
+
+  .card-title {
+    font-size: 1.2rem !important;
+  }
+
+  .price-section {
+    text-align: center;
+    margin: 1rem 0;
+  }
+
+  .btn {
+    font-size: 0.95rem;
+    padding: 12px;
+  }
+}
+
+/* Touch-friendly adjustments */
+@media (hover: none) {
+  .van-transfer-card:hover {
+    transform: none;
+    box-shadow: 0 4px 16px rgba(106, 143, 167, 0.15) !important;
+  }
+}
+
 /* Image Container */
 .card-img-container {
   height: 240px;
