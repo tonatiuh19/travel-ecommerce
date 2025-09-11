@@ -9,19 +9,10 @@
     <div class="mobile-header">
       <div class="header-content">
         <div class="header-top">
-          <button
-            type="button"
-            class="btn-back"
-            (click)="close()"
-            [disabled]="isProcessingPayment"
-          >
-            <fa-icon [icon]="faArrowLeft"></fa-icon>
-          </button>
-
           <div class="header-title">
             <h4 class="title">{{ getStepTitle() }}</h4>
             <p class="subtitle" *ngIf="!showConfirmation">
-              Paso {{ currentStep }} de {{ totalSteps }}
+              Paso {{ currentStep }} de 2
             </p>
           </div>
 
@@ -146,115 +137,56 @@
         </form>
       </div>
 
-      <!-- Step 2: Payment Information -->
+      <!-- Step 2: Payment Information with Summary -->
       <div *ngIf="currentStep === 2" class="step-content">
         <div class="step-header">
           <div class="step-icon">
             <fa-icon [icon]="faCreditCard"></fa-icon>
           </div>
-          <h5 class="step-title">Método de Pago</h5>
-          <p class="step-description">Datos de tu tarjeta de crédito</p>
+          <h5 class="step-title">Resumen y Pago</h5>
+          <p class="step-description">Revisa tu reserva y completa el pago</p>
         </div>
 
-        <form class="mobile-form">
-          <div class="form-group">
-            <label class="form-label">Nombre en la Tarjeta *</label>
-            <input
-              type="text"
-              class="form-control"
-              [(ngModel)]="paymentMethod.cardholderName"
-              name="cardholderName"
-              placeholder="Como aparece en la tarjeta"
-              required
-            />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Número de Tarjeta *</label>
-            <input
-              type="text"
-              class="form-control"
-              [(ngModel)]="paymentMethod.cardNumber"
-              name="cardNumber"
-              placeholder="1234 5678 9012 3456"
-              maxlength="19"
-              (input)="formatCardNumber()"
-              required
-            />
-          </div>
-
-          <div class="form-row">
-            <div class="form-group col-6">
-              <label class="form-label">Vencimiento *</label>
-              <input
-                type="text"
-                class="form-control"
-                [(ngModel)]="paymentMethod.expiryDate"
-                name="expiryDate"
-                placeholder="MM/AA"
-                maxlength="5"
-                (input)="formatExpiryDate()"
-                required
-              />
-            </div>
-            <div class="form-group col-6">
-              <label class="form-label">CVV *</label>
-              <input
-                type="text"
-                class="form-control"
-                [(ngModel)]="paymentMethod.cvv"
-                name="cvv"
-                placeholder="123"
-                maxlength="4"
-                required
-              />
-            </div>
-          </div>
-
-          <!-- Security Badge -->
-          <div class="security-badge">
-            <fa-icon [icon]="faShieldAlt" class="security-icon"></fa-icon>
-            <span class="security-text">Transacción 100% segura</span>
-          </div>
-
-          <!-- Terms -->
-          <div class="form-check">
-            <input
-              class="form-check-input"
-              type="checkbox"
-              id="terms"
-              [(ngModel)]="acceptedTerms"
-              name="acceptedTerms"
-              required
-            />
-            <label class="form-check-label" for="terms">
-              Acepto los <a href="#" class="link">términos y condiciones</a> y
-              la <a href="#" class="link">política de privacidad</a> *
-            </label>
-          </div>
-        </form>
-      </div>
-
-      <!-- Step 3: Review & Summary -->
-      <div *ngIf="currentStep === 3" class="step-content">
-        <div class="step-header">
-          <div class="step-icon">
-            <fa-icon [icon]="faReceipt"></fa-icon>
-          </div>
-          <h5 class="step-title">Revisar y Confirmar</h5>
-          <p class="step-description">
-            Verifica todos los datos antes del pago
-          </p>
-        </div>
-
-        <!-- Booking Summary -->
-        <div class="review-section">
+        <!-- Booking Summary Section -->
+        <div class="review-section mb-4">
           <!-- Route Information -->
           <div class="review-card">
             <h6 class="review-card-title">
               <fa-icon [icon]="faVanShuttle" class="me-2"></fa-icon>
               Detalles del Viaje
             </h6>
+
+            <!-- Service Type Badge -->
+            <div
+              class="review-item"
+              *ngIf="bookingDetails?.expressTrip?.type !== 'none'"
+            >
+              <div class="d-flex align-items-center">
+                <span class="badge bg-info me-2">Express</span>
+                <small class="text-muted">
+                  <span
+                    *ngIf="
+                      bookingDetails?.expressTrip?.type === 'paris-tour-4h'
+                    "
+                    >Tour París 4h</span
+                  >
+                  <span
+                    *ngIf="
+                      bookingDetails?.expressTrip?.type === 'disney-transfer'
+                    "
+                    >Traslado Disney</span
+                  >
+                  <span
+                    *ngIf="
+                      bookingDetails?.expressTrip?.type ===
+                      'airport-hotel-airport'
+                    "
+                    >Aeropuerto-Hotel-Aeropuerto</span
+                  >
+                </small>
+              </div>
+            </div>
+
             <div class="review-item">
               <div class="route-display">
                 <span class="route-city">{{ bookingDetails?.origin }}</span>
@@ -280,13 +212,6 @@
                     {{ bookingDetails?.departureTime }}</span
                   >
                 </div>
-                <div *ngIf="bookingDetails?.isRoundTrip" class="trip-date">
-                  <fa-icon [icon]="faPlaneArrival" class="trip-icon"></fa-icon>
-                  <span
-                    >{{ formatDate(bookingDetails?.returnDate || "") }} -
-                    {{ bookingDetails?.returnTime }}</span
-                  >
-                </div>
               </div>
             </div>
 
@@ -294,43 +219,86 @@
               <fa-icon [icon]="faUsers" class="me-2"></fa-icon>
               <span>{{ bookingDetails?.passengers }} pasajero(s)</span>
             </div>
-          </div>
 
-          <!-- Personal Information -->
-          <div class="review-card">
-            <h6 class="review-card-title">
-              <fa-icon [icon]="faUserCheck" class="me-2"></fa-icon>
-              Información Personal
-            </h6>
-            <div class="review-item">
-              <span class="review-label">Nombre:</span>
-              <span>{{ userInfo.firstName }} {{ userInfo.lastName }}</span>
-            </div>
-            <div class="review-item">
-              <span class="review-label">Email:</span>
-              <span>{{ userInfo.email }}</span>
-            </div>
-            <div class="review-item">
-              <span class="review-label">Teléfono:</span>
-              <span>{{ userInfo.phone }}</span>
-            </div>
-          </div>
+            <!-- Airport Information for Paris Tour Express -->
+            <div
+              class="review-item airport-info"
+              *ngIf="
+                bookingDetails?.expressTrip?.type === 'paris-tour-4h' &&
+                bookingDetails?.airportInfo
+              "
+            >
+              <div class="airport-details-card">
+                <div class="airport-header mb-2">
+                  <fa-icon [icon]="faPlane" class="me-2 text-info"></fa-icon>
+                  <span class="fw-semibold">Información del Vuelo</span>
+                </div>
 
-          <!-- Payment Information -->
-          <div class="review-card">
-            <h6 class="review-card-title">
-              <fa-icon [icon]="faCreditCard" class="me-2"></fa-icon>
-              Método de Pago
-            </h6>
-            <div class="review-item">
-              <span class="review-label">Tarjeta:</span>
-              <span
-                >**** **** **** {{ paymentMethod.cardNumber.slice(-4) }}</span
-              >
+                <div class="airport-info-grid">
+                  <div
+                    class="info-row"
+                    *ngIf="bookingDetails.airportInfo.airport"
+                  >
+                    <span class="info-label">Aeropuerto:</span>
+                    <span class="info-value">{{
+                      bookingDetails.airportInfo.airportLabel ||
+                        bookingDetails.airportInfo.airport
+                    }}</span>
+                  </div>
+
+                  <div
+                    class="info-row"
+                    *ngIf="bookingDetails.airportInfo.flightNumber"
+                  >
+                    <span class="info-label">Vuelo:</span>
+                    <span class="info-value">{{
+                      bookingDetails.airportInfo.flightNumber
+                    }}</span>
+                  </div>
+
+                  <div
+                    class="info-row"
+                    *ngIf="bookingDetails.airportInfo.airline"
+                  >
+                    <span class="info-label">Aerolínea:</span>
+                    <span class="info-value">{{
+                      bookingDetails.airportInfo.airline
+                    }}</span>
+                  </div>
+
+                  <div
+                    class="info-row"
+                    *ngIf="bookingDetails.airportInfo.terminal"
+                  >
+                    <span class="info-label">Terminal:</span>
+                    <span class="info-value">{{
+                      bookingDetails.airportInfo.terminal
+                    }}</span>
+                  </div>
+
+                  <div
+                    class="info-row"
+                    *ngIf="bookingDetails.airportInfo.arrivalTime"
+                  >
+                    <span class="info-label">Llegada:</span>
+                    <span class="info-value">{{
+                      bookingDetails.airportInfo.arrivalTime
+                    }}</span>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="review-item">
-              <span class="review-label">Titular:</span>
-              <span>{{ paymentMethod.cardholderName }}</span>
+
+            <!-- Van Details -->
+            <div class="review-item" *ngFor="let van of bookingDetails?.vans">
+              <div class="van-summary">
+                <div class="van-name">{{ van.van.name }}</div>
+                <div class="van-details">
+                  {{ van.quantity }} van(es) • {{ van.van.capacity }} pasajeros
+                  c/u
+                </div>
+                <div class="van-price">€{{ van.price }}</div>
+              </div>
             </div>
           </div>
 
@@ -338,21 +306,31 @@
           <div class="review-card price-summary">
             <h6 class="review-card-title">Resumen de Pago</h6>
 
+            <!-- Base Service Price -->
             <div class="price-item">
-              <span>Viaje de ida:</span>
-              <span>{{ formatCurrency(bookingDetails?.totalPrice || 0) }}</span>
-            </div>
-
-            <div *ngIf="bookingDetails?.isRoundTrip" class="price-item">
-              <span>Viaje de regreso:</span>
+              <span>Servicio base ({{ bookingDetails?.passengers }} pax):</span>
               <span>{{
-                formatCurrency(bookingDetails?.returnTotalPrice || 0)
+                formatCurrency(
+                  (bookingDetails?.totalPrice || 0) -
+                    (bookingDetails?.urgencyFee || 0) -
+                    (bookingDetails?.serviceFee || 0)
+                )
               }}</span>
             </div>
 
-            <div *ngIf="bookingDetails?.savings" class="price-item discount">
-              <span>Descuento (5%):</span>
-              <span>-{{ formatCurrency(bookingDetails?.savings || 0) }}</span>
+            <!-- Service Fee -->
+            <div class="price-item">
+              <span>Tarifa de servicio (7%):</span>
+              <span>{{ formatCurrency(bookingDetails?.serviceFee || 0) }}</span>
+            </div>
+
+            <!-- Urgency Fee -->
+            <div
+              *ngIf="bookingDetails?.urgencyFee"
+              class="price-item text-warning"
+            >
+              <span>Tarifa urgencia (mañana, 10%):</span>
+              <span>{{ formatCurrency(bookingDetails.urgencyFee) }}</span>
             </div>
 
             <hr class="price-divider" />
@@ -370,6 +348,116 @@
               </span>
             </div>
           </div>
+        </div>
+
+        <!-- Payment Form Section -->
+        <div class="payment-section">
+          <h6 class="payment-title">
+            <fa-icon [icon]="faCreditCard" class="me-2"></fa-icon>
+            Datos de Pago
+          </h6>
+
+          <form class="mobile-form">
+            <div class="form-group">
+              <label class="form-label">Nombre en la Tarjeta *</label>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="paymentMethod.cardholderName"
+                name="cardholderName"
+                placeholder="Como aparece en la tarjeta"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Número de Tarjeta *</label>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="paymentMethod.cardNumber"
+                name="cardNumber"
+                placeholder="1234 5678 9012 3456"
+                maxlength="19"
+                (input)="formatCardNumber()"
+                required
+              />
+            </div>
+
+            <div class="form-row">
+              <div class="form-group col-6">
+                <label class="form-label">Vencimiento *</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="paymentMethod.expiryDate"
+                  name="expiryDate"
+                  placeholder="MM/AA"
+                  maxlength="5"
+                  (input)="formatExpiryDate()"
+                  required
+                />
+              </div>
+              <div class="form-group col-6">
+                <label class="form-label">CVV *</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="paymentMethod.cvv"
+                  name="cvv"
+                  placeholder="123"
+                  maxlength="4"
+                  required
+                />
+              </div>
+            </div>
+
+            <!-- Security Badge -->
+            <div class="security-badge">
+              <fa-icon [icon]="faShieldAlt" class="security-icon"></fa-icon>
+              <span class="security-text">Transacción 100% segura</span>
+            </div>
+
+            <!-- Terms -->
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="terms"
+                [(ngModel)]="acceptedTerms"
+                name="acceptedTerms"
+                required
+              />
+              <label class="form-check-label" for="terms">
+                Acepto los <a href="#" class="link">términos y condiciones</a> y
+                la <a href="#" class="link">política de privacidad</a> *
+              </label>
+            </div>
+
+            <!-- Pay Button -->
+            <button
+              type="button"
+              class="btn btn-success btn-pay w-100 mt-3"
+              (click)="processPayment()"
+              [disabled]="!validateAllInfo() || isProcessingPayment"
+            >
+              <span *ngIf="!isProcessingPayment">
+                <fa-icon [icon]="faLock" class="me-2"></fa-icon>
+                Pagar
+                {{
+                  formatCurrency(
+                    bookingDetails?.grandTotal ||
+                      bookingDetails?.totalPrice ||
+                      0
+                  )
+                }}
+              </span>
+              <span *ngIf="isProcessingPayment">
+                <fa-icon [icon]="faSpinner" spin class="me-2"></fa-icon>
+                Procesando...
+              </span>
+            </button>
+          </form>
         </div>
       </div>
 
@@ -432,7 +520,7 @@
         </button>
 
         <button
-          *ngIf="currentStep < 3"
+          *ngIf="currentStep < 2"
           type="button"
           class="btn btn-primary btn-next"
           (click)="nextStep()"

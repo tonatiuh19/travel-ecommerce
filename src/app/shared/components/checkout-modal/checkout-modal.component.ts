@@ -55,12 +55,28 @@ interface BookingDetails {
   passengers: number;
   vans: any[];
   totalPrice: number;
+  serviceFee?: number;
+  urgencyFee?: number;
   returnTotalPrice?: number;
   grandTotal?: number;
   savings?: number;
   isRoundTrip: boolean;
   duration: string;
   distance: string;
+  pickupInfo?: {
+    type: string;
+    flightNumber?: string;
+    airline?: string;
+    flightArrivalTime?: string;
+    terminal?: string;
+    hotelName?: string;
+    address?: string;
+  };
+  expressTrip?: {
+    type: string;
+    pickupLocation?: string;
+    returnPickupTime?: string;
+  };
 }
 
 interface PaymentMethod {
@@ -138,27 +154,39 @@ export class CheckoutModalComponent implements OnInit, OnChanges {
   faUserCheck = faUserCheck;
   faVanShuttle = faVanShuttle;
 
-  // Country list for nationality
   countries: string[] = [
-    'España',
-    'Francia',
     'Alemania',
-    'Italia',
-    'Portugal',
-    'Reino Unido',
-    'Estados Unidos',
-    'Canadá',
-    'México',
     'Argentina',
-    'Brasil',
-    'Chile',
-    'Colombia',
-    'Perú',
-    'Japón',
-    'China',
     'Australia',
-    'Holanda',
     'Bélgica',
+    'Bolivia',
+    'Brasil',
+    'Canadá',
+    'Chile',
+    'China',
+    'Colombia',
+    'Costa Rica',
+    'Ecuador',
+    'El Salvador',
+    'España',
+    'Estados Unidos',
+    'Francia',
+    'Guatemala',
+    'Holanda',
+    'Honduras',
+    'Italia',
+    'Japón',
+    'México',
+    'Nicaragua',
+    'Panamá',
+    'Paraguay',
+    'Perú',
+    'Portugal',
+    'Puerto Rico',
+    'Reino Unido',
+    'República Dominicana',
+    'Uruguay',
+    'Venezuela',
   ];
 
   ngOnInit(): void {

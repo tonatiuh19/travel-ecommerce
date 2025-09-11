@@ -5,6 +5,7 @@ import {
   EventEmitter,
   OnInit,
   OnChanges,
+  OnDestroy,
 } from '@angular/core';
 import {
   faArrowLeft,
@@ -26,6 +27,7 @@ import {
   faShieldAlt,
   faStepForward,
   faStepBackward,
+  faPlane,
 } from '@fortawesome/free-solid-svg-icons';
 
 interface UserInfo {
@@ -51,7 +53,9 @@ interface PaymentMethod {
   templateUrl: './mobile-checkout-modal.component.html',
   styleUrl: './mobile-checkout-modal.component.css',
 })
-export class MobileCheckoutModalComponent implements OnInit, OnChanges {
+export class MobileCheckoutModalComponent
+  implements OnInit, OnChanges, OnDestroy
+{
   @Input() isVisible: boolean = false;
   @Input() bookingDetails: any = null;
   @Output() closed = new EventEmitter<void>();
@@ -77,10 +81,11 @@ export class MobileCheckoutModalComponent implements OnInit, OnChanges {
   faShieldAlt = faShieldAlt;
   faStepForward = faStepForward;
   faStepBackward = faStepBackward;
+  faPlane = faPlane;
 
   // Multi-step navigation
   currentStep: number = 1;
-  totalSteps: number = 3;
+  totalSteps: number = 2;
 
   // Form data
   userInfo: UserInfo = {
@@ -106,26 +111,39 @@ export class MobileCheckoutModalComponent implements OnInit, OnChanges {
   showConfirmation: boolean = false;
   acceptedTerms: boolean = false;
 
-  // Countries list (simplified)
   countries: string[] = [
-    'España',
-    'Francia',
     'Alemania',
-    'Italia',
-    'Portugal',
-    'Reino Unido',
-    'Países Bajos',
-    'Bélgica',
-    'Suiza',
-    'Austria',
-    'Estados Unidos',
-    'Canadá',
-    'México',
     'Argentina',
+    'Australia',
+    'Bélgica',
+    'Bolivia',
     'Brasil',
+    'Canadá',
     'Chile',
+    'China',
     'Colombia',
+    'Costa Rica',
+    'Ecuador',
+    'El Salvador',
+    'España',
+    'Estados Unidos',
+    'Francia',
+    'Guatemala',
+    'Holanda',
+    'Honduras',
+    'Italia',
+    'Japón',
+    'México',
+    'Nicaragua',
+    'Panamá',
+    'Paraguay',
     'Perú',
+    'Portugal',
+    'Puerto Rico',
+    'Reino Unido',
+    'República Dominicana',
+    'Uruguay',
+    'Venezuela',
   ];
 
   constructor() {}
@@ -135,6 +153,7 @@ export class MobileCheckoutModalComponent implements OnInit, OnChanges {
     if (this.isVisible) {
       this.disableZoom();
     }
+    this.preventHorizontalScroll();
   }
 
   ngOnChanges(): void {
@@ -187,6 +206,60 @@ export class MobileCheckoutModalComponent implements OnInit, OnChanges {
     document.body.style.touchAction = 'auto';
   }
 
+  private preventHorizontalScroll(): void {
+    // Apply overflow-x: hidden to prevent horizontal scrolling
+    if (typeof document !== 'undefined') {
+      document.documentElement.style.overflowX = 'hidden';
+      document.body.style.overflowX = 'hidden';
+      document.documentElement.style.maxWidth = '100%';
+      document.body.style.maxWidth = '100%';
+
+      // Force all elements to respect viewport width
+      const style = document.createElement('style');
+      style.id = 'mobile-modal-overflow-prevention';
+      style.textContent = `
+        .mobile-checkout-overlay,
+        .mobile-checkout-container {
+          overflow-x: hidden !important;
+          max-width: 100vw !important;
+        }
+        
+        .mobile-content,
+        .mobile-form,
+        .step-content {
+          overflow-x: hidden !important;
+          width: 100% !important;
+          max-width: 100% !important;
+        }
+        
+        .form-control,
+        .form-select,
+        .btn {
+          width: 100% !important;
+          max-width: 100% !important;
+          box-sizing: border-box !important;
+        }
+
+        .container, .row {
+          overflow-x: hidden !important;
+          max-width: 100% !important;
+          margin-left: 0 !important;
+          margin-right: 0 !important;
+        }
+      `;
+
+      // Remove existing style if it exists
+      const existingStyle = document.getElementById(
+        'mobile-modal-overflow-prevention'
+      );
+      if (existingStyle) {
+        existingStyle.remove();
+      }
+
+      document.head.appendChild(style);
+    }
+  }
+
   // Navigation methods
   nextStep(): void {
     if (this.currentStep < this.totalSteps && this.isCurrentStepValid()) {
@@ -217,7 +290,7 @@ export class MobileCheckoutModalComponent implements OnInit, OnChanges {
           this.userInfo.phone.trim() !== '' &&
           this.userInfo.nationality.trim() !== ''
         );
-      case 2: // Payment info
+      case 2: // Payment info with summary
         return (
           this.paymentMethod.cardholderName.trim() !== '' &&
           this.paymentMethod.cardNumber.trim() !== '' &&
@@ -225,8 +298,6 @@ export class MobileCheckoutModalComponent implements OnInit, OnChanges {
           this.paymentMethod.cvv.trim() !== '' &&
           this.acceptedTerms
         );
-      case 3: // Review
-        return true;
       default:
         return false;
     }
@@ -359,9 +430,7 @@ export class MobileCheckoutModalComponent implements OnInit, OnChanges {
       case 1:
         return 'Información Personal';
       case 2:
-        return 'Método de Pago';
-      case 3:
-        return 'Revisar y Pagar';
+        return 'Resumen y Pago';
       default:
         return 'Confirmación';
     }
@@ -386,5 +455,19 @@ export class MobileCheckoutModalComponent implements OnInit, OnChanges {
       value = value.substring(0, 2) + '/' + value.substring(2, 4);
     }
     this.paymentMethod.expiryDate = value;
+  }
+
+  ngOnDestroy(): void {
+    this.cleanupHorizontalScrollPrevention();
+  }
+
+  private cleanupHorizontalScrollPrevention(): void {
+    // Remove the overflow prevention styles
+    const existingStyle = document.getElementById(
+      'mobile-modal-overflow-prevention'
+    );
+    if (existingStyle) {
+      existingStyle.remove();
+    }
   }
 }

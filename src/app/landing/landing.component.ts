@@ -58,11 +58,65 @@ export class LandingComponent implements OnInit {
   ngOnInit() {
     this.detectDevice();
     this.typeQuote();
+    this.preventHorizontalScroll();
+  }
+
+  private preventHorizontalScroll() {
+    // Apply overflow-x: hidden to body and html
+    if (typeof document !== 'undefined') {
+      document.documentElement.style.overflowX = 'hidden';
+      document.body.style.overflowX = 'hidden';
+      document.documentElement.style.maxWidth = '100%';
+      document.body.style.maxWidth = '100%';
+
+      // Ensure all containers don't cause horizontal scroll
+      const containers = document.querySelectorAll(
+        '.container, .container-fluid, .row'
+      );
+      containers.forEach((container) => {
+        (container as HTMLElement).style.overflowX = 'hidden';
+        (container as HTMLElement).style.maxWidth = '100%';
+      });
+
+      // Add a global style to prevent any element from exceeding viewport width
+      const style = document.createElement('style');
+      style.textContent = `
+        * {
+          max-width: 100vw !important;
+          box-sizing: border-box !important;
+        }
+        
+        .container, .container-fluid, .row {
+          overflow-x: hidden !important;
+          max-width: 100% !important;
+        }
+        
+        [class*="col-"] {
+          overflow-x: hidden;
+          word-wrap: break-word;
+        }
+
+        /* Mobile-specific fixes */
+        @media (max-width: 768px) {
+          body, html {
+            overflow-x: hidden !important;
+          }
+          
+          .row {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    }
   }
 
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
     this.detectDevice();
+    // Re-apply horizontal scroll prevention on resize
+    this.preventHorizontalScroll();
   }
 
   detectDevice() {

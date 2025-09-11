@@ -8,12 +8,17 @@
         <div class="col-lg-4 col-md-6">
           <div class="footer-section animate-fade-in">
             <div class="footer-logo mb-4">
-              <img src="assets/img/logo.png" alt="Logo" class="logo-img" />
-              <h3 class="brand-name">TravelVIP</h3>
+              <app-logo
+                width="100px"
+                height="67px"
+                color="#ffffff"
+                className="footer-logo-svg"
+              >
+              </app-logo>
             </div>
             <p class="footer-description">
               Más de 15 años creando experiencias de viaje extraordinarias.
-              Conectamos destinos con nuestro servicio premium de transfers VIP,
+              Conectamos destinos con nuestro servicio premium de transfers,
               diseñado para superar tus expectativas.
             </p>
 
@@ -129,7 +134,8 @@
         <div class="col-md-6">
           <div class="copyright animate-fade-up">
             <p class="mb-0">
-              © {{ currentYear }} TravelVIP. Todos los derechos reservados.
+              © {{ currentYear }} Latinos Por Europa. Todos los derechos
+              reservados.
             </p>
           </div>
         </div>
@@ -149,14 +155,14 @@
     </div>
   </div>
 
-  <!-- Back to Top Button -->
+  <!-- Back to Top Button
   <button
     class="back-to-top animate-zoom-in"
     (click)="scrollToTop()"
     title="Volver arriba"
   >
     <fa-icon [icon]="faArrowUp"></fa-icon>
-  </button>
+  </button> -->
 
   <!-- Decorative Elements -->
   <div class="footer-decorations">

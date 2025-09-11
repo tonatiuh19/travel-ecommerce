@@ -1,0 +1,23 @@
+/* Global Overflow Prevention */
+:host {
+  display: block;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Ensure body and html don't allow horizontal scroll */
+:host-context(html) {
+  overflow-x: hidden !important;
+}
+
+:host-context(body) {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+}
+
+/* Global element constraints */
+* {
+  max-width: 100vw;
+  box-sizing: border-box;
+}

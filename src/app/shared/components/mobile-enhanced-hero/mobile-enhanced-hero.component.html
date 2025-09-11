@@ -5,24 +5,11 @@
       class="row h-100 align-items-center justify-content-center text-center"
     >
       <!-- Main Content -->
-      <div class="col-12">
-        <div class="mobile-hero-content">
-          <!-- Hero Badge -->
-          <div class="mobile-hero-badge mb-3">
-            <span class="badge-premium">
-              <fa-icon [icon]="faVanShuttle" class="me-2"></fa-icon>
-              <span class="badge-text">Transfers Premium VIP</span>
-            </span>
-          </div>
-
+      <div class="col-12 pt-5">
+        <div class="mobile-hero-content pt-5">
           <!-- Dynamic Title -->
-          <h1 class="mobile-hero-title mb-3">
-            <span class="title-static">Tu Aventura</span>
-            <br />
-            <span class="title-dynamic">
-              {{ currentText }}
-              <span class="cursor" [class.blinking]="!isTyping">|</span>
-            </span>
+          <h1 id="van-transfers" class="mobile-hero-title mb-3 pt-5">
+            <span class="title-static">Explora Destinos Únicos</span>
           </h1>
 
           <!-- Subtitle -->
@@ -38,17 +25,7 @@
               class="btn btn-primary-gradient btn-lg w-100 mb-3"
               (click)="scrollToSection('van-transfers')"
             >
-              <fa-icon [icon]="faVanShuttle" class="me-2"></fa-icon>
-              Explorar Transfers VIP
-              <fa-icon [icon]="faArrowRight" class="ms-2"></fa-icon>
-            </button>
-
-            <button
-              class="btn btn-outline-light btn-lg w-100 mb-3"
-              (click)="openVideoModal()"
-            >
-              <fa-icon [icon]="faPlay" class="me-2"></fa-icon>
-              Ver Experiencia
+              Reservar Ahora
             </button>
           </div>
 

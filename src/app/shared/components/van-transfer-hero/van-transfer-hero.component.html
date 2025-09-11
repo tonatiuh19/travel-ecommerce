@@ -23,14 +23,14 @@
 
           <!-- Main Title -->
           <h1 class="hero-title display-3 fw-bold mb-4">
-            Transfers VIP en
-            <span style="color: #bb6557">Van Premium</span>
+            Transfers VIP desde
+            <span style="color: #bb6557">París</span>
           </h1>
 
           <!-- Subtitle -->
           <p class="hero-subtitle fs-4 mb-4 text-light opacity-90">
-            Viaja con comodidad y estilo. Servicio puerta a puerta con los
-            mejores vehículos y conductores profesionales.
+            Todos los viajes incluyen ida y vuelta. Servicio puerta a puerta con
+            los mejores vehículos accesibles para sillas de ruedas.
           </p>
 
           <!-- Key Features -->
@@ -42,9 +42,9 @@
                     class="feature-icon rounded-circle p-2 me-3"
                     style="background-color: #9db4c2"
                   >
-                    <i class="fas fa-wifi text-white"></i>
+                    <i class="fas fa-wheelchair text-white"></i>
                   </div>
-                  <span class="text-light">WiFi Gratis</span>
+                  <span class="text-light">Accesible para sillas</span>
                 </div>
               </div>
               <div class="col-md-6">
@@ -53,9 +53,9 @@
                     class="feature-icon rounded-circle p-2 me-3"
                     style="background-color: #6a8fa7"
                   >
-                    <i class="fas fa-leaf text-white"></i>
+                    <i class="fas fa-exchange-alt text-white"></i>
                   </div>
-                  <span class="text-light">Eco-Friendly</span>
+                  <span class="text-light">Ida y Vuelta Incluida</span>
                 </div>
               </div>
               <div class="col-md-6">
@@ -84,23 +84,7 @@
           </div>
 
           <!-- CTA Buttons -->
-          <div class="hero-actions d-flex flex-wrap gap-3">
-            <button
-              (click)="scrollToBooking()"
-              class="btn btn-lg px-5 py-3 rounded-pill fw-bold text-white"
-              style="background-color: #bb6557; border-color: #bb6557"
-            >
-              <i class="fas fa-calendar-check me-2"></i>
-              Reservar Ahora
-            </button>
-            <button
-              class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill fw-bold"
-              style="border-color: #9db4c2; color: #9db4c2"
-            >
-              <i class="fas fa-play me-2"></i>
-              Ver Video
-            </button>
-          </div>
+          <div class="hero-actions d-flex flex-wrap gap-3"></div>
 
           <!-- Trust Indicators -->
           <div class="trust-indicators mt-5 pt-4 border-top border-secondary">
@@ -159,92 +143,740 @@
                 ></button>
               </div>
               <div class="row g-3">
+                <!-- Express Trip Selection -->
                 <div class="col-12">
-                  <label class="form-label text-muted fw-semibold"
-                    >Ciudad de Origen</label
+                  <label class="form-label text-white fw-semibold"
+                    >Tipo de Servicio</label
                   >
-                  <div class="input-group">
-                    <span
-                      class="input-group-text text-white"
-                      style="background-color: #9db4c2"
+                  <select
+                    class="form-select"
+                    [(ngModel)]="expressTrip.type"
+                    name="expressTripType"
+                    (ngModelChange)="onExpressTripChange()"
+                  >
+                    <option value="">Transfer Regular</option>
+                    <option value="paris-tour-4h">
+                      Tour Express París (4 horas - min. 5h escala)
+                    </option>
+                    <option value="disney-transfer">Transporte a Disney</option>
+                    <option value="airport-hotel-airport">
+                      Aeropuerto - Hotel - Aeropuerto
+                    </option>
+                  </select>
+                </div>
+
+                <!-- Destination Selection (appears immediately for regular transfers) -->
+                <div class="col-12" *ngIf="!expressTrip.type">
+                  <div class="card bg-opacity-10 p-3 mb-3">
+                    <h6 class="text-secondary mb-3">
+                      <i class="fas fa-flag-checkered me-2"></i>Selecciona tu
+                      Destino
+                    </h6>
+
+                    <label class="form-label text-muted fw-semibold"
+                      >Ciudad de Destino desde París</label
                     >
-                      <i class="fas fa-map-marker-alt"></i>
-                    </span>
-                    <select
-                      class="form-select"
-                      [(ngModel)]="selectedOrigin"
-                      name="origin"
-                      (ngModelChange)="onOriginChange()"
-                      required
-                    >
-                      <option value="">Selecciona origen</option>
-                      <option
-                        *ngFor="let origin of getAvailableOrigins()"
-                        [value]="origin"
+                    <div class="input-group">
+                      <span class="input-group-text text-white">
+                        <i class="fas fa-map-marked-alt"></i>
+                      </span>
+                      <select
+                        class="form-select"
+                        [(ngModel)]="selectedDestination"
+                        name="destination"
+                        (ngModelChange)="onDestinationChange()"
+                        required
                       >
-                        {{ origin }}
-                      </option>
-                    </select>
+                        <option value="">Selecciona tu destino</option>
+                        <option value="Brujas">Brujas, Bélgica</option>
+                        <option value="Bruselas">Bruselas, Bélgica</option>
+                        <option value="Ámsterdam">
+                          Ámsterdam, Países Bajos
+                        </option>
+                      </select>
+                    </div>
+
+                    <div class="mt-2">
+                      <small class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Transfers a Brujas y Bruselas incluyen ida y vuelta.
+                        <span class="text-warning"
+                          >*Ámsterdam: solo ida (regreso no incluido).</span
+                        >
+                      </small>
+                    </div>
                   </div>
                 </div>
 
-                <div class="col-12">
-                  <label class="form-label text-muted fw-semibold"
-                    >Ciudad de Destino</label
+                <!-- Show detailed form after service selection -->
+                <ng-container
+                  *ngIf="
+                    expressTrip.type ||
+                    (!expressTrip.type && selectedDestination)
+                  "
+                >
+                  <!-- Paris Tour Express Details -->
+                  <div
+                    *ngIf="expressTrip.type === 'paris-tour-4h'"
+                    class="col-12"
                   >
-                  <div class="input-group">
-                    <span
-                      class="input-group-text text-white"
-                      style="background-color: #6a8fa7"
-                    >
-                      <i class="fas fa-flag-checkered"></i>
-                    </span>
-                    <select
-                      class="form-select"
-                      [(ngModel)]="selectedDestination"
-                      name="destination"
-                      (ngModelChange)="onDestinationChange()"
-                      [disabled]="!selectedOrigin"
-                      required
-                    >
-                      <option value="">Selecciona destino</option>
-                      <option
-                        *ngFor="let destination of getAvailableDestinations()"
-                        [value]="destination"
-                      >
-                        {{ destination }}
-                      </option>
-                    </select>
-                  </div>
-                </div>
+                    <div class="card bg-opacity-10 p-3 mb-3">
+                      <h6 class="text-secondary mb-3">
+                        <i class="fas fa-route me-2"></i>Tour Express París - 4
+                        Horas
+                      </h6>
 
-                <!-- Round Trip Toggle -->
-                <div class="col-12">
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      [(ngModel)]="isRoundTrip"
-                      name="roundTrip"
-                      id="roundTripCheck"
-                      (change)="onRoundTripToggle()"
-                    />
-                    <label
-                      class="form-check-label text-muted fw-semibold"
-                      for="roundTripCheck"
-                    >
-                      <i class="fas fa-exchange-alt me-2"></i>
-                      Viaje de Ida y Vuelta (5% descuento)
-                    </label>
+                      <!-- Flight Information -->
+                      <div class="mb-3">
+                        <h6 class="text-dark mb-2">Información del Vuelo</h6>
+                        <div class="row g-2">
+                          <div class="col-md-6">
+                            <label class="form-label text-muted"
+                              >Aeropuerto</label
+                            >
+                            <select
+                              class="form-select"
+                              [(ngModel)]="pickupInfo.airport"
+                              name="parisAirport"
+                              (ngModelChange)="onAirportChange()"
+                              required
+                            >
+                              <option value="">Selecciona aeropuerto</option>
+                              <option
+                                *ngFor="let airport of airportOptions"
+                                [value]="airport.value"
+                              >
+                                {{ airport.label }}
+                              </option>
+                            </select>
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-label text-muted"
+                              >Número de Vuelo</label
+                            >
+                            <input
+                              type="text"
+                              class="form-control"
+                              [(ngModel)]="pickupInfo.flightNumber"
+                              name="flightNumber"
+                              placeholder="ej: AF1234"
+                              required
+                            />
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-label text-muted"
+                              >Aerolínea</label
+                            >
+                            <input
+                              type="text"
+                              class="form-control"
+                              [(ngModel)]="pickupInfo.airline"
+                              name="airline"
+                              placeholder="ej: Air France"
+                              required
+                            />
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-label text-muted"
+                              >Hora de Llegada</label
+                            >
+                            <input
+                              type="time"
+                              class="form-control"
+                              [(ngModel)]="pickupInfo.flightArrivalTime"
+                              name="flightArrivalTime"
+                              required
+                            />
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-label text-muted"
+                              >Terminal</label
+                            >
+                            <select
+                              class="form-select"
+                              [(ngModel)]="pickupInfo.terminal"
+                              name="parisTerminal"
+                              [disabled]="!pickupInfo.airport"
+                            >
+                              <option
+                                *ngFor="let terminal of terminalOptions"
+                                [value]="terminal.value"
+                              >
+                                {{ terminal.label }}
+                              </option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
+
+                  <!-- Disney Transfer Details -->
+                  <div
+                    *ngIf="expressTrip.type === 'disney-transfer'"
+                    class="col-12"
+                  >
+                    <div class="card bg-opacity-10 p-3 mb-3">
+                      <h6 class="text-secondary mb-3">
+                        <i class="fas fa-magic me-2"></i>Transporte a Disneyland
+                        París
+                      </h6>
+
+                      <!-- Pickup Location Selection -->
+                      <div class="mb-3">
+                        <label class="form-label text-muted fw-semibold"
+                          >Lugar de Recogida</label
+                        >
+                        <select
+                          class="form-select"
+                          [(ngModel)]="expressTrip.pickupLocation"
+                          name="disneyPickupLocation"
+                          (ngModelChange)="onDisneyPickupLocationChange()"
+                          required
+                        >
+                          <option value="">
+                            Seleccionar lugar de recogida
+                          </option>
+                          <option value="airport">Aeropuerto</option>
+                          <option value="hotel">Hotel/Airbnb</option>
+                        </select>
+                      </div>
+
+                      <!-- Airport Info for Disney -->
+                      <div *ngIf="expressTrip.pickupLocation === 'airport'">
+                        <h6 class="text-dark mb-2">Información del Vuelo</h6>
+                        <div class="row g-2">
+                          <div class="col-md-6">
+                            <label class="form-label text-muted"
+                              >Aeropuerto</label
+                            >
+                            <select
+                              class="form-select"
+                              [(ngModel)]="pickupInfo.airport"
+                              name="disneyAirport"
+                              (ngModelChange)="onAirportChange()"
+                              required
+                            >
+                              <option value="">Seleccionar aeropuerto</option>
+                              <option
+                                *ngFor="let airport of airportOptions"
+                                [value]="airport.value"
+                              >
+                                {{ airport.label }}
+                              </option>
+                            </select>
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-label text-muted"
+                              >Número de Vuelo</label
+                            >
+                            <input
+                              type="text"
+                              class="form-control"
+                              [(ngModel)]="pickupInfo.flightNumber"
+                              name="flightNumber"
+                              placeholder="ej: AF1234"
+                              required
+                            />
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-label text-muted"
+                              >Aerolínea</label
+                            >
+                            <input
+                              type="text"
+                              class="form-control"
+                              [(ngModel)]="pickupInfo.airline"
+                              name="airline"
+                              placeholder="ej: Air France"
+                              required
+                            />
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-label text-muted"
+                              >Hora de Llegada</label
+                            >
+                            <input
+                              type="time"
+                              class="form-control"
+                              [(ngModel)]="pickupInfo.flightArrivalTime"
+                              name="flightArrivalTime"
+                              required
+                            />
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-label text-muted"
+                              >Terminal</label
+                            >
+                            <select
+                              class="form-select"
+                              [(ngModel)]="pickupInfo.terminal"
+                              name="disneyTerminal"
+                              [disabled]="!pickupInfo.airport"
+                            >
+                              <option
+                                *ngFor="let terminal of terminalOptions"
+                                [value]="terminal.value"
+                              >
+                                {{ terminal.label }}
+                              </option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Hotel Info for Disney -->
+                      <div *ngIf="expressTrip.pickupLocation === 'hotel'">
+                        <h6 class="text-dark mb-2">
+                          Información del Hotel/Airbnb
+                        </h6>
+                        <div class="row g-2">
+                          <div class="col-12">
+                            <label class="form-label text-muted"
+                              >Nombre del Hotel/Airbnb</label
+                            >
+                            <input
+                              type="text"
+                              class="form-control"
+                              [(ngModel)]="pickupInfo.hotelName"
+                              name="hotelName"
+                              placeholder="ej: Hotel Le Marais"
+                              required
+                            />
+                          </div>
+                          <div class="col-12">
+                            <label class="form-label text-muted"
+                              >Dirección Completa</label
+                            >
+                            <textarea
+                              class="form-control"
+                              [(ngModel)]="pickupInfo.address"
+                              name="address"
+                              rows="2"
+                              placeholder="ej: 15 Rue des Archives, 75004 París, Francia"
+                              required
+                            ></textarea>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Airport-Hotel-Airport Details -->
+                  <div
+                    *ngIf="expressTrip.type === 'airport-hotel-airport'"
+                    class="col-12"
+                  >
+                    <div class="card bg-opacity-10 p-3 mb-3">
+                      <h6 class="text-secondary mb-3">
+                        <i class="fas fa-plane me-2"></i>Aeropuerto - Hotel -
+                        Aeropuerto
+                      </h6>
+
+                      <!-- Trip Type Selection -->
+                      <div class="mb-3">
+                        <h6 class="text-dark mb-2">Tipo de Traslado</h6>
+                        <div class="row g-2">
+                          <div class="col-12">
+                            <div class="form-check">
+                              <input
+                                class="form-check-input"
+                                type="radio"
+                                name="tripType"
+                                id="oneWay"
+                                [value]="false"
+                                [(ngModel)]="expressTrip.isRoundTrip"
+                              />
+                              <label class="form-check-label" for="oneWay">
+                                <strong>Solo ida</strong> - Aeropuerto →
+                                Hotel&nbsp;
+                                <small class="text-muted d-block">
+                                  Traslado únicamente del aeropuerto al hotel
+                                </small>
+                              </label>
+                            </div>
+                            <div class="form-check mt-2">
+                              <input
+                                class="form-check-input"
+                                type="radio"
+                                name="tripType"
+                                id="roundTrip"
+                                [value]="true"
+                                [(ngModel)]="expressTrip.isRoundTrip"
+                              />
+                              <label class="form-check-label" for="roundTrip">
+                                <strong>Ida y vuelta</strong> - Aeropuerto →
+                                Hotel → Aeropuerto&nbsp;
+                                <small class="text-muted d-block">
+                                  Traslado del aeropuerto al hotel y regreso al
+                                  aeropuerto
+                                </small>
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Flight Information -->
+                      <div class="mb-3">
+                        <h6 class="text-dark mb-2">
+                          Información del Vuelo de Llegada
+                        </h6>
+                        <div class="row g-2">
+                          <div class="col-md-6">
+                            <label class="form-label text-muted"
+                              >Aeropuerto</label
+                            >
+                            <select
+                              class="form-select"
+                              [(ngModel)]="pickupInfo.airport"
+                              name="airport"
+                              (ngModelChange)="onAirportChange()"
+                              required
+                            >
+                              <option value="">Selecciona aeropuerto</option>
+                              <option
+                                *ngFor="let airport of airportOptions"
+                                [value]="airport.value"
+                              >
+                                {{ airport.label }}
+                              </option>
+                            </select>
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-label text-muted"
+                              >Número de Vuelo</label
+                            >
+                            <input
+                              type="text"
+                              class="form-control"
+                              [(ngModel)]="pickupInfo.flightNumber"
+                              name="flightNumber"
+                              placeholder="ej: AF1234"
+                              required
+                            />
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-label text-muted"
+                              >Aerolínea</label
+                            >
+                            <input
+                              type="text"
+                              class="form-control"
+                              [(ngModel)]="pickupInfo.airline"
+                              name="airline"
+                              placeholder="ej: Air France"
+                              required
+                            />
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-label text-muted"
+                              >Hora de Llegada</label
+                            >
+                            <input
+                              type="time"
+                              class="form-control"
+                              [(ngModel)]="pickupInfo.flightArrivalTime"
+                              name="flightArrivalTime"
+                              required
+                            />
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-label text-muted"
+                              >Terminal</label
+                            >
+                            <select
+                              class="form-select"
+                              [(ngModel)]="pickupInfo.terminal"
+                              name="terminal"
+                              [disabled]="!pickupInfo.airport"
+                            >
+                              <option
+                                *ngFor="let terminal of terminalOptions"
+                                [value]="terminal.value"
+                              >
+                                {{ terminal.label }}
+                              </option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Hotel Information -->
+                      <div class="mb-3">
+                        <h6 class="text-dark mb-2">Información del Hotel</h6>
+                        <div class="row g-2">
+                          <div class="col-12">
+                            <label class="form-label text-muted"
+                              >Nombre del Hotel</label
+                            >
+                            <input
+                              type="text"
+                              class="form-control"
+                              [(ngModel)]="pickupInfo.hotelName"
+                              name="hotelName"
+                              placeholder="ej: Hotel Le Marais"
+                              required
+                            />
+                          </div>
+                          <div class="col-12">
+                            <label class="form-label text-muted"
+                              >Dirección Completa</label
+                            >
+                            <textarea
+                              class="form-control"
+                              [(ngModel)]="pickupInfo.address"
+                              name="address"
+                              rows="2"
+                              placeholder="ej: 15 Rue des Archives, 75004 París, Francia"
+                              required
+                            ></textarea>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Return Pickup Time -->
+                      <div class="mb-3" *ngIf="expressTrip.isRoundTrip">
+                        <label class="form-label text-muted fw-semibold"
+                          >Hora de Recogida en el Hotel (regreso al
+                          aeropuerto)</label
+                        >
+                        <input
+                          type="time"
+                          class="form-control"
+                          [(ngModel)]="expressTrip.returnPickupTime"
+                          name="returnPickupTime"
+                          [required]="expressTrip.isRoundTrip"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Regular Transfer Information -->
+                  <div
+                    *ngIf="!expressTrip.type && selectedDestination"
+                    class="col-12"
+                  >
+                    <div class="card bg-opacity-10 p-3 mb-3">
+                      <h6 class="text-primary mb-3">
+                        <i class="fas fa-route me-2"></i>Transfer Regular desde
+                        París
+                      </h6>
+
+                      <!-- Origin Info -->
+                      <div class="mb-3">
+                        <h6 class="text-dark mb-2">
+                          <i class="fas fa-map-marker-alt me-2 text-success"></i
+                          >Origen: París, Francia
+                        </h6>
+                        <p class="text-muted small mb-0">
+                          Todos los transfers salen desde París con destino a
+                          las ciudades disponibles
+                        </p>
+                      </div>
+
+                      <!-- Pickup Type Selection -->
+                      <div class="mb-3">
+                        <label class="form-label text-muted fw-semibold"
+                          >Lugar de Recogida en París</label
+                        >
+                        <select
+                          class="form-select"
+                          [(ngModel)]="pickupInfo.type"
+                          name="pickupType"
+                          (ngModelChange)="onPickupTypeChange()"
+                          required
+                        >
+                          <option value="">Seleccionar tipo de recogida</option>
+                          <option value="airport">Aeropuerto</option>
+                          <option value="hotel">Hotel/Airbnb en París</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Regular Airport Information -->
+                  <div
+                    *ngIf="!expressTrip.type && pickupInfo.type === 'airport'"
+                    class="col-12"
+                  >
+                    <div class="card bg-light p-3 mb-3">
+                      <h6 class="text-dark mb-3">Información del Vuelo</h6>
+                      <div class="row g-2">
+                        <div class="col-md-6">
+                          <label class="form-label text-muted"
+                            >Aeropuerto</label
+                          >
+                          <select
+                            class="form-select"
+                            [(ngModel)]="pickupInfo.airport"
+                            name="regularAirport"
+                            (ngModelChange)="onAirportChange()"
+                            required
+                          >
+                            <option value="">Seleccionar aeropuerto</option>
+                            <option
+                              *ngFor="let airport of airportOptions"
+                              [value]="airport.value"
+                            >
+                              {{ airport.label }}
+                            </option>
+                          </select>
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-label text-muted"
+                            >Número de Vuelo</label
+                          >
+                          <input
+                            type="text"
+                            class="form-control"
+                            [(ngModel)]="pickupInfo.flightNumber"
+                            name="flightNumber"
+                            placeholder="ej: AF1234"
+                            required
+                          />
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-label text-muted">Aerolínea</label>
+                          <input
+                            type="text"
+                            class="form-control"
+                            [(ngModel)]="pickupInfo.airline"
+                            name="airline"
+                            placeholder="ej: Air France"
+                            required
+                          />
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-label text-muted"
+                            >Hora de Llegada</label
+                          >
+                          <input
+                            type="time"
+                            class="form-control"
+                            [(ngModel)]="pickupInfo.flightArrivalTime"
+                            name="flightArrivalTime"
+                            required
+                          />
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-label text-muted">Terminal</label>
+                          <select
+                            class="form-select"
+                            [(ngModel)]="pickupInfo.terminal"
+                            name="regularTerminal"
+                            [disabled]="!pickupInfo.airport"
+                          >
+                            <option
+                              *ngFor="let terminal of terminalOptions"
+                              [value]="terminal.value"
+                            >
+                              {{ terminal.label }}
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Regular Hotel Information -->
+                  <div
+                    *ngIf="!expressTrip.type && pickupInfo.type === 'hotel'"
+                    class="col-12"
+                  >
+                    <div class="card bg-light p-3 mb-3">
+                      <h6 class="text-dark mb-3">
+                        Información del Hotel/Airbnb
+                      </h6>
+                      <div class="row g-2">
+                        <div class="col-12">
+                          <label class="form-label text-muted"
+                            >Nombre del Hotel/Airbnb</label
+                          >
+                          <input
+                            type="text"
+                            class="form-control"
+                            [(ngModel)]="pickupInfo.hotelName"
+                            name="hotelName"
+                            placeholder="ej: Hotel Le Marais"
+                            required
+                          />
+                        </div>
+                        <div class="col-12">
+                          <label class="form-label text-muted"
+                            >Dirección Completa</label
+                          >
+                          <textarea
+                            class="form-control"
+                            [(ngModel)]="pickupInfo.address"
+                            name="address"
+                            rows="2"
+                            placeholder="ej: 15 Rue des Archives, 75004 París, Francia"
+                            required
+                          ></textarea>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Passengers Selection -->
+                  <div class="col-12">
+                    <label class="form-label text-muted fw-semibold"
+                      >Número de Pasajeros</label
+                    >
+                    <div class="input-group">
+                      <span
+                        class="input-group-text text-white"
+                        style="background-color: #9db4c2"
+                      >
+                        <i class="fas fa-users"></i>
+                      </span>
+                      <select
+                        class="form-select"
+                        [(ngModel)]="passengerCount"
+                        name="passengers"
+                        (ngModelChange)="onPassengerCountChange()"
+                        required
+                      >
+                        <option value="">Selecciona pasajeros</option>
+                        <option value="1">1 pasajero</option>
+                        <option value="2">2 pasajeros</option>
+                        <option value="3">3 pasajeros</option>
+                        <option value="4">4 pasajeros</option>
+                        <option value="5">5 pasajeros</option>
+                        <option value="6">6 pasajeros</option>
+                        <option value="7">7 pasajeros</option>
+                        <option value="8">8 pasajeros</option>
+                        <option value="9">9 pasajeros</option>
+                      </select>
+                    </div>
+
+                    <!-- Wheelchair Accessibility -->
+                    <div class="form-check mt-3">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        [(ngModel)]="requiresWheelchairAccess"
+                        name="wheelchairAccess"
+                        id="wheelchairAccess"
+                      />
+                      <label
+                        class="form-check-label text-white"
+                        for="wheelchairAccess"
+                      >
+                        <i class="fas fa-wheelchair me-2"></i>Requiere acceso
+                        para silla de ruedas
+                      </label>
+                    </div>
+                  </div>
+                </ng-container>
 
                 <!-- Date and Time Selection -->
-                <div class="col-12" *ngIf="!isRoundTrip">
+                <div class="col-12">
                   <div class="row">
                     <div class="col-12">
-                      <label class="form-label text-muted fw-semibold"
-                        >Fecha y Hora</label
+                      <label class="form-label text-white fw-semibold"
+                        >Fecha y Hora de Salida</label
                       >
                       <div class="datetime-wrapper">
                         <div class="row g-2">
@@ -292,143 +924,15 @@
                   </div>
                 </div>
 
-                <!-- Round Trip Date Range -->
-                <div class="col-12" *ngIf="isRoundTrip">
-                  <label class="form-label text-muted fw-semibold"
-                    >Fechas de Viaje</label
-                  >
-                  <div class="datetime-wrapper">
-                    <!-- Departure Date -->
-                    <div class="row g-2 mb-3">
-                      <div class="col-12">
-                        <label class="small text-muted mb-2"
-                          ><i class="fas fa-plane-departure me-1"></i>Fecha de
-                          Salida</label
-                        >
-                      </div>
-                      <div class="col-7">
-                        <div class="input-group">
-                          <span
-                            class="input-group-text text-white"
-                            style="background-color: #9db4c2"
-                          >
-                            <i class="fas fa-calendar"></i>
-                          </span>
-                          <input
-                            type="date"
-                            class="form-control"
-                            [(ngModel)]="selectedDate"
-                            name="departureDate"
-                            [min]="minDateString"
-                            (change)="onDepartureDateChange()"
-                            required
-                          />
-                        </div>
-                      </div>
-                      <div class="col-5">
-                        <div class="input-group">
-                          <span
-                            class="input-group-text text-white"
-                            style="background-color: #6a8fa7"
-                          >
-                            <i class="fas fa-clock"></i>
-                          </span>
-                          <input
-                            type="time"
-                            class="form-control"
-                            [(ngModel)]="selectedTime"
-                            name="departureTime"
-                            [min]="getMinTimeForDate(selectedDate)"
-                            (change)="onDepartureTimeChange()"
-                            required
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Return Date -->
-                    <div class="row g-2">
-                      <div class="col-12">
-                        <label class="small text-muted mb-2"
-                          ><i class="fas fa-plane-arrival me-1"></i>Fecha de
-                          Regreso</label
-                        >
-                      </div>
-                      <div class="col-7">
-                        <div class="input-group">
-                          <span
-                            class="input-group-text text-white"
-                            style="background-color: #bb6557"
-                          >
-                            <i class="fas fa-calendar"></i>
-                          </span>
-                          <input
-                            type="date"
-                            class="form-control"
-                            [(ngModel)]="selectedReturnDate"
-                            name="returnDate"
-                            [min]="selectedDate || minDateString"
-                            (change)="onReturnDateChange()"
-                            required
-                          />
-                        </div>
-                      </div>
-                      <div class="col-5">
-                        <div class="input-group">
-                          <span
-                            class="input-group-text text-white"
-                            style="background-color: #bb6557"
-                          >
-                            <i class="fas fa-clock"></i>
-                          </span>
-                          <input
-                            type="time"
-                            class="form-control"
-                            [(ngModel)]="selectedReturnTime"
-                            name="returnTime"
-                            [min]="getMinReturnTime()"
-                            (change)="onReturnTimeChange()"
-                            required
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-12">
-                  <label class="form-label text-muted fw-semibold"
-                    >Número de Pasajeros</label
-                  >
-                  <select
-                    class="form-select"
-                    [(ngModel)]="selectedPassengers"
-                    name="passengers"
-                    required
-                  >
-                    <option [value]="1">1 persona</option>
-                    <option [value]="2">2 personas</option>
-                    <option [value]="3">3 personas</option>
-                    <option [value]="4">4 personas</option>
-                    <option [value]="5">5 personas</option>
-                    <option [value]="6">6 personas</option>
-                    <option [value]="7">7 personas</option>
-                    <option [value]="8">8 personas</option>
-                    <option [value]="9">9 personas</option>
-                    <option [value]="10">10 personas</option>
-                    <option [value]="12">12 personas</option>
-                  </select>
-                </div>
-
+                <!-- Search Button -->
                 <div class="col-12">
                   <button
-                    type="submit"
-                    class="btn btn-lg w-100 rounded-pill fw-bold text-white"
-                    style="background-color: #9db4c2; border-color: #9db4c2"
-                    [disabled]="!bookingForm.valid"
+                    type="button"
+                    class="btn btn-primary w-100 py-3 fw-bold"
+                    (click)="onSearchTransfers()"
+                    [disabled]="!isSearchFormValid()"
                   >
-                    <i class="fas fa-search me-2"></i>
-                    Buscar Transfers
+                    <i class="fas fa-search me-2"></i>Buscar Transfers
                   </button>
                 </div>
               </div>
@@ -436,7 +940,7 @@
 
             <!-- Popular Routes -->
             <div class="popular-routes mt-4">
-              <h6 class="text-muted mb-3">Rutas Populares:</h6>
+              <h6 class="text-white mb-3">Rutas Populares:</h6>
               <div class="d-flex flex-wrap gap-2">
                 <span
                   *ngFor="let route of availableRoutes.slice(0, 6)"
@@ -466,72 +970,109 @@
                 <div class="col-md-6">
                   <h6 class="text-muted mb-1">
                     {{
-                      bookingCalculation.isRoundTrip
-                        ? "Rutas Seleccionadas"
+                      expressTrip.type
+                        ? "Servicio Seleccionado"
                         : "Ruta Seleccionada"
                     }}
                   </h6>
-                  <p class="mb-0 fw-bold">
-                    <i
-                      class="fas fa-plane-departure me-1"
-                      style="color: #6a8fa7"
-                    ></i>
-                    {{ selectedRoute?.origin }} →
-                    {{ selectedRoute?.destination }}
-                  </p>
-                  <p
-                    class="mb-0 text-muted small"
-                    *ngIf="!bookingCalculation.isRoundTrip"
-                  >
-                    {{ selectedDate }} a las {{ selectedTime }}
-                  </p>
 
-                  <div *ngIf="bookingCalculation.isRoundTrip" class="mt-2">
-                    <p class="mb-1 fw-bold">
+                  <!-- Express Trip Info -->
+                  <div *ngIf="expressTrip.type">
+                    <p
+                      class="mb-0 fw-bold"
+                      *ngIf="expressTrip.type === 'airport-hotel-airport'"
+                    >
+                      <i class="fas fa-plane me-1" style="color: #6a8fa7"></i>
+                      Aeropuerto ⇄ Hotel
+                    </p>
+                    <p
+                      class="mb-0 fw-bold"
+                      *ngIf="expressTrip.type === 'disney-transfer'"
+                    >
+                      <i class="fas fa-magic me-1" style="color: #6a8fa7"></i>
+                      Disney Transport
+                    </p>
+                    <p
+                      class="mb-0 fw-bold"
+                      *ngIf="expressTrip.type === 'paris-tour-4h'"
+                    >
+                      <i class="fas fa-route me-1" style="color: #6a8fa7"></i>
+                      Tour París (4 horas)
+                    </p>
+                  </div>
+
+                  <!-- Regular Route Info -->
+                  <div *ngIf="!expressTrip.type && selectedRoute">
+                    <p class="mb-0 fw-bold">
+                      <i
+                        class="fas fa-plane-departure me-1"
+                        style="color: #6a8fa7"
+                      ></i>
+                      {{ selectedRoute.origin }} →
+                      {{ selectedRoute.destination }}
+                    </p>
+                    <p
+                      class="mb-2 fw-bold"
+                      *ngIf="selectedDestination !== 'Ámsterdam'"
+                    >
                       <i
                         class="fas fa-plane-arrival me-1"
                         style="color: #bb6557"
                       ></i>
-                      {{ returnRoute?.origin }} → {{ returnRoute?.destination }}
+                      {{ selectedRoute.destination }} →
+                      {{ selectedRoute.origin }}
                     </p>
-                    <div class="small text-muted">
-                      <div>
-                        <strong>Ida:</strong> {{ selectedDate }} a las
-                        {{ selectedTime }}
-                      </div>
-                      <div>
-                        <strong>Vuelta:</strong> {{ selectedReturnDate }} a las
-                        {{ selectedReturnTime }}
-                      </div>
+                    <p
+                      class="mb-2 fw-bold text-warning"
+                      *ngIf="selectedDestination === 'Ámsterdam'"
+                    >
+                      <i class="fas fa-info-circle me-1"></i>
+                      Solo ida - regreso no incluido
+                    </p>
+                  </div>
+
+                  <div class="small text-muted mt-2">
+                    <div>
+                      <strong>Salida:</strong> {{ selectedDate }} a las
+                      {{ selectedTime }}
+                    </div>
+                    <div *ngIf="selectedDestination !== 'Ámsterdam'">
+                      <strong>Regreso:</strong> {{ selectedReturnDate }} a las
+                      {{ selectedReturnTime }}
                     </div>
                   </div>
                 </div>
-                <div class="col-md-6">
-                  <div class="row" *ngIf="!bookingCalculation.isRoundTrip">
-                    <div class="col-6">
-                      <h6 class="text-muted mb-1">Duración</h6>
-                      <p class="mb-0">{{ selectedRoute?.duration }}</p>
-                    </div>
-                    <div class="col-6">
-                      <h6 class="text-muted mb-1">Distancia</h6>
-                      <p class="mb-0">{{ selectedRoute?.distance }}</p>
+
+                <div
+                  class="col-md-6"
+                  *ngIf="selectedRoute && !expressTrip.type"
+                >
+                  <div class="mb-3">
+                    <h6 class="text-muted mb-1">Trayecto de Ida</h6>
+                    <div class="small">
+                      <div>Duración: {{ selectedRoute.duration }}</div>
+                      <div>Distancia: {{ selectedRoute.distance }}</div>
                     </div>
                   </div>
-
-                  <div *ngIf="bookingCalculation.isRoundTrip">
-                    <div class="mb-3">
-                      <h6 class="text-muted mb-1">Trayecto de Ida</h6>
-                      <div class="small">
-                        <div>Duración: {{ selectedRoute?.duration }}</div>
-                        <div>Distancia: {{ selectedRoute?.distance }}</div>
-                      </div>
+                  <div>
+                    <h6 class="text-muted mb-1">Trayecto de Vuelta</h6>
+                    <div class="small">
+                      <div>Duración: {{ selectedRoute.duration }}</div>
+                      <div>Distancia: {{ selectedRoute.distance }}</div>
                     </div>
-                    <div>
-                      <h6 class="text-muted mb-1">Trayecto de Vuelta</h6>
-                      <div class="small">
-                        <div>Duración: {{ returnRoute?.duration }}</div>
-                        <div>Distancia: {{ returnRoute?.distance }}</div>
-                      </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6" *ngIf="expressTrip.type">
+                  <h6 class="text-muted mb-1">Información del Servicio</h6>
+                  <div class="small">
+                    <div *ngIf="expressTrip.type === 'paris-tour-4h'">
+                      <div>Duración: 4 horas</div>
+                      <div>Requisito: Mín. 5h de escala</div>
+                    </div>
+                    <div *ngIf="expressTrip.type !== 'paris-tour-4h'">
+                      <div>Servicio puerta a puerta</div>
+                      <div>Conductor profesional</div>
                     </div>
                   </div>
                 </div>
@@ -576,9 +1117,9 @@
                           </span>
                         </div>
                         <p class="text-muted mb-0 mt-2">
-                          <strong>Cantidad:</strong>
-                          {{ recommendation.quantity }} van(s) ×
-                          {{ recommendation.van.capacity }} pasajeros
+                          <strong>Capacidad:</strong> Hasta
+                          {{ recommendation.van.capacity }} pasajeros<br />
+                          <strong>Servicio:</strong> Ida y vuelta incluida
                         </p>
                       </div>
                       <div class="col-md-4 text-end">
@@ -586,11 +1127,7 @@
                           <h5 class="mb-1" style="color: #bb6557">
                             €{{ recommendation.price }}
                           </h5>
-                          <small class="text-muted"
-                            >{{ recommendation.quantity }} van(s) × €{{
-                              recommendation.van.priceEur
-                            }}</small
-                          >
+                          <small class="text-muted">Precio base</small>
                         </div>
                       </div>
                     </div>
@@ -604,101 +1141,77 @@
                 style="background-color: rgba(187, 101, 87, 0.1)"
               >
                 <div class="card-body p-3">
-                  <!-- Single Trip Pricing -->
-                  <div *ngIf="!bookingCalculation.isRoundTrip">
-                    <div class="row align-items-center">
-                      <div class="col-md-8">
-                        <h5 class="mb-1">Precio Total - Viaje Sencillo</h5>
-                        <p class="text-muted mb-0">
-                          {{ selectedDate }} a las {{ selectedTime }}
-                        </p>
-                      </div>
-                      <div class="col-md-4 text-end">
-                        <h3 class="mb-0" style="color: #bb6557">
-                          €{{ bookingCalculation.totalPrice }}
-                        </h3>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Round Trip Pricing -->
-                  <div *ngIf="bookingCalculation.isRoundTrip">
-                    <!-- Pricing Breakdown -->
-                    <div class="pricing-breakdown mb-3">
-                      <div
-                        class="d-flex justify-content-between align-items-center mb-2"
-                      >
-                        <span>Viaje de Ida ({{ selectedDate }})</span>
-                        <span class="fw-bold"
-                          >€{{ bookingCalculation.totalPrice }}</span
-                        >
-                      </div>
-                      <div
-                        class="d-flex justify-content-between align-items-center mb-2"
-                      >
-                        <span>Viaje de Vuelta ({{ selectedReturnDate }})</span>
-                        <span class="fw-bold"
-                          >€{{ bookingCalculation.returnTotalPrice }}</span
-                        >
-                      </div>
-                      <hr class="my-2" />
-                      <div
-                        class="d-flex justify-content-between align-items-center mb-2"
-                      >
-                        <span>Subtotal</span>
-                        <span class="fw-bold"
-                          >€{{
-                            (bookingCalculation.totalPrice || 0) +
-                              (bookingCalculation.returnTotalPrice || 0)
-                          }}</span
-                        >
-                      </div>
-                      <div
-                        class="d-flex justify-content-between align-items-center text-success"
-                        *ngIf="bookingCalculation.savings"
-                      >
-                        <span
-                          ><i class="fas fa-tag me-1"></i>Descuento Ida y Vuelta
-                          (5%)</span
-                        >
-                        <span class="fw-bold"
-                          >-€{{
-                            bookingCalculation.savings | number : "1.2-2"
-                          }}</span
-                        >
-                      </div>
-                    </div>
-
-                    <div class="row align-items-center">
-                      <div class="col-md-8">
-                        <h5 class="mb-1">Precio Total - Ida y Vuelta</h5>
-                        <p class="text-muted mb-0">
-                          <small>
-                            <i class="fas fa-plane-departure me-1"></i
-                            >{{ selectedDate }} a las {{ selectedTime }}<br />
-                            <i class="fas fa-plane-arrival me-1"></i
-                            >{{ selectedReturnDate }} a las
+                  <div class="row align-items-center">
+                    <div class="col-md-8">
+                      <h5 class="mb-1">
+                        {{
+                          selectedDestination === "Ámsterdam"
+                            ? "Precio Total - Solo Ida"
+                            : "Precio Total - Ida y Vuelta Incluida"
+                        }}
+                      </h5>
+                      <p class="text-muted mb-0">
+                        <small>
+                          <i class="fas fa-plane-departure me-1"></i>
+                          Salida: {{ selectedDate }} a las {{ selectedTime }}
+                          <span *ngIf="selectedDestination !== 'Ámsterdam'">
+                            <br />
+                            <i class="fas fa-plane-arrival me-1"></i>
+                            Regreso: {{ selectedReturnDate }} a las
                             {{ selectedReturnTime }}
-                          </small>
-                        </p>
-                      </div>
-                      <div class="col-md-4 text-end">
-                        <h3 class="mb-0" style="color: #bb6557">
-                          €{{
-                            bookingCalculation.grandTotal | number : "1.2-2"
-                          }}
-                        </h3>
-                        <small
-                          class="text-success"
-                          *ngIf="bookingCalculation.savings"
-                        >
-                          ¡Ahorras €{{
-                            bookingCalculation.savings | number : "1.2-2"
-                          }}!
+                          </span>
                         </small>
+                      </p>
+
+                      <!-- Pricing Breakdown -->
+                      <div class="pricing-breakdown mt-3 small">
+                        <div
+                          class="d-flex justify-content-between align-items-center mb-1"
+                        >
+                          <span>Precio base del servicio</span>
+                          <span>€{{ bookingCalculation.totalPrice }}</span>
+                        </div>
+                        <div
+                          *ngIf="bookingCalculation.urgencyFee"
+                          class="d-flex justify-content-between align-items-center mb-1 text-warning"
+                        >
+                          <span
+                            ><i class="fas fa-exclamation-triangle me-1"></i
+                            >Tarifa de urgencia (viaje mañana)</span
+                          >
+                          <span
+                            >€{{
+                              bookingCalculation.urgencyFee | number : "1.2-2"
+                            }}</span
+                          >
+                        </div>
+                        <div
+                          class="d-flex justify-content-between align-items-center mb-2"
+                        >
+                          <span>Comisión de servicio (7%)</span>
+                          <span
+                            >€{{
+                              bookingCalculation.serviceFee | number : "1.2-2"
+                            }}</span
+                          >
+                        </div>
+                        <hr class="my-2" />
                       </div>
                     </div>
+                    <div class="col-md-4 text-end">
+                      <h3 class="mb-0" style="color: #bb6557">
+                        €{{ bookingCalculation.grandTotal | number : "1.2-2" }}
+                      </h3>
+                      <small class="text-success">
+                        {{
+                          selectedDestination === "Ámsterdam"
+                            ? "¡Solo ida!"
+                            : "¡Ida y vuelta incluida!"
+                        }}
+                      </small>
+                    </div>
                   </div>
+
                   <div class="mt-3">
                     <button
                       class="btn btn-lg w-100 rounded-pill fw-bold text-white"

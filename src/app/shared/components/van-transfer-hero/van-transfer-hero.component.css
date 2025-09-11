@@ -313,7 +313,6 @@
 
 /* Ensure round trip label is visible */
 .form-check-label {
-  color: #ffffff !important;
   font-weight: 600 !important;
   cursor: pointer;
   display: flex !important;

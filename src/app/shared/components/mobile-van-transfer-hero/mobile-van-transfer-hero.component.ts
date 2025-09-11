@@ -12,6 +12,15 @@ import {
   faShieldAlt,
   faStar,
   faBolt,
+  faCog,
+  faRocket,
+  faWheelchair,
+  faInfoCircle,
+  faPlane,
+  faHotel,
+  faExchangeAlt,
+  faPlus,
+  faMinus,
 } from '@fortawesome/free-solid-svg-icons';
 
 interface VanType {
@@ -30,14 +39,20 @@ interface Route {
   distance: string;
 }
 
+interface ExpressTrip {
+  type: string; // 'paris-tour-4h', 'disney-transfer', 'airport-hotel-airport'
+  pickupLocation?: string; // 'airport' or 'hotel' (for Disney)
+  returnPickupTime?: string; // for airport-hotel-airport service
+  isRoundTrip?: boolean; // for airport-hotel-airport service - whether return trip is needed
+}
+
 interface BookingCalculation {
   passengers: number;
   vans: VanRecommendation[];
   totalPrice: number;
-  returnTotalPrice?: number;
-  grandTotal?: number;
-  savings?: number;
-  isRoundTrip?: boolean;
+  serviceFee: number;
+  urgencyFee?: number;
+  grandTotal: number;
 }
 
 interface VanRecommendation {
@@ -65,37 +80,46 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
   faShieldAlt = faShieldAlt;
   faStar = faStar;
   faBolt = faBolt;
+  faCog = faCog;
+  faRocket = faRocket;
+  faWheelchair = faWheelchair;
+  faInfoCircle = faInfoCircle;
+  faPlane = faPlane;
+  faHotel = faHotel;
+  faExchangeAlt = faExchangeAlt;
+  faPlus = faPlus;
+  faMinus = faMinus;
 
-  // Van Types Mock Data
-  vanTypes: VanType[] = [
+  // Van Types
+  vans: VanType[] = [
     {
-      id: 'van4',
-      name: 'Van Premium 4 Pasajeros',
-      capacity: 4,
-      priceEur: 550,
+      id: 'small',
+      name: 'Van Pequeña',
+      capacity: 5,
+      priceEur: 650,
       features: [
-        'WiFi Gratis',
-        'Aire Acondicionado',
-        'Equipaje Incluido',
-        'Conductor Profesional',
+        'Hasta 5 pasajeros',
+        'Aire acondicionado',
+        'WiFi gratuito',
+        'Conductor profesional',
       ],
     },
     {
-      id: 'van6',
-      name: 'Van Premium 6 Pasajeros',
-      capacity: 6,
-      priceEur: 650,
+      id: 'large',
+      name: 'Van Grande',
+      capacity: 9,
+      priceEur: 900,
       features: [
-        'WiFi Gratis',
-        'Aire Acondicionado',
-        'Equipaje Incluido',
-        'Conductor Profesional',
-        'Espacio Extra',
+        'Hasta 9 pasajeros',
+        'Aire acondicionado',
+        'WiFi gratuito',
+        'Conductor profesional',
+        'Espacio extra para equipaje',
       ],
     },
   ];
 
-  // Routes Mock Data
+  // Routes
   availableRoutes: Route[] = [
     {
       id: 'paris-brujas',
@@ -142,24 +166,66 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
   ];
 
   // Form Data
-  selectedOrigin: string = '';
   selectedDestination: string = '';
   selectedDate: string = '';
   selectedTime: string = '';
   selectedPassengers: number = 1;
   selectedRoute: Route | null = null;
 
-  // Return trip data
-  isRoundTrip: boolean = false;
-  selectedReturnDate: string = '';
-  selectedReturnTime: string = '';
-  returnRoute: Route | null = null;
+  // Express trip data
+  expressTrip: ExpressTrip = { type: 'none' };
+
+  // Pickup details for Disney transfer
+  airportPickup = {
+    airport: '', // CDG or ORY
+    flightNumber: '',
+    airline: '',
+    terminal: '',
+    arrivalTime: '',
+  };
+
+  hotelPickup = {
+    name: '',
+    address: '',
+  };
+
+  // Destination options
+  destinationOptions = [
+    { value: 'Brujas', label: 'Brujas' },
+    { value: 'Bruselas', label: 'Bruselas' },
+    { value: 'Ámsterdam', label: 'Ámsterdam (Solo Ida)' },
+  ];
+
+  // Express trip options
+  expressTripOptions = [
+    {
+      value: 'none',
+      label: 'Transporte regular',
+      description: 'Ida y vuelta desde París',
+    },
+    {
+      value: 'paris-tour-4h',
+      label: 'Tour París Express 4h',
+      description:
+        'Tour guiado por París (€350-800 según pasajeros, mín. 5h escala)',
+    },
+    {
+      value: 'disney-transfer',
+      label: 'Traslado Disney',
+      description: 'Solo traslado a Disney',
+    },
+    {
+      value: 'airport-hotel-airport',
+      label: 'Aeropuerto-Hotel-Aeropuerto',
+      description: 'Servicio completo ida y vuelta aeropuerto',
+    },
+  ];
 
   // Results
   bookingCalculation: BookingCalculation | null = null;
   showResults: boolean = false;
 
-  // Validation messages
+  // Validation
   validationMessage: string = '';
   showValidationAlert: boolean = false;
 
@@ -167,10 +233,9 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
   showCheckoutModal: boolean = false;
 
   // Calendar constraints
-  minDate: Date = new Date();
-  minDateString: string = ''; // String version for HTML5 date inputs
+  minDateString: string = '';
 
-  // Available time options
+  // Available times
   times = [
     '06:00',
     '06:30',
@@ -207,10 +272,18 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
     '22:00',
   ];
 
+  // Airport options
+  airportOptions = [
+    { value: 'CDG', label: 'Charles de Gaulle (CDG)' },
+    { value: 'ORY', label: 'Orly (ORY)' },
+  ];
+
   constructor() {}
 
   ngOnInit(): void {
-    this.disableZoom(); // Prevent double-tap zoom on mobile
+    this.disableZoom();
+    this.preventHorizontalScroll();
+
     // Set minimum date to today
     const today = new Date();
     this.minDateString = today.toISOString().split('T')[0];
@@ -220,23 +293,16 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
     tomorrow.setDate(tomorrow.getDate() + 1);
     this.selectedDate = tomorrow.toISOString().split('T')[0];
 
-    // Set default return date to day after tomorrow
-    const dayAfterTomorrow = new Date();
-    dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2);
-    this.selectedReturnDate = dayAfterTomorrow.toISOString().split('T')[0];
-
-    // Set default time to 10:00
+    // Set default time
     this.selectedTime = '10:00';
-    this.selectedReturnTime = '10:00';
   }
 
   ngOnDestroy(): void {
-    this.enableZoom(); // Restore zoom functionality
+    this.enableZoom();
+    this.cleanupHorizontalScrollPrevention();
   }
 
-  // Zoom prevention methods
   private disableZoom(): void {
-    // Get or create viewport meta tag
     let viewport = document.querySelector(
       'meta[name="viewport"]'
     ) as HTMLMetaElement;
@@ -246,21 +312,16 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
       document.head.appendChild(viewport);
     }
 
-    // Store original content to restore later
     if (!viewport.getAttribute('data-original-content')) {
       viewport.setAttribute('data-original-content', viewport.content || '');
     }
 
-    // Set content to disable zoom
     viewport.content =
       'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
-
-    // Prevent double-tap zoom with touch-action
     document.body.style.touchAction = 'manipulation';
   }
 
   private enableZoom(): void {
-    // Restore original viewport content
     const viewport = document.querySelector(
       'meta[name="viewport"]'
     ) as HTMLMetaElement;
@@ -272,107 +333,370 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
         viewport.content = 'width=device-width, initial-scale=1.0';
       }
     }
-
-    // Restore body touch-action
     document.body.style.touchAction = 'auto';
   }
 
-  // Handle round trip toggle
-  onRoundTripToggle(): void {
-    if (this.isRoundTrip) {
-      // Find return route
-      if (this.selectedOrigin && this.selectedDestination) {
-        this.returnRoute = this.findRoute(
-          this.selectedDestination,
-          this.selectedOrigin
-        );
+  private preventHorizontalScroll(): void {
+    // Apply overflow-x: hidden to prevent horizontal scrolling
+    if (typeof document !== 'undefined') {
+      document.documentElement.style.overflowX = 'hidden';
+      document.body.style.overflowX = 'hidden';
+      document.documentElement.style.maxWidth = '100%';
+      document.body.style.maxWidth = '100%';
+
+      // Prevent touch scrolling horizontally
+      document.body.style.touchAction = 'pan-y pinch-zoom';
+
+      // Force all elements to respect viewport width
+      const style = document.createElement('style');
+      style.id = 'mobile-overflow-prevention';
+      style.textContent = `
+        * {
+          max-width: 100vw !important;
+          box-sizing: border-box !important;
+        }
+        
+        body, html {
+          overflow-x: hidden !important;
+          width: 100% !important;
+          max-width: 100% !important;
+        }
+        
+        .container, .container-fluid, .row {
+          overflow-x: hidden !important;
+          max-width: 100% !important;
+          margin-left: 0 !important;
+          margin-right: 0 !important;
+        }
+        
+        [class*="col-"] {
+          overflow-x: hidden !important;
+          word-wrap: break-word !important;
+          padding-left: 0.5rem !important;
+          padding-right: 0.5rem !important;
+        }
+
+        .btn-group {
+          width: 100% !important;
+          flex-wrap: wrap !important;
+        }
+
+        .form-control, .form-select, .btn {
+          width: 100% !important;
+          max-width: 100% !important;
+          box-sizing: border-box !important;
+        }
+
+        .card, .mobile-booking-card {
+          width: 100% !important;
+          max-width: 100% !important;
+          overflow-x: hidden !important;
+        }
+      `;
+
+      // Remove existing style if it exists
+      const existingStyle = document.getElementById(
+        'mobile-overflow-prevention'
+      );
+      if (existingStyle) {
+        existingStyle.remove();
       }
-      // Set default return date to one day after departure
-      if (this.selectedDate) {
-        const departureDate = new Date(this.selectedDate);
-        departureDate.setDate(departureDate.getDate() + 1);
-        this.selectedReturnDate = departureDate.toISOString().split('T')[0];
-      }
-    } else {
-      this.returnRoute = null;
-      this.selectedReturnDate = '';
+
+      document.head.appendChild(style);
     }
-    this.showResults = false;
   }
 
-  // Calculate the best van combination for passengers
+  private cleanupHorizontalScrollPrevention(): void {
+    // Remove the overflow prevention styles
+    const existingStyle = document.getElementById('mobile-overflow-prevention');
+    if (existingStyle) {
+      existingStyle.remove();
+    }
+  }
+
   calculateVanRecommendation(passengers: number): BookingCalculation {
     if (passengers <= 0) {
       return {
         passengers: 0,
         vans: [],
         totalPrice: 0,
+        serviceFee: 0,
+        grandTotal: 0,
       };
     }
 
-    const van4 = this.vanTypes.find((v) => v.capacity === 4)!;
-    const van6 = this.vanTypes.find((v) => v.capacity === 6)!;
-
+    let basePrice = 0;
     let bestRecommendation: VanRecommendation[] = [];
-    let lowestPrice = Infinity;
 
-    // Strategy 1: Only 4-passenger vans
-    const vans4Needed = Math.ceil(passengers / 4);
-    const price4Only = vans4Needed * van4.priceEur;
-    if (price4Only < lowestPrice) {
-      lowestPrice = price4Only;
-      bestRecommendation = [
-        { van: van4, quantity: vans4Needed, price: price4Only },
-      ];
-    }
+    // Handle Paris Tour Express 4h pricing
+    if (this.expressTrip.type === 'paris-tour-4h') {
+      if (passengers <= 4) {
+        basePrice = 350;
+        bestRecommendation = [
+          {
+            van: {
+              id: 'tour-small',
+              name: 'Tour París (hasta 4)',
+              capacity: 4,
+              priceEur: 350,
+              features: ['Hasta 4 personas', 'Tour 4 horas', 'Guía incluido'],
+            },
+            quantity: 1,
+            price: 350,
+          },
+        ];
+      } else if (passengers <= 6) {
+        basePrice = 450;
+        bestRecommendation = [
+          {
+            van: {
+              id: 'tour-medium',
+              name: 'Tour París (5-6)',
+              capacity: 6,
+              priceEur: 450,
+              features: ['5-6 personas', 'Tour 4 horas', 'Guía incluido'],
+            },
+            quantity: 1,
+            price: 450,
+          },
+        ];
+      } else if (passengers <= 9) {
+        basePrice = 800;
+        bestRecommendation = [
+          {
+            van: {
+              id: 'tour-large',
+              name: 'Tour París (6-9)',
+              capacity: 9,
+              priceEur: 800,
+              features: ['6-9 personas', 'Tour 4 horas', 'Guía incluido'],
+            },
+            quantity: 1,
+            price: 800,
+          },
+        ];
+      } else {
+        // For more than 9 passengers in tour, use multiple large vans
+        const largeVansNeeded = Math.ceil(passengers / 9);
+        basePrice = largeVansNeeded * 800;
+        bestRecommendation = [
+          {
+            van: {
+              id: 'tour-large',
+              name: 'Tour París (6-9)',
+              capacity: 9,
+              priceEur: 800,
+              features: ['6-9 personas', 'Tour 4 horas', 'Guía incluido'],
+            },
+            quantity: largeVansNeeded,
+            price: basePrice,
+          },
+        ];
+      }
+    } else {
+      // Regular transfer pricing: €650 for 1-5 passengers, €900 for 6-9 passengers
+      const smallVan = this.vans.find((v) => v.capacity === 5)!;
+      const largeVan = this.vans.find((v) => v.capacity === 9)!;
 
-    // Strategy 2: Only 6-passenger vans
-    const vans6Needed = Math.ceil(passengers / 6);
-    const price6Only = vans6Needed * van6.priceEur;
-    if (price6Only < lowestPrice) {
-      lowestPrice = price6Only;
-      bestRecommendation = [
-        { van: van6, quantity: vans6Needed, price: price6Only },
-      ];
-    }
+      if (passengers <= 5) {
+        bestRecommendation = [
+          {
+            van: smallVan,
+            quantity: 1,
+            price: smallVan.priceEur,
+          },
+        ];
+        basePrice = smallVan.priceEur;
+      } else if (passengers <= 9) {
+        bestRecommendation = [
+          {
+            van: largeVan,
+            quantity: 1,
+            price: largeVan.priceEur,
+          },
+        ];
+        basePrice = largeVan.priceEur;
+      } else {
+        // For more than 9 passengers, use multiple vans
+        const largeVansNeeded = Math.floor(passengers / 9);
+        const remainingPassengers = passengers % 9;
 
-    // Strategy 3: Mix of 6 and 4 passenger vans
-    if (passengers > 6) {
-      const vans6ForMix = Math.floor(passengers / 6);
-      const remainingPassengers = passengers - vans6ForMix * 6;
-      const vans4ForMix =
-        remainingPassengers > 0 ? Math.ceil(remainingPassengers / 4) : 0;
-      const priceMix =
-        vans6ForMix * van6.priceEur + vans4ForMix * van4.priceEur;
+        bestRecommendation = [
+          {
+            van: largeVan,
+            quantity: largeVansNeeded,
+            price: largeVansNeeded * largeVan.priceEur,
+          },
+        ];
+        basePrice = largeVansNeeded * largeVan.priceEur;
 
-      if (priceMix < lowestPrice) {
-        lowestPrice = priceMix;
-        bestRecommendation = [];
-        if (vans6ForMix > 0) {
-          bestRecommendation.push({
-            van: van6,
-            quantity: vans6ForMix,
-            price: vans6ForMix * van6.priceEur,
-          });
-        }
-        if (vans4ForMix > 0) {
-          bestRecommendation.push({
-            van: van4,
-            quantity: vans4ForMix,
-            price: vans4ForMix * van4.priceEur,
-          });
+        if (remainingPassengers > 0) {
+          if (remainingPassengers <= 5) {
+            bestRecommendation.push({
+              van: smallVan,
+              quantity: 1,
+              price: smallVan.priceEur,
+            });
+            basePrice += smallVan.priceEur;
+          } else {
+            bestRecommendation.push({
+              van: largeVan,
+              quantity: 1,
+              price: largeVan.priceEur,
+            });
+            basePrice += largeVan.priceEur;
+          }
         }
       }
     }
 
+    // For airport-hotel-airport round trip, double the price
+    if (
+      this.expressTrip.type === 'airport-hotel-airport' &&
+      this.expressTrip.isRoundTrip
+    ) {
+      basePrice = basePrice * 2;
+      // Update recommendation prices for round trip
+      bestRecommendation = bestRecommendation.map((rec) => ({
+        ...rec,
+        price: rec.price * 2,
+      }));
+    }
+
+    let totalPrice = basePrice;
+    const serviceFee = Math.round(totalPrice * 0.07);
+
+    // Calculate urgency fee (10% if traveling tomorrow)
+    let urgencyFee = 0;
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const selectedDateObj = new Date(this.selectedDate);
+    if (selectedDateObj.toDateString() === tomorrow.toDateString()) {
+      urgencyFee = Math.round(totalPrice * 0.1);
+    }
+
+    const grandTotal = totalPrice + serviceFee + urgencyFee;
+
     return {
       passengers,
       vans: bestRecommendation,
-      totalPrice: lowestPrice,
+      totalPrice: totalPrice,
+      serviceFee,
+      urgencyFee,
+      grandTotal,
     };
   }
 
-  // Find route between origin and destination
+  onExpressTripChange(value: string): void {
+    this.expressTrip.type = value;
+
+    // Reset specific properties when changing trip type
+    if (value !== 'disney-transfer') {
+      this.expressTrip.pickupLocation = undefined;
+      // Reset pickup details
+      this.airportPickup = {
+        airport: '',
+        flightNumber: '',
+        airline: '',
+        terminal: '',
+        arrivalTime: '',
+      };
+      this.hotelPickup = {
+        name: '',
+        address: '',
+      };
+    }
+    if (value !== 'airport-hotel-airport' && value !== 'paris-tour-4h') {
+      this.expressTrip.returnPickupTime = undefined;
+      // Reset pickup details for airport-hotel-airport
+      if (value !== 'disney-transfer') {
+        this.airportPickup = {
+          airport: '',
+          flightNumber: '',
+          airline: '',
+          terminal: '',
+          arrivalTime: '',
+        };
+        this.hotelPickup = {
+          name: '',
+          address: '',
+        };
+      }
+    }
+
+    // Reset destination when changing express trip type
+    this.selectedDestination = '';
+    this.selectedRoute = null;
+
+    // Clear results
+    this.showResults = false;
+    this.bookingCalculation = null;
+  }
+  onDestinationChange(destination: string): void {
+    this.selectedDestination = destination;
+    this.selectedRoute = this.findRoute('París', destination);
+    this.showResults = false;
+    this.bookingCalculation = null;
+  }
+
+  isSearchFormValid(): boolean {
+    // Basic validation
+    if (
+      !this.selectedDate ||
+      !this.selectedTime ||
+      this.selectedPassengers < 1
+    ) {
+      return false;
+    }
+
+    // For regular transfers, need destination
+    if (this.expressTrip.type === 'none' && !this.selectedDestination) {
+      return false;
+    }
+
+    // For Disney transfer, need pickup location and details
+    if (this.expressTrip.type === 'disney-transfer') {
+      if (!this.expressTrip.pickupLocation) {
+        return false;
+      }
+      // For airport pickup, need flight details
+      if (this.expressTrip.pickupLocation === 'airport') {
+        if (
+          !this.airportPickup.airport ||
+          !this.airportPickup.flightNumber ||
+          !this.airportPickup.airline ||
+          !this.airportPickup.terminal ||
+          !this.airportPickup.arrivalTime
+        ) {
+          return false;
+        }
+      }
+      // For hotel pickup, need hotel details
+      if (this.expressTrip.pickupLocation === 'hotel') {
+        if (!this.hotelPickup.name || !this.hotelPickup.address) {
+          return false;
+        }
+      }
+    }
+
+    // For airport-hotel-airport, need flight details, hotel details, and return pickup time (only for round trips)
+    if (this.expressTrip.type === 'airport-hotel-airport') {
+      if (
+        !this.airportPickup.airport ||
+        !this.airportPickup.flightNumber ||
+        !this.airportPickup.airline ||
+        !this.airportPickup.arrivalTime ||
+        !this.hotelPickup.name ||
+        !this.hotelPickup.address ||
+        (this.expressTrip.isRoundTrip && !this.expressTrip.returnPickupTime)
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   findRoute(origin: string, destination: string): Route | null {
     return (
       this.availableRoutes.find(
@@ -383,41 +707,14 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
     );
   }
 
-  getAvailableOrigins(): string[] {
-    return [...new Set(this.availableRoutes.map((r) => r.origin))];
-  }
-
   getAvailableDestinations(): string[] {
-    if (!this.selectedOrigin) return [];
     return this.availableRoutes
-      .filter((r) => r.origin === this.selectedOrigin)
+      .filter((r) => r.origin === 'París')
       .map((r) => r.destination);
   }
 
-  onOriginChange(): void {
-    this.selectedDestination = '';
-    this.selectedRoute = null;
-    this.showResults = false;
-    this.hideValidationMessage();
-  }
-
-  onDestinationChange(): void {
-    if (this.selectedOrigin && this.selectedDestination) {
-      this.selectedRoute = this.findRoute(
-        this.selectedOrigin,
-        this.selectedDestination
-      );
-    }
-    this.showResults = false;
-  }
-
   onSearchTransfers(): void {
-    if (
-      !this.selectedOrigin ||
-      !this.selectedDestination ||
-      !this.selectedDate ||
-      !this.selectedTime
-    ) {
+    if (!this.isSearchFormValid()) {
       this.showValidationMessage(
         'Por favor complete todos los campos requeridos'
       );
@@ -432,74 +729,30 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (
-      this.isRoundTrip &&
-      (!this.selectedReturnDate || !this.selectedReturnTime)
-    ) {
-      this.showValidationMessage(
-        'Por favor complete la fecha y hora de regreso'
-      );
-      return;
-    }
-
-    // Validate return date/time is not in the past (if round trip)
-    if (
-      this.isRoundTrip &&
-      this.isDateTimeInPast(this.selectedReturnDate, this.selectedReturnTime)
-    ) {
-      this.showValidationMessage(
-        'La fecha y hora de regreso no puede ser en el pasado'
-      );
-      return;
-    }
-
-    // Find outbound route
-    this.selectedRoute = this.findRoute(
-      this.selectedOrigin,
-      this.selectedDestination
-    );
-
-    if (!this.selectedRoute) {
-      this.showValidationMessage(
-        'Lo sentimos, esta ruta no está disponible actualmente. Rutas disponibles: París-Brujas, París-Ámsterdam, París-Bruselas y sus rutas de regreso.'
-      );
-      return;
-    }
-
-    // Find return route if round trip
-    if (this.isRoundTrip) {
-      this.returnRoute = this.findRoute(
-        this.selectedDestination,
-        this.selectedOrigin
-      );
-      if (!this.returnRoute) {
+    // For regular transfers, find route from Paris to destination
+    if (this.expressTrip.type === 'none') {
+      this.selectedRoute = this.findRoute('París', this.selectedDestination);
+      if (!this.selectedRoute) {
         this.showValidationMessage(
-          'Lo sentimos, la ruta de regreso no está disponible.'
+          'Lo sentimos, esta ruta no está disponible actualmente.'
         );
         return;
       }
+    } else {
+      // For express trips, create a mock route
+      this.selectedRoute = {
+        id: 'express-' + this.expressTrip.type,
+        origin: 'París',
+        destination: this.getExpressDestination(),
+        duration: this.getExpressDuration(),
+        distance: this.getExpressDistance(),
+      };
     }
 
     // Calculate van recommendation
     this.bookingCalculation = this.calculateVanRecommendation(
       this.selectedPassengers
     );
-
-    // Add round trip calculations
-    if (this.isRoundTrip && this.bookingCalculation) {
-      this.bookingCalculation.isRoundTrip = true;
-      this.bookingCalculation.returnTotalPrice =
-        this.bookingCalculation.totalPrice; // Same price for return
-      this.bookingCalculation.grandTotal =
-        this.bookingCalculation.totalPrice +
-        this.bookingCalculation.returnTotalPrice;
-
-      // Add 5% discount for round trips
-      const discount = this.bookingCalculation.grandTotal * 0.05;
-      this.bookingCalculation.savings = discount;
-      this.bookingCalculation.grandTotal -= discount;
-    }
-
     this.showResults = true;
 
     // Scroll to results
@@ -511,21 +764,63 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
     }, 100);
   }
 
-  // Validate if selected date/time is not in the past
+  // Helper methods for express trips
+  getExpressDestination(): string {
+    switch (this.expressTrip.type) {
+      case 'paris-tour-4h':
+        return 'Tour París (4 horas)';
+      case 'disney-transfer':
+        return 'Disneyland París';
+      case 'airport-hotel-airport':
+        return 'Hotel (ida y vuelta)';
+      default:
+        return 'Destino Express';
+    }
+  }
+
+  getExpressDuration(): string {
+    switch (this.expressTrip.type) {
+      case 'paris-tour-4h':
+        return '4 horas';
+      case 'disney-transfer':
+        return '1h 30min';
+      case 'airport-hotel-airport':
+        return 'Día completo';
+      default:
+        return 'Variable';
+    }
+  }
+
+  getExpressDistance(): string {
+    switch (this.expressTrip.type) {
+      case 'paris-tour-4h':
+        return 'Ciudad de París';
+      case 'disney-transfer':
+        return '45 km';
+      case 'airport-hotel-airport':
+        return 'Variable';
+      default:
+        return 'Variable';
+    }
+  }
+
+  getSelectedExpressTripDescription(): string {
+    const trip = this.expressTripOptions.find(
+      (t) => t.value === this.expressTrip.type
+    );
+    return trip ? trip.description : '';
+  }
+
   isDateTimeInPast(date: string, time: string): boolean {
     if (!date || !time) return false;
-
     const selectedDateTime = new Date(date + 'T' + time);
     const now = new Date();
-
     return selectedDateTime < now;
   }
 
   private showValidationMessage(message: string): void {
     this.validationMessage = message;
     this.showValidationAlert = true;
-
-    // Auto-hide after 5 seconds
     setTimeout(() => {
       this.showValidationAlert = false;
     }, 5000);
@@ -537,7 +832,7 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
   }
 
   incrementPassengers(): void {
-    if (this.selectedPassengers < 8) {
+    if (this.selectedPassengers < 15) {
       this.selectedPassengers++;
     }
   }
@@ -553,28 +848,52 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
     return today.toISOString().split('T')[0];
   }
 
+  // Get terminal options based on selected airport
+  getTerminalOptions(): { value: string; label: string }[] {
+    if (this.airportPickup.airport === 'CDG') {
+      return [
+        { value: '', label: 'Seleccione Terminal' },
+        { value: '1', label: 'Terminal 1' },
+        { value: '2A', label: 'Terminal 2A' },
+        { value: '2B', label: 'Terminal 2B' },
+        { value: '2C', label: 'Terminal 2C' },
+        { value: '2D', label: 'Terminal 2D' },
+        { value: '2E', label: 'Terminal 2E' },
+        { value: '2F', label: 'Terminal 2F' },
+        { value: '2G', label: 'Terminal 2G' },
+        { value: '3', label: 'Terminal 3' },
+      ];
+    } else if (this.airportPickup.airport === 'ORY') {
+      return [
+        { value: '', label: 'Seleccione Terminal' },
+        { value: '1', label: 'Terminal 1' },
+        { value: '2', label: 'Terminal 2' },
+        { value: '3', label: 'Terminal 3' },
+        { value: '4', label: 'Terminal 4' },
+      ];
+    }
+    return [{ value: '', label: 'Seleccione aeropuerto primero' }];
+  }
+
+  // Handle airport change
+  onAirportChange(): void {
+    // Reset terminal when airport changes
+    this.airportPickup.terminal = '';
+  }
+
   // Checkout modal methods
   openCheckoutModal(): void {
     this.showCheckoutModal = true;
-    // Prevent body scroll when modal is open
     document.body.style.overflow = 'hidden';
   }
 
   closeCheckoutModal(): void {
     this.showCheckoutModal = false;
-    // Restore body scroll
     document.body.style.overflow = 'auto';
   }
 
   onBookingConfirmed(confirmation: any): void {
     console.log('Mobile booking confirmed:', confirmation);
-    // Here you would typically:
-    // 1. Send confirmation to backend
-    // 2. Send confirmation email
-    // 3. Update user's booking history
-    // 4. Show success message
-
-    // For now, we'll just close the modal after a short delay
     setTimeout(() => {
       this.closeCheckoutModal();
       this.showResults = false;
@@ -583,46 +902,69 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
   }
 
   private resetForm(): void {
-    this.selectedOrigin = '';
     this.selectedDestination = '';
     this.selectedPassengers = 1;
-    this.isRoundTrip = false;
     this.bookingCalculation = null;
+    this.expressTrip = { type: 'none' };
 
-    // Reset dates to defaults
+    // Reset pickup details
+    this.airportPickup = {
+      airport: '',
+      flightNumber: '',
+      airline: '',
+      terminal: '',
+      arrivalTime: '',
+    };
+    this.hotelPickup = {
+      name: '',
+      address: '',
+    };
+
+    // Reset date to tomorrow
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     this.selectedDate = tomorrow.toISOString().split('T')[0];
-
-    const dayAfterTomorrow = new Date();
-    dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2);
-    this.selectedReturnDate = dayAfterTomorrow.toISOString().split('T')[0];
-
     this.selectedTime = '10:00';
-    this.selectedReturnTime = '10:00';
   }
 
-  // Prepare booking details for checkout modal
   getBookingDetailsForCheckout(): any {
     if (!this.bookingCalculation || !this.selectedRoute) {
       return null;
     }
 
+    // Prepare airport information if available
+    let airportInfo = null;
+    if (this.expressTrip.type === 'paris-tour-4h' && this.airportPickup) {
+      const airportOption = this.airportOptions.find(
+        (airport) => airport.value === this.airportPickup.airport
+      );
+      airportInfo = {
+        airport: this.airportPickup.airport,
+        airportLabel: airportOption
+          ? airportOption.label
+          : this.airportPickup.airport,
+        flightNumber: this.airportPickup.flightNumber,
+        airline: this.airportPickup.airline,
+        terminal: this.airportPickup.terminal,
+        arrivalTime: this.airportPickup.arrivalTime,
+      };
+    }
+
     return {
       bookingId: 'VT' + Date.now().toString(36).toUpperCase(),
-      origin: this.selectedOrigin,
+      origin: 'París',
       destination: this.selectedDestination,
       departureDate: this.selectedDate,
       departureTime: this.selectedTime,
-      returnDate: this.isRoundTrip ? this.selectedReturnDate : undefined,
-      returnTime: this.isRoundTrip ? this.selectedReturnTime : undefined,
       passengers: this.selectedPassengers,
+      serviceType: this.expressTrip.type === 'none' ? 'regular' : 'express',
+      expressTrip: this.expressTrip,
+      airportInfo: airportInfo,
       vans: this.bookingCalculation.vans,
       totalPrice: this.bookingCalculation.totalPrice,
-      returnTotalPrice: this.bookingCalculation.returnTotalPrice,
+      serviceFee: this.bookingCalculation.serviceFee,
+      urgencyFee: this.bookingCalculation.urgencyFee,
       grandTotal: this.bookingCalculation.grandTotal,
-      savings: this.bookingCalculation.savings,
-      isRoundTrip: this.isRoundTrip,
       duration: this.selectedRoute.duration,
       distance: this.selectedRoute.distance,
     };

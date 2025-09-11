@@ -931,3 +931,67 @@
     transform: none;
   }
 }
+
+/* Service Section Styles */
+.service-section {
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 1rem;
+}
+
+.service-section .service-type .badge {
+  font-size: 0.8rem;
+  border-radius: 8px;
+}
+
+/* Pickup Section Styles */
+.pickup-section {
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 1rem;
+}
+
+.pickup-section .pickup-type .badge {
+  font-size: 0.8rem;
+  border-radius: 8px;
+}
+
+.pickup-section .flight-info,
+.pickup-section .hotel-info {
+  background-color: #f8f9fa;
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin-top: 0.5rem;
+}
+
+.pickup-section .text-small {
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+/* Price Section Updates */
+.price-section .price-item.urgency .price-label,
+.price-section .price-item.urgency .price-value {
+  color: #ffc107 !important;
+}
+
+.price-section .price-item.service .price-label {
+  color: #6c757d;
+}
+
+.price-section .price-item {
+  margin-bottom: 0.5rem;
+}
+
+/* Route Header Updates */
+.route-header h6 {
+  margin-bottom: 0.75rem;
+}
+
+.cities {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Trip Item Updates */
+.trip-item .trip-label {
+  margin-bottom: 0.25rem;
+}
