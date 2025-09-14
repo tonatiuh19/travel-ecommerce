@@ -14,3 +14,18 @@ export const selectPackages = createSelector(
   selectLandingState,
   (state: LandingState) => state.packages
 );
+
+export const selectReservation = createSelector(
+  selectLandingState,
+  (state: LandingState) => state.reservation
+);
+
+export const selectIsProcessingReservation = createSelector(
+  selectLandingState,
+  (state: LandingState) => state.isProcessingReservation
+);
+
+export const selectReservationError = createSelector(
+  selectLandingState,
+  (state: LandingState) => state.reservationError
+);

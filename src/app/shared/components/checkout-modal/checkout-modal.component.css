@@ -995,3 +995,16 @@
 .trip-item .trip-label {
   margin-bottom: 0.25rem;
 }
+
+.payment-form-section .custom-input-payment {
+  border: 2px solid #000000; /* Custom border color */
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  padding-top: 28px;
+  padding-bottom: 28px;
+  font-size: 1rem; /* Custom font size */
+  margin-bottom: 15px; /* Custom margin */
+  background-color: rgb(16, 17, 17), var(--bs-bg-opacity) !important;
+  color: #000000; /* Custom text color */
+  border-radius: 1.5rem;
+}

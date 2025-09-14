@@ -6,4 +6,7 @@ export const initialLandingState: LandingState = {
   packages: [],
   isLoading: false,
   isError: false,
+  reservation: null,
+  isProcessingReservation: false,
+  reservationError: null,
 };

@@ -426,6 +426,10 @@ export class MobileCheckoutModalComponent
 
   // Mobile-specific methods
   getStepTitle(): string {
+    if (this.showConfirmation) {
+      return 'Confirmación de Reserva';
+    }
+
     switch (this.currentStep) {
       case 1:
         return 'Información Personal';
@@ -469,5 +473,51 @@ export class MobileCheckoutModalComponent
     if (existingStyle) {
       existingStyle.remove();
     }
+  }
+
+  // Getters for thank-you component data
+  get thankYouBookingDetails() {
+    return {
+      origin: this.bookingDetails?.origin,
+      destination: this.bookingDetails?.destination,
+      departureDate: this.bookingDetails?.departureDate,
+      departureTime: this.bookingDetails?.departureTime,
+      returnDate: this.bookingDetails?.returnDate,
+      returnTime: this.bookingDetails?.returnTime,
+      passengers: this.bookingDetails?.passengers,
+      isRoundTrip: this.bookingDetails?.isRoundTrip,
+      totalPrice: this.bookingDetails?.totalPrice,
+      serviceFee: this.bookingDetails?.serviceFee,
+      urgencyFee: this.bookingDetails?.urgencyFee,
+      grandTotal: this.bookingDetails?.grandTotal,
+      savings: this.bookingDetails?.savings,
+      expressTrip: this.bookingDetails?.expressTrip,
+      pickupInfo: this.bookingDetails?.pickupInfo,
+      vans: this.bookingDetails?.vans,
+      distance: this.bookingDetails?.distance,
+      duration: this.bookingDetails?.duration,
+    };
+  }
+
+  get thankYouUserInfo() {
+    return {
+      firstName: this.userInfo.firstName,
+      lastName: this.userInfo.lastName,
+      email: this.userInfo.email,
+      phone: this.userInfo.phone,
+      nationality: this.userInfo.nationality,
+      dateOfBirth: this.userInfo.dateOfBirth,
+      passportNumber: this.userInfo.passportNumber,
+      specialRequests: this.userInfo.specialRequests,
+    };
+  }
+
+  get thankYouPaymentMethod() {
+    return {
+      cardholderName: this.paymentMethod.cardholderName,
+      cardNumber: this.paymentMethod.cardNumber,
+      expiryDate: this.paymentMethod.expiryDate,
+      cvv: this.paymentMethod.cvv,
+    };
   }
 }

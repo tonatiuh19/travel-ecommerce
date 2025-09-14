@@ -177,7 +177,7 @@
                       >Ciudad de Destino desde París</label
                     >
                     <div class="input-group">
-                      <span class="input-group-text text-white">
+                      <span class="input-group-text">
                         <i class="fas fa-map-marked-alt"></i>
                       </span>
                       <select
@@ -635,19 +635,43 @@
                         </div>
                       </div>
 
-                      <!-- Return Pickup Time -->
+                      <!-- Return Pickup Date and Time -->
                       <div class="mb-3" *ngIf="expressTrip.isRoundTrip">
-                        <label class="form-label text-muted fw-semibold"
-                          >Hora de Recogida en el Hotel (regreso al
-                          aeropuerto)</label
-                        >
-                        <input
-                          type="time"
-                          class="form-control"
-                          [(ngModel)]="expressTrip.returnPickupTime"
-                          name="returnPickupTime"
-                          [required]="expressTrip.isRoundTrip"
-                        />
+                        <h6 class="text-dark mb-3">Información del Regreso</h6>
+                        <div class="row g-3">
+                          <div class="col-md-6">
+                            <label class="form-label text-muted"
+                              >Fecha de Regreso al Aeropuerto</label
+                            >
+                            <input
+                              type="date"
+                              class="form-control"
+                              [(ngModel)]="selectedReturnDate"
+                              name="returnDate"
+                              [min]="selectedDate"
+                              [required]="expressTrip.isRoundTrip"
+                            />
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-label text-muted"
+                              >Hora de Recogida en el Hotel</label
+                            >
+                            <input
+                              type="time"
+                              class="form-control"
+                              [(ngModel)]="expressTrip.returnPickupTime"
+                              name="returnPickupTime"
+                              [required]="expressTrip.isRoundTrip"
+                            />
+                          </div>
+                        </div>
+                        <div class="mt-2">
+                          <small class="text-muted">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Seleccione la fecha y hora en que debe ser recogido
+                            en el hotel para regresar al aeropuerto.
+                          </small>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -872,7 +896,14 @@
                 </ng-container>
 
                 <!-- Date and Time Selection -->
-                <div class="col-12">
+                <div
+                  class="col-12"
+                  *ngIf="
+                    !expressTrip.type ||
+                    (expressTrip.type !== 'airport-hotel-airport' &&
+                      expressTrip.type !== 'paris-tour-4h')
+                  "
+                >
                   <div class="row">
                     <div class="col-12">
                       <label class="form-label text-white fw-semibold"
@@ -920,6 +951,44 @@
                           </div>
                         </div>
                       </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Date Selection for Airport-Hotel-Airport Service -->
+                <div
+                  class="col-12"
+                  *ngIf="
+                    expressTrip.type === 'airport-hotel-airport' ||
+                    expressTrip.type === 'paris-tour-4h'
+                  "
+                >
+                  <div class="row">
+                    <div class="col-12">
+                      <label class="form-label text-white fw-semibold"
+                        >Fecha de Llegada</label
+                      >
+                      <div class="input-group">
+                        <span
+                          class="input-group-text text-white"
+                          style="background-color: #9db4c2"
+                        >
+                          <i class="fas fa-calendar"></i>
+                        </span>
+                        <input
+                          type="date"
+                          class="form-control"
+                          [(ngModel)]="selectedDate"
+                          name="arrivalDate"
+                          [min]="minDateString"
+                          (change)="onDepartureDateChange()"
+                          required
+                        />
+                      </div>
+                      <small class="text-light opacity-75 mt-1">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Fecha en que llega su vuelo al aeropuerto
+                      </small>
                     </div>
                   </div>
                 </div>
@@ -1032,13 +1101,42 @@
                   </div>
 
                   <div class="small text-muted mt-2">
-                    <div>
-                      <strong>Salida:</strong> {{ selectedDate }} a las
-                      {{ selectedTime }}
+                    <div *ngIf="expressTrip.type === 'airport-hotel-airport'">
+                      <strong>Llegada:</strong> {{ selectedDate }} a las
+                      {{ pickupInfo.flightArrivalTime }}
+                      <div
+                        *ngIf="
+                          expressTrip.isRoundTrip &&
+                          selectedReturnDate &&
+                          expressTrip.returnPickupTime
+                        "
+                      >
+                        <strong>Regreso:</strong> {{ selectedReturnDate }} a las
+                        {{ expressTrip.returnPickupTime }}
+                      </div>
                     </div>
-                    <div *ngIf="selectedDestination !== 'Ámsterdam'">
-                      <strong>Regreso:</strong> {{ selectedReturnDate }} a las
-                      {{ selectedReturnTime }}
+                    <div *ngIf="expressTrip.type === 'paris-tour-4h'">
+                      <strong>Llegada:</strong> {{ selectedDate }} a las
+                      {{ pickupInfo.flightArrivalTime }}
+                    </div>
+                    <div
+                      *ngIf="
+                        expressTrip.type !== 'airport-hotel-airport' &&
+                        expressTrip.type !== 'paris-tour-4h'
+                      "
+                    >
+                      <div>
+                        <strong>Salida:</strong> {{ selectedDate }} a las
+                        {{ selectedTime }}
+                      </div>
+                      <div
+                        *ngIf="
+                          selectedDestination !== 'Ámsterdam' && isRoundTrip
+                        "
+                      >
+                        <strong>Regreso:</strong> {{ selectedReturnDate }} a las
+                        {{ selectedReturnTime }}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1144,17 +1242,80 @@
                   <div class="row align-items-center">
                     <div class="col-md-8">
                       <h5 class="mb-1">
-                        {{
-                          selectedDestination === "Ámsterdam"
-                            ? "Precio Total - Solo Ida"
-                            : "Precio Total - Ida y Vuelta Incluida"
-                        }}
+                        <span *ngIf="selectedDestination === 'Ámsterdam'">
+                          Precio Total - Solo Ida
+                        </span>
+                        <span
+                          *ngIf="
+                            expressTrip.type === 'airport-hotel-airport' &&
+                            !expressTrip.isRoundTrip
+                          "
+                        >
+                          Precio Total - Solo Aeropuerto → Hotel
+                        </span>
+                        <span
+                          *ngIf="
+                            expressTrip.type === 'airport-hotel-airport' &&
+                            expressTrip.isRoundTrip
+                          "
+                        >
+                          Precio Total - Aeropuerto ⇄ Hotel
+                        </span>
+                        <span
+                          *ngIf="
+                            selectedDestination !== 'Ámsterdam' &&
+                            expressTrip.type !== 'airport-hotel-airport'
+                          "
+                        >
+                          Precio Total - Ida y Vuelta Incluida
+                        </span>
+                        <span
+                          *ngIf="
+                            expressTrip.type &&
+                            expressTrip.type !== 'airport-hotel-airport'
+                          "
+                        >
+                          Precio Total - Servicio Express
+                        </span>
                       </h5>
                       <p class="text-muted mb-0">
-                        <small>
+                        <small
+                          *ngIf="expressTrip.type === 'airport-hotel-airport'"
+                        >
+                          <i class="fas fa-plane-arrival me-1"></i>
+                          Llegada: {{ selectedDate }} a las
+                          {{ pickupInfo.flightArrivalTime }}
+                          <span
+                            *ngIf="
+                              expressTrip.isRoundTrip &&
+                              selectedReturnDate &&
+                              expressTrip.returnPickupTime
+                            "
+                          >
+                            <br />
+                            <i class="fas fa-plane-departure me-1"></i>
+                            Regreso: {{ selectedReturnDate }} a las
+                            {{ expressTrip.returnPickupTime }}
+                          </span>
+                        </small>
+                        <small *ngIf="expressTrip.type === 'paris-tour-4h'">
+                          <i class="fas fa-plane-arrival me-1"></i>
+                          Llegada: {{ selectedDate }} a las
+                          {{ pickupInfo.flightArrivalTime }}
+                        </small>
+                        <small
+                          *ngIf="
+                            expressTrip.type !== 'airport-hotel-airport' &&
+                            expressTrip.type !== 'paris-tour-4h'
+                          "
+                        >
                           <i class="fas fa-plane-departure me-1"></i>
                           Salida: {{ selectedDate }} a las {{ selectedTime }}
-                          <span *ngIf="selectedDestination !== 'Ámsterdam'">
+                          <span
+                            *ngIf="
+                              selectedDestination !== 'Ámsterdam' && isRoundTrip
+                            "
+                          >
                             <br />
                             <i class="fas fa-plane-arrival me-1"></i>
                             Regreso: {{ selectedReturnDate }} a las
@@ -1203,11 +1364,37 @@
                         €{{ bookingCalculation.grandTotal | number : "1.2-2" }}
                       </h3>
                       <small class="text-success">
-                        {{
-                          selectedDestination === "Ámsterdam"
-                            ? "¡Solo ida!"
-                            : "¡Ida y vuelta incluida!"
-                        }}
+                        <span *ngIf="selectedDestination === 'Ámsterdam'"
+                          >¡Solo ida!</span
+                        >
+                        <span
+                          *ngIf="
+                            expressTrip.type === 'airport-hotel-airport' &&
+                            !expressTrip.isRoundTrip
+                          "
+                          >¡Solo aeropuerto → hotel!</span
+                        >
+                        <span
+                          *ngIf="
+                            expressTrip.type === 'airport-hotel-airport' &&
+                            expressTrip.isRoundTrip
+                          "
+                          >¡Aeropuerto ⇄ hotel!</span
+                        >
+                        <span
+                          *ngIf="
+                            selectedDestination !== 'Ámsterdam' &&
+                            !expressTrip.type
+                          "
+                          >¡Ida y vuelta incluida!</span
+                        >
+                        <span
+                          *ngIf="
+                            expressTrip.type &&
+                            expressTrip.type !== 'airport-hotel-airport'
+                          "
+                          >¡Servicio express!</span
+                        >
                       </small>
                     </div>
                   </div>
@@ -1275,7 +1462,7 @@
 <!-- Checkout Modal -->
 <app-checkout-modal
   [isVisible]="showCheckoutModal"
-  [bookingDetails]="getBookingDetailsForCheckout()"
+  [bookingDetails]="currentBookingDetails || getBookingDetailsForCheckout()"
   (closeModal)="closeCheckoutModal()"
   (bookingConfirmed)="onBookingConfirmed($event)"
 ></app-checkout-modal>

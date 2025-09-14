@@ -5,6 +5,14 @@
   (click)="close()"
   *ngIf="isVisible"
 >
+  <!-- Loading Mask for Payment Processing -->
+  <app-loading-mask
+    [isVisible]="isProcessingPayment"
+    message="Procesando tu pago..."
+    size="large"
+  >
+  </app-loading-mask>
+
   <div class="checkout-modal-container" (click)="$event.stopPropagation()">
     <!-- Modal Header -->
     <div class="modal-header">
@@ -36,247 +44,206 @@
         <div class="row g-4">
           <!-- Left Column - Forms -->
           <div class="col-lg-8">
-            <!-- User Information Section -->
-            <div class="checkout-section mb-5">
-              <div class="section-header mb-4">
-                <h5 class="fw-bold text-primary">
-                  <fa-icon [icon]="faUserCircle" class="me-2"></fa-icon
-                  >Información Personal
-                </h5>
-                <p class="text-muted mb-0">Completa tus datos de contacto</p>
-              </div>
+            <form
+              id="checkoutForm"
+              (ngSubmit)="processPayment()"
+              #checkoutForm="ngForm"
+            >
+              <!-- User Information Section -->
+              <div class="checkout-section mb-5">
+                <div class="section-header mb-4">
+                  <h5 class="fw-bold text-primary">
+                    <fa-icon [icon]="faUserCircle" class="me-2"></fa-icon
+                    >Información Personal
+                  </h5>
+                  <p class="text-muted mb-0">Completa tus datos de contacto</p>
+                </div>
 
-              <div class="row g-3">
-                <div class="col-md-6">
-                  <label class="form-label">Nombre *</label>
-                  <input
-                    type="text"
-                    class="form-control form-control-lg"
-                    [(ngModel)]="userInfo.firstName"
-                    name="firstName"
-                    placeholder="Ingresa tu nombre"
-                    required
-                  />
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label">Apellidos *</label>
-                  <input
-                    type="text"
-                    class="form-control form-control-lg"
-                    [(ngModel)]="userInfo.lastName"
-                    name="lastName"
-                    placeholder="Ingresa tus apellidos"
-                    required
-                  />
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label">Email *</label>
-                  <input
-                    type="email"
-                    class="form-control form-control-lg"
-                    [(ngModel)]="userInfo.email"
-                    name="email"
-                    placeholder="tu@email.com"
-                    required
-                  />
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label">Teléfono *</label>
-                  <input
-                    type="tel"
-                    class="form-control form-control-lg"
-                    [(ngModel)]="userInfo.phone"
-                    name="phone"
-                    placeholder="+34 123 456 789"
-                    required
-                  />
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label">País *</label>
-                  <select
-                    class="form-select form-select-lg"
-                    [(ngModel)]="userInfo.nationality"
-                    name="nationality"
-                    required
-                  >
-                    <option value="">Selecciona tu país</option>
-                    <option *ngFor="let country of countries" [value]="country">
-                      {{ country }}
-                    </option>
-                  </select>
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label">Fecha de Nacimiento</label>
-                  <input
-                    type="date"
-                    class="form-control form-control-lg"
-                    [(ngModel)]="userInfo.dateOfBirth"
-                    name="dateOfBirth"
-                  />
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label"
-                    >Número de Pasaporte (Opcional)</label
-                  >
-                  <input
-                    type="text"
-                    class="form-control form-control-lg"
-                    [(ngModel)]="userInfo.passportNumber"
-                    name="passportNumber"
-                    placeholder="A12345678"
-                  />
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label">Solicitudes Especiales</label>
-                  <input
-                    type="text"
-                    class="form-control form-control-lg"
-                    [(ngModel)]="userInfo.specialRequests"
-                    name="specialRequests"
-                    placeholder="Asientos específicos, asistencia, etc."
-                  />
-                </div>
-              </div>
-            </div>
-
-            <!-- Payment Information Section -->
-            <div class="checkout-section mb-5" *ngIf="!showConfirmation">
-              <div class="section-header mb-4">
-                <h5 class="fw-bold text-primary">
-                  <fa-icon [icon]="faCreditCard" class="me-2"></fa-icon>Método
-                  de Pago
-                </h5>
-              </div>
-
-              <!-- Payment Forms -->
-              <div class="payment-form-section">
-                <!-- Credit Card Form -->
-                <div>
-                  <h6 class="mb-3 fw-semibold">Datos de la Tarjeta</h6>
-                  <div class="row g-3">
-                    <div class="col-12">
-                      <label class="form-label">Nombre en la Tarjeta *</label>
-                      <input
-                        type="text"
-                        class="form-control form-control-lg"
-                        [(ngModel)]="paymentMethod.cardholderName"
-                        name="cardholderName"
-                        placeholder="Como aparece en la tarjeta"
-                        required
-                      />
-                    </div>
-                    <div class="col-12">
-                      <label class="form-label">Número de Tarjeta *</label>
-                      <input
-                        type="text"
-                        class="form-control form-control-lg"
-                        [(ngModel)]="paymentMethod.cardNumber"
-                        name="cardNumber"
-                        placeholder="1234 5678 9012 3456"
-                        maxlength="19"
-                        required
-                      />
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label">Vencimiento *</label>
-                      <input
-                        type="text"
-                        class="form-control form-control-lg"
-                        [(ngModel)]="paymentMethod.expiryDate"
-                        name="expiryDate"
-                        placeholder="MM/AA"
-                        maxlength="5"
-                        required
-                      />
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label">CVV *</label>
-                      <input
-                        type="text"
-                        class="form-control form-control-lg"
-                        [(ngModel)]="paymentMethod.cvv"
-                        name="cvv"
-                        placeholder="123"
-                        maxlength="4"
-                        required
-                      />
-                    </div>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label">Nombre *</label>
+                    <input
+                      type="text"
+                      class="form-control form-control-lg"
+                      [(ngModel)]="userInfo.firstName"
+                      name="firstName"
+                      placeholder="Ingresa tu nombre"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Apellidos *</label>
+                    <input
+                      type="text"
+                      class="form-control form-control-lg"
+                      [(ngModel)]="userInfo.lastName"
+                      name="lastName"
+                      placeholder="Ingresa tus apellidos"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Email *</label>
+                    <input
+                      type="email"
+                      class="form-control form-control-lg"
+                      [(ngModel)]="userInfo.email"
+                      name="email"
+                      placeholder="tu@email.com"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Teléfono *</label>
+                    <input
+                      type="tel"
+                      class="form-control form-control-lg"
+                      [(ngModel)]="userInfo.phone"
+                      name="phone"
+                      placeholder="+34 123 456 789"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">País *</label>
+                    <select
+                      class="form-select form-select-lg"
+                      [(ngModel)]="userInfo.nationality"
+                      name="nationality"
+                      required
+                    >
+                      <option value="">Selecciona tu país</option>
+                      <option
+                        *ngFor="let country of countries"
+                        [value]="country"
+                      >
+                        {{ country }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Fecha de Nacimiento</label>
+                    <input
+                      type="date"
+                      class="form-control form-control-lg"
+                      [(ngModel)]="userInfo.dateOfBirth"
+                      name="dateOfBirth"
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label"
+                      >Número de Pasaporte (Opcional)</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control form-control-lg"
+                      [(ngModel)]="userInfo.passportNumber"
+                      name="passportNumber"
+                      placeholder="A12345678"
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Solicitudes Especiales</label>
+                    <input
+                      type="text"
+                      class="form-control form-control-lg"
+                      [(ngModel)]="userInfo.specialRequests"
+                      name="specialRequests"
+                      placeholder="Asientos específicos, asistencia, etc."
+                    />
                   </div>
                 </div>
               </div>
 
-              <!-- Terms and Conditions -->
-              <div class="terms-section mt-4">
-                <div class="form-check form-check-lg">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    id="terms"
-                    required
-                  />
-                  <label class="form-check-label" for="terms">
-                    Acepto los
-                    <a href="#" class="text-primary">términos y condiciones</a>
-                    y la
-                    <a href="#" class="text-primary">política de privacidad</a>
-                    *
-                  </label>
+              <!-- Payment Information Section -->
+              <div class="checkout-section mb-5" *ngIf="!showConfirmation">
+                <div class="section-header mb-4">
+                  <h5 class="fw-bold text-primary">
+                    <fa-icon [icon]="faCreditCard" class="me-2"></fa-icon>Método
+                    de Pago
+                  </h5>
                 </div>
-              </div>
-            </div>
 
-            <!-- Confirmation Section -->
-            <div *ngIf="showConfirmation" class="checkout-section">
-              <div class="confirmation-success text-center">
-                <div class="success-animation mb-4">
-                  <fa-icon
-                    [icon]="faCheckCircle"
-                    class="text-success"
-                    style="font-size: 4rem"
-                  ></fa-icon>
+                <!-- Payment Forms -->
+                <div class="payment-form-section">
+                  <!-- Credit Card Form -->
+                  <div
+                    id="card-element"
+                    class="form-control custom-input-payment"
+                  ></div>
                 </div>
-                <h3 class="success-title text-success">¡Reserva Confirmada!</h3>
-                <p class="success-subtitle mb-4">
-                  Tu reserva ha sido procesada exitosamente
-                </p>
 
-                <div class="confirmation-card">
-                  <div class="confirmation-details">
-                    <div class="detail-item">
-                      <span class="label">ID de Reserva:</span>
-                      <span class="value fw-bold">{{
-                        generateBookingId()
-                      }}</span>
-                    </div>
-                    <div class="detail-item">
-                      <span class="label">Email:</span>
-                      <span class="value">{{ userInfo.email }}</span>
-                    </div>
-                    <div class="detail-item">
-                      <span class="label">Fecha:</span>
-                      <span class="value">{{ getCurrentDate() }}</span>
-                    </div>
+                <!-- Terms and Conditions -->
+                <div class="terms-section mt-4">
+                  <div class="form-check form-check-lg">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      id="terms"
+                      required
+                    />
+                    <label class="form-check-label" for="terms">
+                      Acepto los
+                      <a href="#" class="text-primary"
+                        >términos y condiciones</a
+                      >
+                      y la
+                      <a href="#" class="text-primary"
+                        >política de privacidad</a
+                      >
+                      *
+                    </label>
                   </div>
                 </div>
-
-                <div class="confirmation-actions mt-4">
-                  <button
-                    class="btn btn-primary btn-lg me-3"
-                    (click)="downloadConfirmation()"
-                  >
-                    <fa-icon [icon]="faDownload" class="me-2"></fa-icon
-                    >Descargar PDF
-                  </button>
-                  <button
-                    class="btn btn-outline-primary btn-lg"
-                    (click)="close()"
-                  >
-                    <fa-icon [icon]="faHome" class="me-2"></fa-icon>Volver al
-                    Inicio
-                  </button>
-                </div>
               </div>
-            </div>
+
+              <!-- Thank You Component Integration -->
+              <div *ngIf="showConfirmation" class="checkout-section">
+                <app-thank-you
+                  [isVisible]="showConfirmation"
+                  [paymentSuccessful]="paymentSuccessful"
+                  [bookingDetails]="thankYouBookingDetails"
+                  [userInfo]="thankYouUserInfo"
+                  [paymentMethod]="thankYouPaymentMethod"
+                  [reservationData]="reservationData"
+                  (closed)="close()"
+                  (downloadConfirmation)="downloadConfirmation()"
+                  (tryAgain)="retryPayment()"
+                ></app-thank-you>
+              </div>
+
+              <!-- Payment Button Inside Form -->
+              <div
+                *ngIf="!showConfirmation"
+                class="d-flex justify-content-end mt-4"
+              >
+                <button
+                  type="submit"
+                  class="btn btn-success btn-lg px-5"
+                  [disabled]="!validateAllInfo() || isProcessingPayment"
+                >
+                  <span *ngIf="!isProcessingPayment">
+                    <fa-icon [icon]="faLock" class="me-2"></fa-icon>
+                    Pagar
+                    {{
+                      formatCurrency(
+                        bookingDetails?.grandTotal ||
+                          bookingDetails?.totalPrice ||
+                          0
+                      )
+                    }}
+                  </span>
+                  <span *ngIf="isProcessingPayment">
+                    <fa-icon
+                      [icon]="faSpinner"
+                      spin="true"
+                      class="me-2"
+                    ></fa-icon>
+                    Procesando...
+                  </span>
+                </button>
+              </div>
+            </form>
           </div>
 
           <!-- Right Column - Booking Summary (Sticky) -->
@@ -373,7 +340,68 @@
 
                     <!-- Trip Details -->
                     <div class="trip-info mt-3">
-                      <div class="trip-item">
+                      <!-- Airport-Hotel-Airport Service -->
+                      <div
+                        class="trip-item"
+                        *ngIf="
+                          bookingDetails?.expressTrip?.type ===
+                          'airport-hotel-airport'
+                        "
+                      >
+                        <div class="trip-label">
+                          <fa-icon
+                            [icon]="faPlaneArrival"
+                            class="text-primary"
+                          ></fa-icon>
+                          <span class="fw-semibold">Llegada</span>
+                        </div>
+                        <div class="trip-details">
+                          <div class="date">
+                            {{
+                              formatDate(bookingDetails?.departureDate || "")
+                            }}
+                          </div>
+                          <div class="time text-muted">
+                            {{ bookingDetails?.pickupInfo?.flightArrivalTime }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Paris Tour 4h Service -->
+                      <div
+                        class="trip-item"
+                        *ngIf="
+                          bookingDetails?.expressTrip?.type === 'paris-tour-4h'
+                        "
+                      >
+                        <div class="trip-label">
+                          <fa-icon
+                            [icon]="faPlaneArrival"
+                            class="text-primary"
+                          ></fa-icon>
+                          <span class="fw-semibold">Llegada</span>
+                        </div>
+                        <div class="trip-details">
+                          <div class="date">
+                            {{
+                              formatDate(bookingDetails?.departureDate || "")
+                            }}
+                          </div>
+                          <div class="time text-muted">
+                            {{ bookingDetails?.pickupInfo?.flightArrivalTime }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Regular transfers and Disney transfer -->
+                      <div
+                        class="trip-item"
+                        *ngIf="
+                          !bookingDetails?.expressTrip?.type ||
+                          bookingDetails?.expressTrip?.type ===
+                            'disney-transfer'
+                        "
+                      >
                         <div class="trip-label">
                           <fa-icon
                             [icon]="faPlaneDeparture"
@@ -397,7 +425,11 @@
                       <div
                         *ngIf="
                           bookingDetails?.isRoundTrip &&
-                          bookingDetails?.destination !== 'Ámsterdam'
+                          bookingDetails?.destination !== 'Ámsterdam' &&
+                          bookingDetails?.expressTrip?.type !==
+                            'paris-tour-4h' &&
+                          bookingDetails?.expressTrip?.type !==
+                            'disney-transfer'
                         "
                         class="trip-item mt-2"
                       >
@@ -675,11 +707,44 @@
                   <div class="price-section">
                     <div class="price-item">
                       <span class="price-label">
-                        {{
-                          bookingDetails?.destination === "Ámsterdam"
-                            ? "Viaje (solo ida)"
-                            : "Viaje de ida y vuelta"
-                        }}:
+                        <span
+                          *ngIf="bookingDetails?.destination === 'Ámsterdam'"
+                        >
+                          Viaje (solo ida)
+                        </span>
+                        <span
+                          *ngIf="
+                            bookingDetails?.expressTrip?.type ===
+                            'paris-tour-4h'
+                          "
+                        >
+                          Tour Express París (4h)
+                        </span>
+                        <span
+                          *ngIf="
+                            bookingDetails?.expressTrip?.type ===
+                            'airport-hotel-airport'
+                          "
+                        >
+                          Servicio Aeropuerto-Hotel
+                        </span>
+                        <span
+                          *ngIf="
+                            bookingDetails?.expressTrip?.type ===
+                            'disney-transfer'
+                          "
+                        >
+                          Transporte a Disney
+                        </span>
+                        <span
+                          *ngIf="
+                            !bookingDetails?.expressTrip?.type &&
+                            bookingDetails?.destination !== 'Ámsterdam'
+                          "
+                        >
+                          Viaje de ida y vuelta
+                        </span>
+                        :
                       </span>
                       <span class="price-value">{{
                         formatCurrency(bookingDetails?.totalPrice || 0)
@@ -756,26 +821,7 @@
     <div class="modal-footer" *ngIf="!showConfirmation">
       <div class="container-fluid">
         <div class="d-flex justify-content-end align-items-center">
-          <button
-            type="button"
-            class="btn btn-success btn-lg px-5"
-            (click)="processPayment()"
-            [disabled]="!validateAllInfo() || isProcessingPayment"
-          >
-            <span *ngIf="!isProcessingPayment">
-              <fa-icon [icon]="faLock" class="me-2"></fa-icon>
-              Pagar
-              {{
-                formatCurrency(
-                  bookingDetails?.grandTotal || bookingDetails?.totalPrice || 0
-                )
-              }}
-            </span>
-            <span *ngIf="isProcessingPayment">
-              <fa-icon [icon]="faSpinner" spin="true" class="me-2"></fa-icon>
-              Procesando...
-            </span>
-          </button>
+          <!-- Payment button moved inside form -->
         </div>
       </div>
     </div>

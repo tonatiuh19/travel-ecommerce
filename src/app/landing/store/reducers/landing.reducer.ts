@@ -37,5 +37,42 @@ export const LandingReducer = createRehydrateReducer(
         isError: true,
       };
     }
-  )
+  ),
+  on(LandingActions.createReservation, (state: LandingState) => {
+    return {
+      ...state,
+      isProcessingReservation: true,
+      reservationError: null,
+    };
+  }),
+  on(
+    LandingActions.createReservationSuccess,
+    (state: LandingState, { reservationResponse }: any) => {
+      return {
+        ...state,
+        reservation: reservationResponse,
+        isProcessingReservation: false,
+        reservationError: null,
+      };
+    }
+  ),
+  on(
+    LandingActions.createReservationFailure,
+    (state: LandingState, { errorResponse }: any) => {
+      return {
+        ...state,
+        reservation: null,
+        isProcessingReservation: false,
+        reservationError: errorResponse,
+      };
+    }
+  ),
+  on(LandingActions.clearReservation, (state: LandingState) => {
+    return {
+      ...state,
+      reservation: null,
+      isProcessingReservation: false,
+      reservationError: null,
+    };
+  })
 );

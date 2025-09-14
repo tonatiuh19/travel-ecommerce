@@ -1,0 +1,595 @@
+<!-- Thank You Page Modal -->
+<div class="thank-you-overlay" [class.active]="isVisible" *ngIf="isVisible">
+  <div class="thank-you-container">
+    <!-- Header -->
+    <div class="thank-you-header">
+      <div class="container-fluid">
+        <div class="header-content">
+          <button type="button" class="btn btn-outline-light" (click)="close()">
+            <fa-icon [icon]="faArrowLeft"></fa-icon>
+          </button>
+          <div class="header-title">
+            <h4 class="mb-0 text-white fw-bold">
+              {{
+                paymentSuccessful
+                  ? "Confirmación de Reserva"
+                  : "Error en el Pago"
+              }}
+            </h4>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="thank-you-content">
+      <div class="container-fluid">
+        <!-- Success Section -->
+        <div *ngIf="paymentSuccessful" class="success-section">
+          <!-- Success Animation -->
+          <div class="status-animation mb-4">
+            <div class="success-circle">
+              <fa-icon [icon]="faCheckCircle" class="success-icon"></fa-icon>
+            </div>
+            <div class="success-pulse"></div>
+          </div>
+
+          <!-- Success Title -->
+          <div class="status-title mb-4">
+            <h2 class="text-success fw-bold mb-2">¡Reserva Confirmada!</h2>
+            <p class="text-muted lead mb-0">
+              Tu pago se ha procesado exitosamente
+            </p>
+          </div>
+
+          <!-- Confirmation Details -->
+          <div class="confirmation-details mb-4">
+            <div class="confirmation-card">
+              <div class="card-header text-center">
+                <div class="confirmation-number">
+                  <small class="text-muted">Número de Confirmación</small>
+                  <h3 class="text-primary fw-bold mb-0">
+                    {{ generateConfirmationNumber() }}
+                  </h3>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="detail-row">
+                  <fa-icon
+                    [icon]="faCalendarAlt"
+                    class="detail-icon text-info"
+                  ></fa-icon>
+                  <div class="detail-info">
+                    <span class="detail-label">Fecha de Confirmación</span>
+                    <span class="detail-value"
+                      >{{ getCurrentDate() }} - {{ getCurrentTime() }}</span
+                    >
+                  </div>
+                </div>
+                <div class="detail-row">
+                  <fa-icon
+                    [icon]="faEnvelope"
+                    class="detail-icon text-warning"
+                  ></fa-icon>
+                  <div class="detail-info">
+                    <span class="detail-label">Email de Confirmación</span>
+                    <span class="detail-value">{{
+                      userInfo.email || "No proporcionado"
+                    }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Error Section -->
+        <div *ngIf="!paymentSuccessful" class="error-section">
+          <!-- Error Animation -->
+          <div class="status-animation mb-4">
+            <div class="error-circle">
+              <fa-icon [icon]="faTimesCircle" class="error-icon"></fa-icon>
+            </div>
+            <div class="error-pulse"></div>
+          </div>
+
+          <!-- Error Title -->
+          <div class="status-title mb-4">
+            <h2 class="text-danger fw-bold mb-2">Pago No Procesado</h2>
+            <p class="text-muted lead mb-0">
+              Hubo un problema con tu transacción
+            </p>
+          </div>
+
+          <!-- Error Details -->
+          <div class="error-details mb-4">
+            <div class="error-card">
+              <div class="card-header text-center">
+                <div class="error-number">
+                  <small class="text-muted">Número de Error</small>
+                  <h3 class="text-danger fw-bold mb-0">
+                    {{ generateConfirmationNumber() }}
+                  </h3>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="alert alert-danger">
+                  <fa-icon
+                    [icon]="faExclamationTriangle"
+                    class="me-2"
+                  ></fa-icon>
+                  <strong>Error en la transacción:</strong> No se pudo procesar
+                  tu pago. Por favor, verifica los datos de tu tarjeta e intenta
+                  nuevamente.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Booking Summary -->
+        <div class="booking-summary-section">
+          <div class="section-header mb-3">
+            <h5 class="fw-bold text-dark">
+              <fa-icon [icon]="faReceipt" class="me-2 text-primary"></fa-icon>
+              {{
+                paymentSuccessful
+                  ? "Detalles de tu Reserva"
+                  : "Resumen de la Reserva Pendiente"
+              }}
+            </h5>
+          </div>
+
+          <!-- Service Type -->
+          <div
+            class="service-info mb-4"
+            *ngIf="bookingDetails?.expressTrip?.type"
+          >
+            <div class="info-card">
+              <div class="card-header bg-primary text-white">
+                <fa-icon [icon]="faVanShuttle" class="me-2"></fa-icon>
+                Servicio Seleccionado
+              </div>
+              <div class="card-body">
+                <div
+                  class="service-badge"
+                  *ngIf="bookingDetails?.expressTrip?.type === 'paris-tour-4h'"
+                >
+                  <span class="badge bg-info fs-6 p-2">
+                    <fa-icon [icon]="faMapMarkerAlt" class="me-2"></fa-icon>
+                    Tour Express París (4 horas)
+                  </span>
+                </div>
+                <div
+                  class="service-badge"
+                  *ngIf="
+                    bookingDetails?.expressTrip?.type === 'disney-transfer'
+                  "
+                >
+                  <span class="badge bg-warning fs-6 p-2">
+                    <fa-icon [icon]="faMapMarkerAlt" class="me-2"></fa-icon>
+                    Transporte a Disney
+                  </span>
+                </div>
+                <div
+                  class="service-badge"
+                  *ngIf="
+                    bookingDetails?.expressTrip?.type ===
+                    'airport-hotel-airport'
+                  "
+                >
+                  <span class="badge bg-success fs-6 p-2">
+                    <fa-icon [icon]="faPlane" class="me-2"></fa-icon>
+                    Aeropuerto - Hotel - Aeropuerto
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Trip Information -->
+          <div class="trip-info mb-4">
+            <div class="info-card">
+              <div class="card-header bg-light">
+                <fa-icon
+                  [icon]="faArrowRight"
+                  class="me-2 text-primary"
+                ></fa-icon>
+                Información del Viaje
+              </div>
+              <div class="card-body">
+                <!-- Route -->
+                <div class="route-display mb-3">
+                  <div class="route-cities">
+                    <span class="city-from">{{
+                      bookingDetails?.origin || "París"
+                    }}</span>
+                    <fa-icon
+                      [icon]="faArrowRight"
+                      class="route-arrow mx-3 text-muted"
+                    ></fa-icon>
+                    <span class="city-to">{{
+                      bookingDetails?.destination ||
+                        (bookingDetails?.expressTrip?.type === "disney-transfer"
+                          ? "Disneyland París"
+                          : "París")
+                    }}</span>
+                  </div>
+                  <div
+                    class="route-details text-muted small"
+                    *ngIf="!bookingDetails?.expressTrip?.type"
+                  >
+                    {{ bookingDetails?.distance }} •
+                    {{ bookingDetails?.duration }}
+                  </div>
+                </div>
+
+                <!-- Trip Details Grid -->
+                <div class="row g-3">
+                  <div class="col-sm-6">
+                    <div class="trip-detail">
+                      <div class="detail-icon-wrapper">
+                        <fa-icon
+                          [icon]="faPlaneDeparture"
+                          class="text-primary"
+                        ></fa-icon>
+                      </div>
+                      <div>
+                        <div class="detail-label">Salida</div>
+                        <div class="detail-value">
+                          {{ formatDate(bookingDetails?.departureDate || "") }}
+                        </div>
+                        <div class="detail-time">
+                          {{ bookingDetails?.departureTime }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="col-sm-6"
+                    *ngIf="
+                      bookingDetails?.isRoundTrip &&
+                      bookingDetails?.destination !== 'Ámsterdam'
+                    "
+                  >
+                    <div class="trip-detail">
+                      <div class="detail-icon-wrapper">
+                        <fa-icon
+                          [icon]="faPlaneArrival"
+                          class="text-success"
+                        ></fa-icon>
+                      </div>
+                      <div>
+                        <div class="detail-label">Regreso</div>
+                        <div class="detail-value">
+                          {{ formatDate(bookingDetails?.returnDate || "") }}
+                        </div>
+                        <div class="detail-time">
+                          {{ bookingDetails?.returnTime }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="trip-detail">
+                      <div class="detail-icon-wrapper">
+                        <fa-icon [icon]="faUsers" class="text-info"></fa-icon>
+                      </div>
+                      <div>
+                        <div class="detail-label">Pasajeros</div>
+                        <div class="detail-value">
+                          {{ bookingDetails?.passengers || 1 }} persona(s)
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pickup Information -->
+          <div
+            class="pickup-info mb-4"
+            *ngIf="bookingDetails?.pickupInfo?.type"
+          >
+            <div class="info-card">
+              <div class="card-header bg-secondary text-white">
+                <fa-icon [icon]="faUserCheck" class="me-2"></fa-icon>
+                Información de Recogida
+              </div>
+              <div class="card-body">
+                <!-- Airport Pickup -->
+                <div *ngIf="bookingDetails?.pickupInfo?.type === 'airport'">
+                  <div class="pickup-type mb-2">
+                    <span class="badge bg-secondary">
+                      <fa-icon [icon]="faPlane" class="me-1"></fa-icon>
+                      Recogida en Aeropuerto
+                    </span>
+                  </div>
+                  <div
+                    class="pickup-details"
+                    *ngIf="bookingDetails?.pickupInfo?.flightNumber"
+                  >
+                    <div class="row g-2 small">
+                      <div class="col-6">
+                        <strong>Vuelo:</strong>
+                        {{ bookingDetails?.pickupInfo?.flightNumber }}
+                      </div>
+                      <div class="col-6">
+                        <strong>Aerolínea:</strong>
+                        {{ bookingDetails?.pickupInfo?.airline }}
+                      </div>
+                      <div class="col-6">
+                        <strong>Llegada:</strong>
+                        {{ bookingDetails?.pickupInfo?.flightArrivalTime }}
+                      </div>
+                      <div
+                        class="col-6"
+                        *ngIf="bookingDetails?.pickupInfo?.terminal"
+                      >
+                        <strong>Terminal:</strong>
+                        {{ bookingDetails?.pickupInfo?.terminal }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Hotel Pickup -->
+                <div *ngIf="bookingDetails?.pickupInfo?.type === 'hotel'">
+                  <div class="pickup-type mb-2">
+                    <span class="badge bg-secondary">
+                      <fa-icon [icon]="faHotel" class="me-1"></fa-icon>
+                      Recogida en Hotel
+                    </span>
+                  </div>
+                  <div
+                    class="pickup-details"
+                    *ngIf="bookingDetails?.pickupInfo?.hotelName"
+                  >
+                    <div class="small">
+                      <div>
+                        <strong>Hotel:</strong>
+                        {{ bookingDetails?.pickupInfo?.hotelName }}
+                      </div>
+                      <div class="mt-1">
+                        <strong>Dirección:</strong>
+                        {{ bookingDetails?.pickupInfo?.address }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Customer Information -->
+          <div
+            class="customer-info mb-4"
+            *ngIf="userInfo.firstName || userInfo.email"
+          >
+            <div class="info-card">
+              <div class="card-header bg-info text-white">
+                <fa-icon [icon]="faUserCheck" class="me-2"></fa-icon>
+                Información del Cliente
+              </div>
+              <div class="card-body">
+                <div class="row g-2 small">
+                  <div
+                    class="col-sm-6"
+                    *ngIf="userInfo.firstName || userInfo.lastName"
+                  >
+                    <strong>Nombre:</strong>
+                    {{ (userInfo.firstName + " " + userInfo.lastName).trim() }}
+                  </div>
+                  <div class="col-sm-6" *ngIf="userInfo.email">
+                    <strong>Email:</strong> {{ userInfo.email }}
+                  </div>
+                  <div class="col-sm-6" *ngIf="userInfo.phone">
+                    <strong>Teléfono:</strong> {{ userInfo.phone }}
+                  </div>
+                  <div class="col-sm-6" *ngIf="userInfo.nationality">
+                    <strong>País:</strong> {{ userInfo.nationality }}
+                  </div>
+                </div>
+                <div *ngIf="userInfo.specialRequests" class="mt-2">
+                  <strong>Solicitudes Especiales:</strong>
+                  <p class="small text-muted mb-0">
+                    {{ userInfo.specialRequests }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Payment Information -->
+          <div
+            class="payment-info mb-4"
+            *ngIf="paymentMethod.cardholderName && paymentSuccessful"
+          >
+            <div class="info-card">
+              <div class="card-header bg-success text-white">
+                <fa-icon [icon]="faCreditCard" class="me-2"></fa-icon>
+                Método de Pago
+              </div>
+              <div class="card-body">
+                <div class="payment-method">
+                  <div class="d-flex align-items-center">
+                    <fa-icon
+                      [icon]="faLock"
+                      class="text-success me-2"
+                    ></fa-icon>
+                    <div>
+                      <div class="fw-semibold">
+                        {{ paymentMethod.cardholderName }}
+                      </div>
+                      <div class="small text-muted">
+                        **** **** **** {{ paymentMethod.cardNumber?.slice(-4) }}
+                      </div>
+                    </div>
+                    <div class="ms-auto">
+                      <span class="badge bg-success">Procesado</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Vehicle Information -->
+          <div class="vehicle-info mb-4" *ngIf="bookingDetails?.vans?.length">
+            <div class="info-card">
+              <div class="card-header bg-warning text-dark">
+                <fa-icon [icon]="faVanShuttle" class="me-2"></fa-icon>
+                Vehículos Asignados
+              </div>
+              <div class="card-body">
+                <div
+                  *ngFor="let vanRec of bookingDetails?.vans"
+                  class="vehicle-item mb-2"
+                >
+                  <div
+                    class="d-flex justify-content-between align-items-center"
+                  >
+                    <div>
+                      <div class="fw-semibold">{{ vanRec.van.name }}</div>
+                      <div class="small text-muted">
+                        {{ vanRec.van.capacity }} pasajeros • x{{
+                          vanRec.quantity
+                        }}
+                      </div>
+                    </div>
+                    <span class="badge bg-light text-dark"
+                      >{{ vanRec.quantity }}x</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Price Summary -->
+          <div class="price-summary">
+            <div class="info-card">
+              <div
+                class="card-header"
+                [class.bg-success]="paymentSuccessful"
+                [class.bg-danger]="!paymentSuccessful"
+                class="text-white"
+              >
+                <fa-icon [icon]="faReceipt" class="me-2"></fa-icon>
+                {{ paymentSuccessful ? "Resumen de Pago" : "Total Pendiente" }}
+              </div>
+              <div class="card-body">
+                <div class="price-breakdown">
+                  <div class="price-item">
+                    <span class="price-label">Servicio base:</span>
+                    <span class="price-value">{{
+                      formatCurrency(bookingDetails?.totalPrice || 0)
+                    }}</span>
+                  </div>
+                  <div *ngIf="bookingDetails?.serviceFee" class="price-item">
+                    <span class="price-label">Tarifa de servicio (7%):</span>
+                    <span class="price-value">{{
+                      formatCurrency(bookingDetails?.serviceFee || 0)
+                    }}</span>
+                  </div>
+                  <div
+                    *ngIf="bookingDetails?.urgencyFee"
+                    class="price-item text-warning"
+                  >
+                    <span class="price-label">Tarifa de urgencia:</span>
+                    <span class="price-value">{{
+                      formatCurrency(bookingDetails?.urgencyFee || 0)
+                    }}</span>
+                  </div>
+                  <div
+                    *ngIf="bookingDetails?.savings"
+                    class="price-item text-success"
+                  >
+                    <span class="price-label">Descuento:</span>
+                    <span class="price-value"
+                      >-{{ formatCurrency(bookingDetails?.savings || 0) }}</span
+                    >
+                  </div>
+                  <hr class="my-3" />
+                  <div class="price-total">
+                    <span class="total-label"
+                      >Total
+                      {{ paymentSuccessful ? "Pagado" : "Pendiente" }}:</span
+                    >
+                    <span
+                      class="total-value"
+                      [class.text-success]="paymentSuccessful"
+                      [class.text-danger]="!paymentSuccessful"
+                    >
+                      {{
+                        formatCurrency(
+                          bookingDetails?.grandTotal ||
+                            bookingDetails?.totalPrice ||
+                            0
+                        )
+                      }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons mt-5">
+          <div *ngIf="paymentSuccessful" class="success-actions">
+            <button
+              class="btn btn-primary btn-lg mb-3 w-100"
+              (click)="onDownloadConfirmation()"
+            >
+              <fa-icon [icon]="faDownload" class="me-2"></fa-icon>
+              Descargar Confirmación PDF
+            </button>
+            <button
+              class="btn btn-outline-primary btn-lg w-100"
+              (click)="close()"
+            >
+              <fa-icon [icon]="faHome" class="me-2"></fa-icon>
+              Volver al Inicio
+            </button>
+          </div>
+
+          <div *ngIf="!paymentSuccessful" class="error-actions">
+            <button
+              class="btn btn-danger btn-lg mb-3 w-100"
+              (click)="onTryAgain()"
+            >
+              <fa-icon [icon]="faRefresh" class="me-2"></fa-icon>
+              Intentar Nuevamente
+            </button>
+            <button
+              class="btn btn-outline-secondary btn-lg w-100"
+              (click)="close()"
+            >
+              <fa-icon [icon]="faArrowLeft" class="me-2"></fa-icon>
+              Volver
+            </button>
+          </div>
+        </div>
+
+        <!-- Security Notice -->
+        <div class="security-notice mt-4">
+          <div class="alert alert-info">
+            <fa-icon [icon]="faShieldAlt" class="me-2"></fa-icon>
+            <small>
+              <strong>Información segura:</strong>
+              {{
+                paymentSuccessful
+                  ? "Tu pago ha sido procesado de forma segura. Recibirás un email de confirmación en breve."
+                  : "Tus datos están seguros. No se ha realizado ningún cargo a tu tarjeta."
+              }}
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

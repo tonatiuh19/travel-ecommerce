@@ -39,6 +39,17 @@ interface Route {
   distance: string;
 }
 
+interface PickupInfo {
+  type: 'airport' | 'hotel' | '';
+  airport?: string; // CDG or ORY
+  flightNumber?: string;
+  flightArrivalTime?: string;
+  airline?: string;
+  terminal?: string;
+  hotelName?: string;
+  address?: string;
+}
+
 interface ExpressTrip {
   type: string; // 'paris-tour-4h', 'disney-transfer', 'airport-hotel-airport'
   pickupLocation?: string; // 'airport' or 'hotel' (for Disney)
@@ -169,11 +180,15 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
   selectedDestination: string = '';
   selectedDate: string = '';
   selectedTime: string = '';
+  selectedReturnDate: string = '';
   selectedPassengers: number = 1;
   selectedRoute: Route | null = null;
 
   // Express trip data
   expressTrip: ExpressTrip = { type: 'none' };
+
+  // Pickup information for regular transfers
+  pickupInfo: PickupInfo = { type: '' };
 
   // Pickup details for Disney transfer
   airportPickup = {
@@ -292,6 +307,11 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     this.selectedDate = tomorrow.toISOString().split('T')[0];
+
+    // Set default return date (day after departure)
+    const dayAfterTomorrow = new Date();
+    dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2);
+    this.selectedReturnDate = dayAfterTomorrow.toISOString().split('T')[0];
 
     // Set default time
     this.selectedTime = '10:00';
@@ -639,6 +659,26 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
     this.bookingCalculation = null;
   }
 
+  onPickupTypeChange(type: string): void {
+    this.showResults = false;
+    // Reset pickup info when type changes
+    if (type === 'airport') {
+      this.pickupInfo = {
+        type: 'airport',
+        flightNumber: '',
+        flightArrivalTime: '',
+        airline: '',
+        terminal: '',
+      };
+    } else if (type === 'hotel') {
+      this.pickupInfo = {
+        type: 'hotel',
+        hotelName: '',
+        address: '',
+      };
+    }
+  }
+
   isSearchFormValid(): boolean {
     // Basic validation
     if (
@@ -649,9 +689,35 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
       return false;
     }
 
-    // For regular transfers, need destination
-    if (this.expressTrip.type === 'none' && !this.selectedDestination) {
-      return false;
+    // For regular transfers, need destination and pickup information
+    if (this.expressTrip.type === 'none') {
+      if (!this.selectedDestination) {
+        return false;
+      }
+
+      // Need pickup type
+      if (!this.pickupInfo.type) {
+        return false;
+      }
+
+      // For airport pickup, need flight details
+      if (this.pickupInfo.type === 'airport') {
+        if (
+          !this.pickupInfo.airport ||
+          !this.pickupInfo.flightNumber ||
+          !this.pickupInfo.airline ||
+          !this.pickupInfo.flightArrivalTime
+        ) {
+          return false;
+        }
+      }
+
+      // For hotel pickup, need hotel details
+      if (this.pickupInfo.type === 'hotel') {
+        if (!this.pickupInfo.hotelName || !this.pickupInfo.address) {
+          return false;
+        }
+      }
     }
 
     // For Disney transfer, need pickup location and details
@@ -688,7 +754,8 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
         !this.airportPickup.arrivalTime ||
         !this.hotelPickup.name ||
         !this.hotelPickup.address ||
-        (this.expressTrip.isRoundTrip && !this.expressTrip.returnPickupTime)
+        (this.expressTrip.isRoundTrip &&
+          (!this.expressTrip.returnPickupTime || !this.selectedReturnDate))
       ) {
         return false;
       }
@@ -850,7 +917,10 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
 
   // Get terminal options based on selected airport
   getTerminalOptions(): { value: string; label: string }[] {
-    if (this.airportPickup.airport === 'CDG') {
+    const selectedAirport =
+      this.airportPickup.airport || this.pickupInfo.airport;
+
+    if (selectedAirport === 'CDG') {
       return [
         { value: '', label: 'Seleccione Terminal' },
         { value: '1', label: 'Terminal 1' },
@@ -863,7 +933,7 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
         { value: '2G', label: 'Terminal 2G' },
         { value: '3', label: 'Terminal 3' },
       ];
-    } else if (this.airportPickup.airport === 'ORY') {
+    } else if (selectedAirport === 'ORY') {
       return [
         { value: '', label: 'Seleccione Terminal' },
         { value: '1', label: 'Terminal 1' },
@@ -879,6 +949,32 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
   onAirportChange(): void {
     // Reset terminal when airport changes
     this.airportPickup.terminal = '';
+    this.pickupInfo.terminal = '';
+  }
+
+  // Handle departure date change for validation
+  onDepartureDateChange(): void {
+    // Ensure return date is not before departure date
+    if (
+      this.selectedReturnDate &&
+      this.selectedDate &&
+      this.selectedReturnDate < this.selectedDate
+    ) {
+      const departureDate = new Date(this.selectedDate);
+      departureDate.setDate(departureDate.getDate() + 1);
+      this.selectedReturnDate = departureDate.toISOString().split('T')[0];
+    }
+  }
+
+  onReturnDateChange(): void {
+    // Ensure return date is not before departure date
+    if (
+      this.selectedReturnDate &&
+      this.selectedDate &&
+      this.selectedReturnDate < this.selectedDate
+    ) {
+      this.selectedReturnDate = this.selectedDate;
+    }
   }
 
   // Checkout modal methods
@@ -956,6 +1052,8 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
       destination: this.selectedDestination,
       departureDate: this.selectedDate,
       departureTime: this.selectedTime,
+      returnDate: this.selectedReturnDate,
+      returnTime: this.expressTrip.returnPickupTime,
       passengers: this.selectedPassengers,
       serviceType: this.expressTrip.type === 'none' ? 'regular' : 'express',
       expressTrip: this.expressTrip,

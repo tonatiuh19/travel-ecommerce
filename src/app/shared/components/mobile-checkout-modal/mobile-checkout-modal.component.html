@@ -461,47 +461,17 @@
         </div>
       </div>
 
-      <!-- Confirmation Step -->
+      <!-- Thank You Component Integration -->
       <div *ngIf="showConfirmation" class="step-content confirmation-content">
-        <div class="confirmation-success">
-          <div class="success-animation">
-            <fa-icon [icon]="faCheckCircle" class="success-icon"></fa-icon>
-          </div>
-
-          <h3 class="success-title">¡Reserva Confirmada!</h3>
-          <p class="success-subtitle">
-            Tu reserva ha sido procesada exitosamente
-          </p>
-
-          <div class="confirmation-card">
-            <div class="confirmation-item">
-              <span class="confirmation-label">ID de Reserva:</span>
-              <span class="confirmation-value">{{ generateBookingId() }}</span>
-            </div>
-            <div class="confirmation-item">
-              <span class="confirmation-label">Email:</span>
-              <span class="confirmation-value">{{ userInfo.email }}</span>
-            </div>
-            <div class="confirmation-item">
-              <span class="confirmation-label">Fecha:</span>
-              <span class="confirmation-value">{{ getCurrentDate() }}</span>
-            </div>
-          </div>
-
-          <div class="confirmation-actions">
-            <button
-              class="btn btn-primary btn-download"
-              (click)="downloadConfirmation()"
-            >
-              <fa-icon [icon]="faDownload" class="me-2"></fa-icon>
-              Descargar PDF
-            </button>
-            <button class="btn btn-outline btn-home" (click)="close()">
-              <fa-icon [icon]="faHome" class="me-2"></fa-icon>
-              Volver al Inicio
-            </button>
-          </div>
-        </div>
+        <app-thank-you
+          [isVisible]="showConfirmation"
+          [paymentSuccessful]="true"
+          [bookingDetails]="thankYouBookingDetails"
+          [userInfo]="thankYouUserInfo"
+          [paymentMethod]="thankYouPaymentMethod"
+          (closed)="close()"
+          (downloadConfirmation)="downloadConfirmation()"
+        ></app-thank-you>
       </div>
     </div>
 

@@ -29,6 +29,41 @@ export class LandingEffects {
     );
   });
 
+  creatingReservation$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(LandingActions.createReservation),
+      switchMap(({ userInfo, reservationInfo, stripeToken, payment_type }) => {
+        return this.landingService
+          .createReservation(
+            userInfo,
+            reservationInfo,
+            stripeToken,
+            payment_type
+          )
+          .pipe(
+            map((response) => {
+              // Check if response is false (payment failed)
+              if (response === false) {
+                return LandingActions.createReservationFailure({
+                  errorResponse: { message: 'Payment failed' },
+                });
+              }
+              return LandingActions.createReservationSuccess({
+                reservationResponse: response,
+              });
+            }),
+            catchError((error) => {
+              return of(
+                LandingActions.createReservationFailure({
+                  errorResponse: error,
+                })
+              );
+            })
+          );
+      })
+    );
+  });
+
   constructor(
     private actions$: Actions,
     private store: Store,

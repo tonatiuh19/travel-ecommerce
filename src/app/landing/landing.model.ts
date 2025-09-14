@@ -1,9 +1,12 @@
-export const DOMAIN = 'http://localhost:8015/api';
+export const DOMAIN = 'https://garbrix.com/travel-ecommerce/api';
 
 export interface LandingState {
   packages: PackageModel[];
   isLoading?: boolean;
   isError?: boolean;
+  reservation?: any;
+  isProcessingReservation?: boolean;
+  reservationError?: any;
 }
 
 export interface PackageModel {

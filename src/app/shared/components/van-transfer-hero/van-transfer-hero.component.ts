@@ -202,6 +202,7 @@ export class VanTransferHeroComponent implements OnInit {
   validationMessage: string = '';
   showValidationAlert: boolean = false;
   showCheckoutModal: boolean = false;
+  currentBookingDetails: any = null;
 
   // Calendar constraints
   minDate: Date = new Date();
@@ -290,6 +291,8 @@ export class VanTransferHeroComponent implements OnInit {
     this.showResults = false;
     this.hideValidationMessage();
 
+    console.log('Date changed to:', this.selectedDate); // Debug log
+
     // Ensure return date is not before departure date
     if (
       this.selectedReturnDate &&
@@ -301,6 +304,20 @@ export class VanTransferHeroComponent implements OnInit {
       this.selectedReturnDate = departureDate.toISOString().split('T')[0];
     }
     this.validateReturnTime();
+
+    // Update booking details to trigger change detection
+    this.updateBookingDetails();
+  }
+
+  // Update booking details when date changes
+  private updateBookingDetails(): void {
+    if (this.bookingCalculation) {
+      this.currentBookingDetails = this.getBookingDetailsForCheckout();
+      console.log(
+        'Updated booking details due to date change:',
+        this.currentBookingDetails
+      );
+    }
   }
 
   onDepartureTimeChange(): void {
@@ -628,7 +645,8 @@ export class VanTransferHeroComponent implements OnInit {
             this.pickupInfo.flightArrivalTime &&
             this.pickupInfo.hotelName &&
             this.pickupInfo.address &&
-            (!this.expressTrip.isRoundTrip || this.expressTrip.returnPickupTime)
+            (!this.expressTrip.isRoundTrip ||
+              (this.expressTrip.returnPickupTime && this.selectedReturnDate))
           );
         default:
           return true;
@@ -716,9 +734,15 @@ export class VanTransferHeroComponent implements OnInit {
         );
         return;
       }
-      if (!this.expressTrip.returnPickupTime) {
+      if (this.expressTrip.isRoundTrip && !this.expressTrip.returnPickupTime) {
         this.showValidationMessage(
           'Por favor seleccione la hora de recogida en el hotel'
+        );
+        return;
+      }
+      if (this.expressTrip.isRoundTrip && !this.selectedReturnDate) {
+        this.showValidationMessage(
+          'Por favor seleccione la fecha de regreso al aeropuerto'
         );
         return;
       }
@@ -942,6 +966,13 @@ export class VanTransferHeroComponent implements OnInit {
   }
 
   openCheckoutModal(): void {
+    // Refresh booking details before opening modal
+    this.currentBookingDetails = this.getBookingDetailsForCheckout();
+    console.log(
+      'Opening checkout modal with booking details:',
+      this.currentBookingDetails
+    );
+
     this.showCheckoutModal = true;
     document.body.style.overflow = 'hidden';
   }
@@ -1013,7 +1044,12 @@ export class VanTransferHeroComponent implements OnInit {
       return null;
     }
 
-    return {
+    console.log(
+      'Creating booking details with selectedDate:',
+      this.selectedDate
+    ); // Debug log
+
+    const bookingDetails = {
       bookingId: 'VT' + Date.now().toString(36).toUpperCase(),
       origin: this.selectedOrigin,
       destination: this.selectedDestination,
@@ -1033,5 +1069,8 @@ export class VanTransferHeroComponent implements OnInit {
       pickupInfo: this.pickupInfo,
       expressTrip: this.expressTrip,
     };
+
+    console.log('Booking details created:', bookingDetails); // Debug log
+    return bookingDetails;
   }
 }

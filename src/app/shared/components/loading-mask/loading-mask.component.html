@@ -1,0 +1,24 @@
+<div class="loading-mask" *ngIf="isVisible" [class.full-screen]="fullScreen">
+  <div class="loading-overlay"></div>
+  <div class="loading-content" [ngClass]="'size-' + size">
+    <!-- Font Awesome Truck Icon with Animation -->
+    <div class="icon-container">
+      <fa-icon [icon]="mainIcon" class="truck-icon" size="4x"> </fa-icon>
+
+      <!-- Road animation -->
+      <div class="road">
+        <div class="road-line"></div>
+      </div>
+    </div>
+
+    <!-- Loading Text -->
+    <div class="loading-text">
+      <h4 class="loading-message">{{ message }}</h4>
+      <div class="loading-dots">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+    </div>
+  </div>
+</div>
