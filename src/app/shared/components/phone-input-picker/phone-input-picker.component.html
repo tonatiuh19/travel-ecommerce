@@ -1,0 +1,132 @@
+<!-- Phone Input Picker Component -->
+<div class="phone-input-picker" (document:click)="onDocumentClick($event)">
+  <!-- Label -->
+  <label *ngIf="label" class="form-label">
+    {{ label }}
+    <span *ngIf="required" class="text-danger">*</span>
+  </label>
+
+  <!-- Phone Input Container -->
+  <div class="phone-input-container" [class.disabled]="disabled">
+    <!-- Country Dropdown -->
+    <div class="country-selector" [class.open]="isDropdownOpen">
+      <button
+        type="button"
+        class="country-button"
+        [class]="'country-button-' + size"
+        [disabled]="disabled"
+        (click)="toggleDropdown()"
+      >
+        <span class="country-flag">{{ selectedCountry.flag }}</span>
+        <span class="country-code">{{ selectedCountry.dialCode }}</span>
+        <fa-icon
+          [icon]="faChevronDown"
+          class="dropdown-icon"
+          [class.rotated]="isDropdownOpen"
+        ></fa-icon>
+      </button>
+
+      <!-- Dropdown Menu -->
+      <div
+        class="dropdown-menu"
+        *ngIf="isDropdownOpen"
+        (click)="$event.stopPropagation()"
+      >
+        <!-- Search Input -->
+        <div class="dropdown-search">
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            placeholder="Buscar país..."
+            [value]="searchQuery"
+            (input)="onCountrySearch($event)"
+            (click)="$event.stopPropagation()"
+          />
+        </div>
+
+        <!-- Countries List -->
+        <div class="dropdown-list">
+          <button
+            type="button"
+            class="dropdown-item"
+            *ngFor="
+              let country of filteredCountries;
+              trackBy: trackByCountryCode
+            "
+            (click)="selectCountry(country)"
+            [class.selected]="country.code === selectedCountry.code"
+          >
+            <span class="country-option">
+              <span class="country-flag">{{ country.flag }}</span>
+              <span class="country-name">{{ country.name }}</span>
+              <span class="country-dial">{{ country.dialCode }}</span>
+              <fa-icon
+                [icon]="faCheck"
+                class="check-icon"
+                *ngIf="country.code === selectedCountry.code"
+              ></fa-icon>
+            </span>
+          </button>
+
+          <!-- No results message -->
+          <div
+            class="dropdown-no-results"
+            *ngIf="filteredCountries.length === 0"
+          >
+            <small class="text-muted">No se encontraron países</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phone Number Input -->
+    <div class="phone-number-container">
+      <input
+        type="tel"
+        [class]="getFormControlClasses()"
+        [placeholder]="placeholder"
+        [disabled]="disabled"
+        [value]="phoneNumber"
+        (input)="onPhoneInput($event)"
+        (blur)="onPhoneBlur()"
+        (focus)="isTouched = true"
+      />
+
+      <!-- Validation Icons -->
+      <div
+        class="input-feedback"
+        *ngIf="showValidation && isTouched && phoneNumber"
+      >
+        <fa-icon [icon]="faCheck" class="valid-icon" *ngIf="isValid"></fa-icon>
+        <fa-icon
+          [icon]="faPhone"
+          class="invalid-icon"
+          *ngIf="!isValid"
+        ></fa-icon>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  <div
+    class="invalid-feedback d-block"
+    *ngIf="!isValid && isTouched && phoneNumber && showValidation"
+  >
+    <small>
+      {{
+        errorMessage ||
+          "Por favor, ingresa un número de teléfono válido (7-15 dígitos)"
+      }}
+    </small>
+  </div>
+
+  <!-- Help Text -->
+  <div
+    class="form-text"
+    *ngIf="!errorMessage && !(!isValid && isTouched && phoneNumber)"
+  >
+    <small class="text-muted">
+      Formato: {{ selectedCountry.dialCode }} 123 456 789
+    </small>
+  </div>
+</div>

@@ -94,15 +94,15 @@
                     />
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label">Teléfono *</label>
-                    <input
-                      type="tel"
-                      class="form-control form-control-lg"
+                    <app-phone-input-picker
+                      label="Teléfono *"
                       [(ngModel)]="userInfo.phone"
                       name="phone"
-                      placeholder="+34 123 456 789"
-                      required
-                    />
+                      placeholder="123 456 789"
+                      [required]="true"
+                      size="lg"
+                      (phoneChange)="onPhoneChange($event)"
+                    ></app-phone-input-picker>
                   </div>
                   <div class="col-md-6">
                     <label class="form-label">País *</label>

@@ -1,3 +1,25 @@
+/*
+ * DEVELOPMENT TEST DATA - REMOVE IN PRODUCTION
+ * ============================================
+ * This file contains test data for easier development and debugging.
+ *
+ * To remove test data for production:
+ * 1. Search for "TEST DATA FOR DEVELOPMENT (REMOVE IN PRODUCTION)" comments
+ * 2. Replace test values with empty strings:
+ *    - firstName: 'María Elena' -> firstName: ''
+ *    - lastName: 'Rodríguez Santos' -> lastName: ''
+ *    - email: 'maria.rodriguez@example.com' -> email: ''
+ *    - phone: '+34 687 123 456' -> phone: ''
+ *    - nationality: 'España' -> nationality: ''
+ *    - dateOfBirth: '1990-07-22' -> dateOfBirth: ''
+ *    - passportNumber: 'P87654321' -> passportNumber: ''
+ *    - specialRequests: '...' -> specialRequests: ''
+ *    - cardNumber: '4242424242424242' -> cardNumber: ''
+ *    - expiryDate: '12/28' -> expiryDate: ''
+ *    - cvv: '123' -> cvv: ''
+ *    - cardholderName: '...' -> cardholderName: ''
+ */
+
 import {
   Component,
   Input,
@@ -38,6 +60,7 @@ import {
   selectIsProcessingReservation,
   selectReservationError,
 } from '../../../landing/store/selectors/landing.selectors';
+import { PhoneValue } from '../phone-input-picker/phone-input-picker.component';
 
 interface UserInfo {
   firstName: string;
@@ -120,15 +143,17 @@ export class CheckoutModalComponent
   totalSteps: number = 1;
 
   // User information
+  // Form data - TEST DATA FOR DEVELOPMENT (REMOVE IN PRODUCTION)
   userInfo: UserInfo = {
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    nationality: '',
-    dateOfBirth: '',
-    passportNumber: '',
-    specialRequests: '',
+    firstName: 'María Elena',
+    lastName: 'Rodríguez Santos',
+    email: 'maria.rodriguez@example.com',
+    phone: '+34 687 123 456',
+    nationality: 'España',
+    dateOfBirth: '1990-07-22',
+    passportNumber: 'P87654321',
+    specialRequests:
+      'Necesito asiento accesible para persona con movilidad reducida',
   };
 
   // Passenger information (for multiple passengers)
@@ -224,6 +249,7 @@ export class CheckoutModalComponent
   private isTesting = false;
 
   private unsubscribe$ = new Subject<void>();
+  private dateFormatCache = new Map<string, string>();
 
   constructor(private stripeService: StripeService, private store: Store) {
     // Initialize with default state to ensure form is shown first
@@ -256,7 +282,14 @@ export class CheckoutModalComponent
     this.reservation$
       .pipe(takeUntil(this.unsubscribe$), distinctUntilChanged())
       .subscribe((reservation) => {
-        if (reservation && !this.reservation) {
+        // Only show confirmation if we receive a NEW reservation after clearing state
+        // and we're not already in confirmation mode
+        if (
+          reservation &&
+          !this.reservation &&
+          !this.showConfirmation &&
+          !this.confirmationProcessing
+        ) {
           console.log('💡 Reservation received from store:', reservation);
           this.confirmationProcessing = true; // Set flag to prevent clearing
           this.reservation = reservation;
@@ -364,6 +397,8 @@ export class CheckoutModalComponent
     // Only clear when explicitly closing the modal
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
+    // Clear date format cache to prevent memory leaks
+    this.dateFormatCache.clear();
   }
 
   async setupStripe() {
@@ -497,6 +532,15 @@ export class CheckoutModalComponent
         return this.validateUserInfo();
       default:
         return false;
+    }
+  }
+
+  // Phone input handler
+  onPhoneChange(phoneValue: any): void {
+    if (phoneValue && typeof phoneValue === 'object' && phoneValue.fullNumber) {
+      this.userInfo.phone = phoneValue.fullNumber;
+    } else if (typeof phoneValue === 'string') {
+      this.userInfo.phone = phoneValue;
     }
   }
 
@@ -863,24 +907,35 @@ export class CheckoutModalComponent
 
   private resetForm(): void {
     this.currentStep = 1;
+    // Reset form data - TEST DATA FOR DEVELOPMENT (REMOVE IN PRODUCTION)
     this.userInfo = {
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      nationality: '',
-      dateOfBirth: '',
-      passportNumber: '',
-      specialRequests: '',
+      firstName: 'María Elena',
+      lastName: 'Rodríguez Santos',
+      email: 'maria.rodriguez@example.com',
+      phone: '+34 687 123 456',
+      nationality: 'España',
+      dateOfBirth: '1990-07-22',
+      passportNumber: 'P87654321',
+      specialRequests:
+        'Necesito asiento accesible para persona con movilidad reducida',
     };
     this.passengers = [];
-    this.paymentMethod = { type: 'credit' };
+    this.paymentMethod = {
+      type: 'credit',
+      cardNumber: '4242424242424242',
+      expiryDate: '12/28',
+      cvv: '123',
+      cardholderName: 'María Elena Rodríguez Santos',
+    };
     this.showConfirmation = false;
     this.isProcessingPayment = false;
     this.reservation = null;
     this.reservationError = null;
     this.confirmationProcessing = false; // Reset confirmation flag
     this.stripeSetupInitialized = false; // Reset Stripe setup flag
+
+    // Clear date format cache
+    this.dateFormatCache.clear();
 
     // Clear reservation state from store
     this.store.dispatch(LandingActions.clearReservation());
@@ -928,7 +983,10 @@ export class CheckoutModalComponent
       return 'Fecha no disponible';
     }
 
-    console.log('Formatting date:', dateString); // Debug log
+    // Check cache first to prevent recomputation
+    if (this.dateFormatCache.has(dateString)) {
+      return this.dateFormatCache.get(dateString)!;
+    }
 
     try {
       // Parse the date string as a local date to avoid timezone issues
@@ -943,7 +1001,9 @@ export class CheckoutModalComponent
 
         // Check if date is valid
         if (isNaN(date.getTime())) {
-          return 'Fecha inválida';
+          const errorResult = 'Fecha inválida';
+          this.dateFormatCache.set(dateString, errorResult);
+          return errorResult;
         }
 
         const formattedDate = date.toLocaleDateString('es-ES', {
@@ -953,7 +1013,8 @@ export class CheckoutModalComponent
           day: 'numeric',
         });
 
-        console.log('Formatted date result:', formattedDate); // Debug log
+        // Cache the result
+        this.dateFormatCache.set(dateString, formattedDate);
         return formattedDate;
       } else {
         // Fallback to regular Date parsing
@@ -961,15 +1022,21 @@ export class CheckoutModalComponent
 
         // Check if date is valid
         if (isNaN(date.getTime())) {
-          return 'Fecha inválida';
+          const errorResult = 'Fecha inválida';
+          this.dateFormatCache.set(dateString, errorResult);
+          return errorResult;
         }
 
-        return date.toLocaleDateString('es-ES', {
+        const formattedDate = date.toLocaleDateString('es-ES', {
           weekday: 'long',
           year: 'numeric',
           month: 'long',
           day: 'numeric',
         });
+
+        // Cache the result
+        this.dateFormatCache.set(dateString, formattedDate);
+        return formattedDate;
       }
     } catch (error) {
       console.error(
@@ -978,7 +1045,9 @@ export class CheckoutModalComponent
         'for dateString:',
         dateString
       );
-      return 'Error en fecha';
+      const errorResult = 'Error en fecha';
+      this.dateFormatCache.set(dateString, errorResult);
+      return errorResult;
     }
   }
 

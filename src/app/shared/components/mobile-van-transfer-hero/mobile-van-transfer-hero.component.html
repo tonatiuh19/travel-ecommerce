@@ -136,7 +136,7 @@
                           class="form-select"
                           [(ngModel)]="airportPickup.airport"
                           name="parisAirport"
-                          (change)="onAirportChange()"
+                          (change)="onAirportChangeParis()"
                           required
                         >
                           <option value="">Selecciona aeropuerto</option>
@@ -179,22 +179,16 @@
                           [disabled]="!airportPickup.airport"
                         >
                           <option
-                            *ngFor="let terminal of getTerminalOptions()"
+                            *ngFor="
+                              let terminal of getTerminalOptionsForContext(
+                                'paris'
+                              )
+                            "
                             [value]="terminal.value"
                           >
                             {{ terminal.label }}
                           </option>
                         </select>
-                      </div>
-                      <div class="col-6">
-                        <label class="form-label">Hora de Llegada</label>
-                        <input
-                          type="time"
-                          class="form-control"
-                          [(ngModel)]="airportPickup.arrivalTime"
-                          name="parisArrivalTime"
-                          required
-                        />
                       </div>
                     </div>
                   </div>
@@ -203,7 +197,7 @@
             </div>
 
             <!-- Destination for Regular Transfer -->
-            <div class="form-group mb-3" *ngIf="expressTrip.type === 'none'">
+            <div class="form-group mb-3" *ngIf="expressTrip.type === ''">
               <label class="form-label fw-semibold">
                 <fa-icon
                   [icon]="faFlagCheckered"
@@ -231,7 +225,7 @@
             <!-- Regular Transfer Pickup Location -->
             <div
               class="form-group mb-3"
-              *ngIf="expressTrip.type === 'none' && selectedDestination"
+              *ngIf="expressTrip.type === '' && selectedDestination"
             >
               <label class="form-label fw-semibold">
                 <fa-icon
@@ -259,9 +253,7 @@
             <!-- Regular Transfer: Airport Pickup Details -->
             <div
               class="form-group mb-3"
-              *ngIf="
-                expressTrip.type === 'none' && pickupInfo.type === 'airport'
-              "
+              *ngIf="expressTrip.type === '' && pickupInfo.type === 'airport'"
             >
               <div class="card">
                 <div class="card-header bg-info text-white">
@@ -278,7 +270,7 @@
                         class="form-select"
                         [(ngModel)]="pickupInfo.airport"
                         name="regularAirport"
-                        (change)="onAirportChange()"
+                        (change)="onAirportChangeRegular()"
                         required
                       >
                         <option value="">Selecciona aeropuerto</option>
@@ -321,22 +313,16 @@
                         [disabled]="!pickupInfo.airport"
                       >
                         <option
-                          *ngFor="let terminal of getTerminalOptions()"
+                          *ngFor="
+                            let terminal of getTerminalOptionsForContext(
+                              'regular'
+                            )
+                          "
                           [value]="terminal.value"
                         >
                           {{ terminal.label }}
                         </option>
                       </select>
-                    </div>
-                    <div class="col-6">
-                      <label class="form-label">Hora de Llegada</label>
-                      <input
-                        type="time"
-                        class="form-control"
-                        [(ngModel)]="pickupInfo.flightArrivalTime"
-                        name="regularArrivalTime"
-                        required
-                      />
                     </div>
                   </div>
                 </div>
@@ -346,7 +332,7 @@
             <!-- Regular Transfer: Hotel Pickup Details -->
             <div
               class="form-group mb-3"
-              *ngIf="expressTrip.type === 'none' && pickupInfo.type === 'hotel'"
+              *ngIf="expressTrip.type === '' && pickupInfo.type === 'hotel'"
             >
               <div class="card">
                 <div class="card-header bg-success text-white">
@@ -444,7 +430,7 @@
                           class="form-select"
                           [(ngModel)]="airportPickup.airport"
                           name="disneyAirport"
-                          (change)="onAirportChange()"
+                          (change)="onAirportChangeDisney()"
                           required
                         >
                           <option value="">Selecciona aeropuerto</option>
@@ -485,21 +471,16 @@
                           [disabled]="!airportPickup.airport"
                         >
                           <option
-                            *ngFor="let terminal of getTerminalOptions()"
+                            *ngFor="
+                              let terminal of getTerminalOptionsForContext(
+                                'disney'
+                              )
+                            "
                             [value]="terminal.value"
                           >
                             {{ terminal.label }}
                           </option>
                         </select>
-                      </div>
-                      <div class="col-6">
-                        <label class="form-label">Hora de Llegada</label>
-                        <input
-                          type="time"
-                          class="form-control"
-                          [(ngModel)]="airportPickup.arrivalTime"
-                          name="arrivalTime"
-                        />
                       </div>
                     </div>
                   </div>
@@ -527,6 +508,7 @@
                           [(ngModel)]="hotelPickup.name"
                           name="hotelName"
                           placeholder="ej: Hotel Plaza Athénée"
+                          (ngModelChange)="syncHotelToPickupInfo()"
                         />
                       </div>
                       <div class="col-12">
@@ -537,6 +519,7 @@
                           name="hotelAddress"
                           rows="2"
                           placeholder="Dirección completa del hotel/apartamento"
+                          (ngModelChange)="syncHotelToPickupInfo()"
                         ></textarea>
                       </div>
                     </div>
@@ -619,7 +602,7 @@
                         class="form-select"
                         [(ngModel)]="airportPickup.airport"
                         name="airport"
-                        (change)="onAirportChange()"
+                        (change)="onAirportChangeAirportHotel()"
                         required
                       >
                         <option value="">Selecciona aeropuerto</option>
@@ -660,21 +643,16 @@
                         [disabled]="!airportPickup.airport"
                       >
                         <option
-                          *ngFor="let terminal of getTerminalOptions()"
+                          *ngFor="
+                            let terminal of getTerminalOptionsForContext(
+                              'airport-hotel'
+                            )
+                          "
                           [value]="terminal.value"
                         >
                           {{ terminal.label }}
                         </option>
                       </select>
-                    </div>
-                    <div class="col-6">
-                      <label class="form-label">Hora de Llegada</label>
-                      <input
-                        type="time"
-                        class="form-control"
-                        [(ngModel)]="airportPickup.arrivalTime"
-                        name="airportArrivalTime"
-                      />
                     </div>
                   </div>
                 </div>
@@ -698,6 +676,7 @@
                         [(ngModel)]="hotelPickup.name"
                         name="airportHotelName"
                         placeholder="ej: Hotel Plaza Athénée"
+                        (ngModelChange)="syncHotelToPickupInfo()"
                       />
                     </div>
                     <div class="col-12">
@@ -708,6 +687,7 @@
                         name="airportHotelAddress"
                         rows="2"
                         placeholder="Dirección completa del hotel"
+                        (ngModelChange)="syncHotelToPickupInfo()"
                       ></textarea>
                     </div>
                   </div>
@@ -836,8 +816,8 @@
                 </label>
                 <select
                   class="form-select form-select-lg"
-                  [(ngModel)]="pickupInfo.flightArrivalTime"
-                  name="arrivalTime"
+                  [(ngModel)]="airportPickup.arrivalTime"
+                  name="airportHotelArrivalTime"
                   required
                 >
                   <option value="">Hora</option>
@@ -957,7 +937,7 @@
             class="pricing-summary p-3 bg-primary bg-opacity-10 rounded mb-3"
           >
             <!-- Service Type Display -->
-            <div class="mb-2" *ngIf="expressTrip.type !== 'none'">
+            <div class="mb-2" *ngIf="expressTrip.type !== ''">
               <div class="d-flex align-items-center mb-2">
                 <span class="badge bg-info me-2">Express</span>
                 <small class="text-muted">
@@ -1063,7 +1043,7 @@
   <!-- Mobile Checkout Modal -->
   <app-mobile-checkout-modal
     [isVisible]="showCheckoutModal"
-    [bookingDetails]="getBookingDetailsForCheckout()"
+    [bookingDetails]="currentBookingDetails"
     (closed)="closeCheckoutModal()"
     (bookingConfirmed)="onBookingConfirmed($event)"
   ></app-mobile-checkout-modal>

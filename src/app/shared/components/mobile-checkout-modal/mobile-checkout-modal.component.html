@@ -88,15 +88,15 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">Teléfono *</label>
-            <input
-              type="tel"
-              class="form-control"
+            <app-phone-input-picker
+              label="Teléfono"
               [(ngModel)]="userInfo.phone"
               name="phone"
-              placeholder="+34 123 456 789"
-              required
-            />
+              placeholder="123 456 789"
+              [required]="true"
+              size="md"
+              (phoneChange)="onPhoneChange($event)"
+            ></app-phone-input-picker>
           </div>
 
           <div class="form-group">
@@ -159,7 +159,10 @@
             <!-- Service Type Badge -->
             <div
               class="review-item"
-              *ngIf="bookingDetails?.expressTrip?.type !== 'none'"
+              *ngIf="
+                bookingDetails?.expressTrip?.type &&
+                bookingDetails?.expressTrip?.type !== ''
+              "
             >
               <div class="d-flex align-items-center">
                 <span class="badge bg-info me-2">Express</span>
@@ -220,12 +223,18 @@
               <span>{{ bookingDetails?.passengers }} pasajero(s)</span>
             </div>
 
-            <!-- Airport Information for Paris Tour Express -->
+            <!-- Airport/Pickup Information for Express Services -->
             <div
               class="review-item airport-info"
               *ngIf="
-                bookingDetails?.expressTrip?.type === 'paris-tour-4h' &&
-                bookingDetails?.airportInfo
+                (bookingDetails?.expressTrip?.type === 'paris-tour-4h' ||
+                  (bookingDetails?.expressTrip?.type === 'disney-transfer' &&
+                    bookingDetails?.expressTrip?.pickupLocation ===
+                      'airport') ||
+                  bookingDetails?.expressTrip?.type ===
+                    'airport-hotel-airport' ||
+                  bookingDetails?.pickupInfo?.type === 'airport') &&
+                (bookingDetails?.airportInfo || bookingDetails?.pickupInfo)
               "
             >
               <div class="airport-details-card">
@@ -235,54 +244,207 @@
                 </div>
 
                 <div class="airport-info-grid">
+                  <!-- Airport Info (from airportInfo object) -->
                   <div
                     class="info-row"
-                    *ngIf="bookingDetails.airportInfo.airport"
+                    *ngIf="bookingDetails?.airportInfo?.airport"
                   >
                     <span class="info-label">Aeropuerto:</span>
                     <span class="info-value">{{
-                      bookingDetails.airportInfo.airportLabel ||
-                        bookingDetails.airportInfo.airport
+                      bookingDetails?.airportInfo?.airportLabel ||
+                        bookingDetails?.airportInfo?.airport
                     }}</span>
                   </div>
 
+                  <!-- Airport Info (from pickupInfo object) -->
                   <div
                     class="info-row"
-                    *ngIf="bookingDetails.airportInfo.flightNumber"
+                    *ngIf="
+                      !bookingDetails?.airportInfo?.airport &&
+                      bookingDetails?.pickupInfo?.airport
+                    "
+                  >
+                    <span class="info-label">Aeropuerto:</span>
+                    <span class="info-value">{{
+                      bookingDetails?.pickupInfo?.airport
+                    }}</span>
+                  </div>
+
+                  <!-- Flight Number -->
+                  <div
+                    class="info-row"
+                    *ngIf="
+                      bookingDetails?.airportInfo?.flightNumber ||
+                      bookingDetails?.pickupInfo?.flightNumber
+                    "
                   >
                     <span class="info-label">Vuelo:</span>
                     <span class="info-value">{{
-                      bookingDetails.airportInfo.flightNumber
+                      bookingDetails?.airportInfo?.flightNumber ||
+                        bookingDetails?.pickupInfo?.flightNumber
                     }}</span>
                   </div>
 
+                  <!-- Airline -->
                   <div
                     class="info-row"
-                    *ngIf="bookingDetails.airportInfo.airline"
+                    *ngIf="
+                      bookingDetails?.airportInfo?.airline ||
+                      bookingDetails?.pickupInfo?.airline
+                    "
                   >
                     <span class="info-label">Aerolínea:</span>
                     <span class="info-value">{{
-                      bookingDetails.airportInfo.airline
+                      bookingDetails?.airportInfo?.airline ||
+                        bookingDetails?.pickupInfo?.airline
                     }}</span>
                   </div>
 
+                  <!-- Terminal -->
                   <div
                     class="info-row"
-                    *ngIf="bookingDetails.airportInfo.terminal"
+                    *ngIf="
+                      bookingDetails?.airportInfo?.terminal ||
+                      bookingDetails?.pickupInfo?.terminal
+                    "
                   >
                     <span class="info-label">Terminal:</span>
                     <span class="info-value">{{
-                      bookingDetails.airportInfo.terminal
+                      bookingDetails?.airportInfo?.terminal ||
+                        bookingDetails?.pickupInfo?.terminal
                     }}</span>
                   </div>
 
+                  <!-- Arrival Time -->
                   <div
                     class="info-row"
-                    *ngIf="bookingDetails.airportInfo.arrivalTime"
+                    *ngIf="
+                      bookingDetails?.airportInfo?.arrivalTime ||
+                      bookingDetails?.pickupInfo?.flightArrivalTime
+                    "
                   >
                     <span class="info-label">Llegada:</span>
                     <span class="info-value">{{
-                      bookingDetails.airportInfo.arrivalTime
+                      bookingDetails?.airportInfo?.arrivalTime ||
+                        bookingDetails?.pickupInfo?.flightArrivalTime
+                    }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Hotel Information for Hotel Pickup -->
+            <div
+              class="review-item hotel-info"
+              *ngIf="
+                bookingDetails?.pickupInfo?.type === 'hotel' ||
+                (bookingDetails?.expressTrip?.type === 'disney-transfer' &&
+                  bookingDetails?.expressTrip?.pickupLocation === 'hotel')
+              "
+            >
+              <div class="hotel-details-card">
+                <div class="hotel-header mb-2">
+                  <fa-icon [icon]="faHotel" class="me-2 text-success"></fa-icon>
+                  <span class="fw-semibold">Información del Hotel</span>
+                </div>
+
+                <div class="hotel-info-grid">
+                  <!-- Hotel Name -->
+                  <div
+                    class="info-row"
+                    *ngIf="bookingDetails?.pickupInfo?.hotelName"
+                  >
+                    <span class="info-label">Hotel:</span>
+                    <span class="info-value">{{
+                      bookingDetails?.pickupInfo?.hotelName
+                    }}</span>
+                  </div>
+
+                  <!-- Hotel Address -->
+                  <div
+                    class="info-row"
+                    *ngIf="bookingDetails?.pickupInfo?.address"
+                  >
+                    <span class="info-label">Dirección:</span>
+                    <span class="info-value">{{
+                      bookingDetails?.pickupInfo?.address
+                    }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Return Trip Information for Airport-Hotel-Airport Round Trip -->
+            <div
+              class="review-item return-trip-info"
+              *ngIf="
+                bookingDetails?.expressTrip?.type === 'airport-hotel-airport' &&
+                bookingDetails?.expressTrip?.isRoundTrip &&
+                (bookingDetails?.returnDate ||
+                  bookingDetails?.expressTrip?.returnPickupTime)
+              "
+            >
+              <div class="return-trip-card">
+                <div class="return-trip-header mb-2">
+                  <fa-icon
+                    [icon]="faPlaneArrival"
+                    class="me-2 text-warning"
+                  ></fa-icon>
+                  <span class="fw-semibold"
+                    >Información del Viaje de Vuelta</span
+                  >
+                </div>
+
+                <div class="return-trip-grid">
+                  <!-- Return Service Type -->
+                  <div class="info-row">
+                    <span class="info-label">Servicio:</span>
+                    <span class="info-value">Hotel → Aeropuerto</span>
+                  </div>
+
+                  <!-- Return Date -->
+                  <div class="info-row" *ngIf="bookingDetails?.returnDate">
+                    <span class="info-label">Fecha de Recogida:</span>
+                    <span class="info-value">{{
+                      bookingDetails?.returnDate | date : "short" : "es-ES"
+                    }}</span>
+                  </div>
+
+                  <!-- Return Pickup Time -->
+                  <div
+                    class="info-row"
+                    *ngIf="bookingDetails?.expressTrip?.returnPickupTime"
+                  >
+                    <span class="info-label">Hora de Recogida:</span>
+                    <span class="info-value">{{
+                      bookingDetails?.expressTrip?.returnPickupTime
+                    }}</span>
+                  </div>
+
+                  <!-- Return Pickup Location -->
+                  <div
+                    class="info-row"
+                    *ngIf="bookingDetails?.pickupInfo?.hotelName"
+                  >
+                    <span class="info-label">Lugar de Recogida:</span>
+                    <span class="info-value">{{
+                      bookingDetails?.pickupInfo?.hotelName
+                    }}</span>
+                  </div>
+
+                  <!-- Return Destination Airport -->
+                  <div
+                    class="info-row"
+                    *ngIf="
+                      bookingDetails?.airportInfo?.airportLabel ||
+                      bookingDetails?.airportInfo?.airport
+                    "
+                  >
+                    <span class="info-label">Destino:</span>
+                    <span class="info-value">{{
+                      bookingDetails?.airportInfo?.airportLabel ||
+                        bookingDetails?.airportInfo?.airport ||
+                        bookingDetails?.pickupInfo?.airport
                     }}</span>
                   </div>
                 </div>
@@ -330,7 +492,7 @@
               class="price-item text-warning"
             >
               <span>Tarifa urgencia (mañana, 10%):</span>
-              <span>{{ formatCurrency(bookingDetails.urgencyFee) }}</span>
+              <span>{{ formatCurrency(bookingDetails?.urgencyFee || 0) }}</span>
             </div>
 
             <hr class="price-divider" />
@@ -370,45 +532,11 @@
               />
             </div>
 
+            <!-- Stripe Elements Card Input -->
             <div class="form-group">
-              <label class="form-label">Número de Tarjeta *</label>
-              <input
-                type="text"
-                class="form-control"
-                [(ngModel)]="paymentMethod.cardNumber"
-                name="cardNumber"
-                placeholder="1234 5678 9012 3456"
-                maxlength="19"
-                (input)="formatCardNumber()"
-                required
-              />
-            </div>
-
-            <div class="form-row">
-              <div class="form-group col-6">
-                <label class="form-label">Vencimiento *</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  [(ngModel)]="paymentMethod.expiryDate"
-                  name="expiryDate"
-                  placeholder="MM/AA"
-                  maxlength="5"
-                  (input)="formatExpiryDate()"
-                  required
-                />
-              </div>
-              <div class="form-group col-6">
-                <label class="form-label">CVV *</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  [(ngModel)]="paymentMethod.cvv"
-                  name="cvv"
-                  placeholder="123"
-                  maxlength="4"
-                  required
-                />
+              <label class="form-label">Información de la Tarjeta *</label>
+              <div id="mobile-card-element" class="stripe-card-element">
+                <!-- Stripe Elements will create form elements here -->
               </div>
             </div>
 
@@ -500,27 +628,8 @@
           <fa-icon [icon]="faStepForward" class="ms-2"></fa-icon>
         </button>
 
-        <button
-          *ngIf="currentStep === 3"
-          type="button"
-          class="btn btn-success btn-pay"
-          (click)="processPayment()"
-          [disabled]="!validateAllInfo() || isProcessingPayment"
-        >
-          <span *ngIf="!isProcessingPayment">
-            <fa-icon [icon]="faLock" class="me-2"></fa-icon>
-            Pagar
-            {{
-              formatCurrency(
-                bookingDetails?.grandTotal || bookingDetails?.totalPrice || 0
-              )
-            }}
-          </span>
-          <span *ngIf="isProcessingPayment">
-            <fa-icon [icon]="faSpinner" spin class="me-2"></fa-icon>
-            Procesando...
-          </span>
-        </button>
+        <!-- Remove the step 3 button since we only have 2 steps -->
+        <!-- Payment button is already in the form section for step 2 -->
       </div>
     </div>
   </div>
