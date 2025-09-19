@@ -1,6 +1,7 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { fromLanding } from './store/selectors';
+import { MetaService } from '../shared/services/meta.service';
 import {
   faPlane,
   faCompass,
@@ -53,12 +54,123 @@ export class LandingComponent implements OnInit {
 
   public currentQuoteIndex: number = 0;
 
-  constructor(private store: Store) {}
+  constructor(private store: Store, private metaService: MetaService) {}
 
   ngOnInit() {
+    this.setupMetaTags();
     this.detectDevice();
     this.typeQuote();
     this.preventHorizontalScroll();
+  }
+
+  private setupMetaTags() {
+    this.metaService.updateTags({
+      title: 'Viajes Premium y Transfers VIP | Tu Destino de Ensueño',
+      description:
+        'Descubre destinos increíbles con nuestros paquetes de viaje premium y servicio de transfers VIP. Vehículos de lujo, conductores certificados y experiencias únicas te esperan.',
+      keywords:
+        'viajes premium, transfers VIP, paquetes de viaje, turismo de lujo, transporte privado, vans VIP, destinos turísticos, vacaciones, tours exclusivos',
+      author: 'Travel Ecommerce Premium',
+      canonical: typeof window !== 'undefined' ? window.location.href : '',
+      openGraph: {
+        title: 'Viajes Premium y Transfers VIP | Experiencias Únicas',
+        description:
+          'Servicio de transporte premium con vehículos de última generación, conductores certificados y paquetes de viaje exclusivos para destinos increíbles.',
+        image: '/assets/img/back-main.jpg',
+        type: 'website',
+        siteName: 'Travel Ecommerce Premium',
+        locale: 'es_MX',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: 'Viajes Premium y Transfers VIP',
+        description:
+          'Descubre destinos increíbles con nuestro servicio premium de transfers y paquetes de viaje exclusivos.',
+        image: '/assets/img/back-main.jpg',
+      },
+      customTags: [
+        { name: 'theme-color', content: '#0066cc' },
+        { name: 'apple-mobile-web-app-capable', content: 'yes' },
+        { name: 'apple-mobile-web-app-status-bar-style', content: 'default' },
+        { name: 'mobile-web-app-capable', content: 'yes' },
+        { name: 'application-name', content: 'Travel Premium' },
+        { name: 'msapplication-TileColor', content: '#0066cc' },
+        {
+          name: 'msapplication-config',
+          content: '/assets/favicons/browserconfig.xml',
+        },
+      ],
+    });
+
+    // Add structured data for travel agency
+    this.metaService.addStructuredData({
+      type: 'TravelAgency',
+      data: {
+        name: 'Travel Ecommerce Premium',
+        description:
+          'Agencia de viajes premium especializada en transfers VIP y paquetes turísticos exclusivos',
+        url: typeof window !== 'undefined' ? window.location.origin : '',
+        logo: '/assets/img/logo.png',
+        contactPoint: {
+          '@type': 'ContactPoint',
+          telephone: '+52-555-123-4567',
+          contactType: 'customer service',
+          availableLanguage: ['Spanish', 'English'],
+        },
+        address: {
+          '@type': 'PostalAddress',
+          addressCountry: 'MX',
+          addressLocality: 'Ciudad de México',
+        },
+        sameAs: [
+          'https://facebook.com/travelpremium',
+          'https://instagram.com/travelpremium',
+          'https://twitter.com/travelpremium',
+        ],
+      },
+    });
+
+    // Add structured data for services
+    this.metaService.addStructuredData({
+      type: 'Service',
+      data: {
+        serviceType: 'Transportation Service',
+        name: 'Transfers VIP Premium',
+        description:
+          'Servicio de transporte privado de lujo con vehículos premium, conductores certificados y atención 24/7',
+        provider: {
+          '@type': 'TravelAgency',
+          name: 'Travel Ecommerce Premium',
+        },
+        areaServed: {
+          '@type': 'Country',
+          name: 'Mexico',
+        },
+        hasOfferCatalog: {
+          '@type': 'OfferCatalog',
+          name: 'Servicios de Transfer',
+          itemListElement: [
+            {
+              '@type': 'Offer',
+              name: 'Transfer Aeropuerto',
+              description: 'Servicio de transfer desde y hacia aeropuertos',
+            },
+            {
+              '@type': 'Offer',
+              name: 'Transfer Turístico',
+              description:
+                'Transporte a destinos turísticos y lugares de interés',
+            },
+            {
+              '@type': 'Offer',
+              name: 'Transfer VIP',
+              description:
+                'Servicio premium con vehículos de lujo y amenidades especiales',
+            },
+          ],
+        },
+      },
+    });
   }
 
   private preventHorizontalScroll() {

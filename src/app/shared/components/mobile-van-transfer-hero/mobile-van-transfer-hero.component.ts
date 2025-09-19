@@ -21,6 +21,7 @@ import {
   faExchangeAlt,
   faPlus,
   faMinus,
+  faExclamationTriangle,
 } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
@@ -111,6 +112,7 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
   faExchangeAlt = faExchangeAlt;
   faPlus = faPlus;
   faMinus = faMinus;
+  faExclamationTriangle = faExclamationTriangle;
 
   // Van Types
   vans: VanType[] = [
@@ -185,6 +187,20 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
       duration: '3h 20min',
       distance: '265 km',
     },
+    {
+      id: 'paris-mont-saint-michel',
+      origin: 'París',
+      destination: 'Mont Saint-Michel',
+      duration: '3h 45min',
+      distance: '320 km',
+    },
+    {
+      id: 'mont-saint-michel-paris',
+      origin: 'Mont Saint-Michel',
+      destination: 'París',
+      duration: '3h 45min',
+      distance: '320 km',
+    },
   ];
 
   // Form Data
@@ -208,6 +224,7 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
     airline: '',
     terminal: '',
     arrivalTime: '',
+    departureTime: '',
   };
 
   hotelPickup = {
@@ -220,13 +237,14 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
     { value: 'Brujas', label: 'Brujas' },
     { value: 'Bruselas', label: 'Bruselas' },
     { value: 'Ámsterdam', label: 'Ámsterdam (Solo Ida)' },
+    { value: 'Mont Saint-Michel', label: 'Mont Saint-Michel' },
   ];
 
   // Express trip options
   expressTripOptions = [
     {
       value: '',
-      label: 'Transporte regular',
+      label: 'Tour Normal',
       description: 'Ida y vuelta desde París',
     },
     {
@@ -660,6 +678,7 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
         airline: '',
         terminal: '',
         arrivalTime: '',
+        departureTime: '',
       };
       this.hotelPickup = {
         name: '',
@@ -676,6 +695,7 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
           airline: '',
           terminal: '',
           arrivalTime: '',
+          departureTime: '',
         };
         this.hotelPickup = {
           name: '',
@@ -787,12 +807,6 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
 
     // For airport-hotel-airport, need flight details and hotel details only
     if (this.expressTrip.type === 'airport-hotel-airport') {
-      console.log('🛂 Airport-Hotel-Airport Validation Debug:', {
-        airportPickup: this.airportPickup,
-        hotelPickup: this.hotelPickup,
-        expressTrip: this.expressTrip,
-      });
-
       if (
         !this.airportPickup.airport ||
         !this.airportPickup.flightNumber ||
@@ -801,12 +815,9 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
         !this.hotelPickup.name ||
         !this.hotelPickup.address
       ) {
-        console.log('❌ Airport-hotel-airport fields validation failed');
         return false;
       }
     }
-
-    console.log('✅ All form validation passed');
     return true;
   }
 
@@ -1125,11 +1136,6 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
       this.currentBookingDetails = this.getBookingDetailsForCheckout();
     }
 
-    console.log(
-      'Opening mobile checkout modal with booking details:',
-      this.currentBookingDetails
-    );
-
     this.showCheckoutModal = true;
     document.body.style.overflow = 'hidden';
   }
@@ -1140,7 +1146,6 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
   }
 
   onBookingConfirmed(confirmation: any): void {
-    console.log('Mobile booking confirmed:', confirmation);
     setTimeout(() => {
       this.closeCheckoutModal();
       this.showResults = false;
@@ -1162,6 +1167,7 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
       airline: '',
       terminal: '',
       arrivalTime: '',
+      departureTime: '',
     };
     this.hotelPickup = {
       name: '',
@@ -1180,11 +1186,6 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
     if (!this.bookingCalculation) {
       return null;
     }
-
-    console.log(
-      'Creating mobile booking details with selectedDate:',
-      this.selectedDate
-    ); // Debug log
 
     // Prepare airport information if available
     let airportInfo = null;
@@ -1289,21 +1290,6 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
       expressTrip: this.expressTrip,
       airportInfo: airportInfo, // Add airport information
     };
-
-    console.log('Mobile booking details created:', bookingDetails); // Debug log
-
-    // Additional debug for airplane information
-    if (airportInfo) {
-      console.log('✈️ Airport information included:', airportInfo);
-    } else {
-      console.log('⚠️ No airport information - checking data:', {
-        expressType: this.expressTrip.type,
-        pickupLocation: this.expressTrip.pickupLocation,
-        pickupType: this.pickupInfo.type,
-        airportPickup: this.airportPickup,
-        pickupInfo: this.pickupInfo,
-      });
-    }
 
     return bookingDetails;
   }

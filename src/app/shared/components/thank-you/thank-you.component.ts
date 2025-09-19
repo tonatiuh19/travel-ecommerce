@@ -142,29 +142,15 @@ export class ThankYouComponent implements OnInit {
 
   confirmationNumber: string = '';
 
-  ngOnInit() {
-    this.generateConfirmationNumber();
+  ngOnInit(): void {
+    this.confirmationNumber = this.generateConfirmationNumber();
   }
 
   generateConfirmationNumber(): string {
-    if (!this.confirmationNumber) {
-      // Use reservation code from API if available
-      if (
-        this.reservationData &&
-        this.reservationData.reservation &&
-        this.reservationData.reservation.reservation_code
-      ) {
-        this.confirmationNumber =
-          this.reservationData.reservation.reservation_code;
-      } else {
-        // Fallback to generated confirmation number
-        const prefix = this.paymentSuccessful ? 'VIP' : 'ERR';
-        const randomNum = Math.floor(Math.random() * 900000) + 100000;
-        const timestamp = Date.now().toString().slice(-4);
-        this.confirmationNumber = `${prefix}${randomNum}${timestamp}`;
-      }
+    if (this.reservationData?.reservation?.reservation_code) {
+      return this.reservationData.reservation.reservation_code;
     }
-    return this.confirmationNumber;
+    return '';
   }
 
   formatDate(date: string): string {

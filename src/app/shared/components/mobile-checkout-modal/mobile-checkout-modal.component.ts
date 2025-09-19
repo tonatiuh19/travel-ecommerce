@@ -30,6 +30,9 @@ import {
   faStepBackward,
   faPlane,
   faHotel,
+  faInfoCircle,
+  faClock,
+  faExclamationTriangle,
 } from '@fortawesome/free-solid-svg-icons';
 import { Stripe, StripeElements, StripeCardElement } from '@stripe/stripe-js';
 import { StripeService } from '../../../landing/services/stripe.service';
@@ -140,13 +143,16 @@ export class MobileCheckoutModalComponent
   faStepBackward = faStepBackward;
   faPlane = faPlane;
   faHotel = faHotel;
+  faInfoCircle = faInfoCircle;
+  faClock = faClock;
+  faExclamationTriangle = faExclamationTriangle;
 
   // Multi-step navigation
   currentStep: number = 1;
   totalSteps: number = 2;
 
   // Form data - TEST DATA FOR DEVELOPMENT (REMOVE IN PRODUCTION)
-  userInfo: UserInfo = {
+  /*userInfo: UserInfo = {
     firstName: 'Juan Carlos',
     lastName: 'García López',
     email: 'juan.garcia@example.com',
@@ -155,9 +161,9 @@ export class MobileCheckoutModalComponent
     dateOfBirth: '1985-03-15',
     passportNumber: 'P12345678',
     specialRequests: 'Asiento con vista, si es posible',
-  };
+  };*/
 
-  /*userInfo: UserInfo = {
+  userInfo: UserInfo = {
     firstName: '',
     lastName: '',
     email: '',
@@ -166,7 +172,7 @@ export class MobileCheckoutModalComponent
     dateOfBirth: '',
     passportNumber: '',
     specialRequests: '',
-  };*/
+  };
 
   paymentMethod: PaymentMethod = {
     cardholderName: '',
@@ -262,66 +268,6 @@ export class MobileCheckoutModalComponent
       this.enableZoom();
     }
 
-    // Debug Disney transfer data
-    if (
-      this.isVisible &&
-      this.bookingDetails?.expressTrip?.type === 'disney-transfer'
-    ) {
-      console.log('🏰 Disney Transfer Debug - Mobile Modal:', {
-        expressTrip: this.bookingDetails.expressTrip,
-        pickupInfo: this.bookingDetails.pickupInfo,
-        airportInfo: this.bookingDetails.airportInfo,
-      });
-
-      // Additional debug for hotel information
-      if (this.bookingDetails.expressTrip.pickupLocation === 'hotel') {
-        console.log('🏨 Hotel Pickup Debug:', {
-          hasPickupInfo: !!this.bookingDetails.pickupInfo,
-          pickupType: this.bookingDetails.pickupInfo?.type,
-          hotelName: this.bookingDetails.pickupInfo?.hotelName,
-          hotelAddress: this.bookingDetails.pickupInfo?.address,
-        });
-      }
-    }
-
-    // Debug airplane information for all services
-    if (this.isVisible && this.bookingDetails) {
-      console.log('✈️ Airplane Info Debug - Mobile Modal:', {
-        serviceType:
-          this.bookingDetails.expressTrip?.type || 'regular-transfer',
-        pickupLocation: this.bookingDetails.expressTrip?.pickupLocation,
-        hasAirportInfo: !!this.bookingDetails.airportInfo,
-        hasPickupInfo: !!this.bookingDetails.pickupInfo,
-        pickupType: this.bookingDetails.pickupInfo?.type,
-        airportInfo: this.bookingDetails.airportInfo,
-        pickupInfoAirport: this.bookingDetails.pickupInfo?.airport,
-        shouldShowAirplaneInfo:
-          (this.bookingDetails?.expressTrip?.type === 'paris-tour-4h' ||
-            (this.bookingDetails?.expressTrip?.type === 'disney-transfer' &&
-              this.bookingDetails?.expressTrip?.pickupLocation === 'airport') ||
-            this.bookingDetails?.expressTrip?.type ===
-              'airport-hotel-airport' ||
-            this.bookingDetails?.pickupInfo?.type === 'airport') &&
-          (this.bookingDetails?.airportInfo || this.bookingDetails?.pickupInfo),
-      });
-
-      // Debug return trip information for airport-hotel-airport services
-      if (this.bookingDetails.expressTrip?.type === 'airport-hotel-airport') {
-        console.log('🔄 Return Trip Debug - Mobile Modal:', {
-          isRoundTrip: this.bookingDetails.expressTrip?.isRoundTrip,
-          returnDate: this.bookingDetails.returnDate,
-          returnPickupTime: this.bookingDetails.expressTrip?.returnPickupTime,
-          returnTime: this.bookingDetails.returnTime,
-          hotelName: this.bookingDetails.pickupInfo?.hotelName,
-          shouldShowReturnTrip: !!(
-            this.bookingDetails?.expressTrip?.isRoundTrip &&
-            (this.bookingDetails?.returnDate ||
-              this.bookingDetails?.expressTrip?.returnPickupTime)
-          ),
-        });
-      }
-    }
-
     // Setup Stripe only when modal becomes visible for the first time and hasn't been initialized yet
     if (
       this.isVisible &&
@@ -329,7 +275,6 @@ export class MobileCheckoutModalComponent
       !this.confirmationProcessing &&
       !this.stripeSetupInitialized
     ) {
-      console.log('🔄 Mobile modal becoming visible - setting up Stripe...');
       this.stripeSetupInitialized = true; // Set flag to prevent multiple setups
       setTimeout(() => {
         this.waitForElementAndSetupStripe();
@@ -506,15 +451,13 @@ export class MobileCheckoutModalComponent
       this.userInfo.email.trim() !== '' &&
       this.userInfo.phone.trim() !== '' &&
       this.userInfo.nationality.trim() !== '' &&
-      this.paymentMethod.cardholderName.trim() !== '' &&
-      this.acceptedTerms
+      this.paymentMethod.cardholderName.trim() !== ''
     );
   }
 
   // Payment processing
   async processPayment(): Promise<void> {
     if (!this.stripe || !this.card) {
-      console.error('Mobile Stripe not initialized');
       return;
     }
 
@@ -531,8 +474,6 @@ export class MobileCheckoutModalComponent
         console.error('Mobile Stripe token error:', error);
         return;
       }
-
-      console.log('Mobile token generated successfully:', token.id);
 
       // Prepare user info for API
       const userInfo = {
@@ -586,23 +527,6 @@ export class MobileCheckoutModalComponent
         status: 'confirmed',
       };
 
-      console.group('=== SENDING MOBILE RESERVATION TO API ===');
-      console.log('📋 User Info:', userInfo);
-      console.log('🎫 Reservation Info:', reservationInfo);
-      console.log('💳 Token:', token.id);
-
-      // Debug hotel name specifically for airport-hotel-airport services
-      if (this.bookingDetails?.expressTrip?.type === 'airport-hotel-airport') {
-        console.log('🏨 Hotel Name Debug:', {
-          pickupType: this.bookingDetails?.pickupInfo?.type,
-          hotelName: this.bookingDetails?.pickupInfo?.hotelName,
-          pickupHotelNameInAPI: reservationInfo.pickup_hotel_name,
-          shouldIncludeHotel: !!this.bookingDetails?.pickupInfo?.hotelName,
-        });
-      }
-
-      console.groupEnd();
-
       // Dispatch create reservation action
       this.store.dispatch(
         LandingActions.createReservation({
@@ -613,7 +537,6 @@ export class MobileCheckoutModalComponent
         })
       );
     } catch (error) {
-      console.error('❌ Mobile payment processing failed:', error);
       this.isProcessingPayment = false;
     }
   }
@@ -651,10 +574,6 @@ export class MobileCheckoutModalComponent
         this.bookingDetails?.pickupInfo?.flightArrivalTime ||
         this.bookingDetails?.airportInfo?.arrivalTime;
       if (arrivalTime) {
-        console.log(
-          `Using flight arrival time for ${this.bookingDetails.expressTrip.type}:`,
-          arrivalTime
-        );
         return `${this.bookingDetails.departureDate} ${arrivalTime}`;
       }
     }
@@ -667,20 +586,12 @@ export class MobileCheckoutModalComponent
           this.bookingDetails?.pickupInfo?.flightArrivalTime ||
           this.bookingDetails?.airportInfo?.arrivalTime;
         if (arrivalTime) {
-          console.log(
-            'Using flight arrival time for Disney transfer from airport:',
-            arrivalTime
-          );
           return `${this.bookingDetails.departureDate} ${arrivalTime}`;
         }
       } else {
         // Disney transfer from hotel - use departure time
         const time = this.bookingDetails?.departureTime;
         if (time) {
-          console.log(
-            'Using departure time for Disney transfer from hotel:',
-            time
-          );
           return `${this.bookingDetails.departureDate} ${time}`;
         }
       }
@@ -689,11 +600,9 @@ export class MobileCheckoutModalComponent
     // For regular transfers, use departure time
     const time = this.bookingDetails?.departureTime;
     if (time) {
-      console.log('Using departure time for regular transfer:', time);
       return `${this.bookingDetails.departureDate} ${time}`;
     }
 
-    console.warn('No valid time found, using default 10:00');
     return `${this.bookingDetails.departureDate} 10:00`; // Default fallback
   }
 
@@ -707,10 +616,6 @@ export class MobileCheckoutModalComponent
         this.bookingDetails?.returnDate &&
         this.bookingDetails?.expressTrip?.returnPickupTime
       ) {
-        console.log(
-          'Using return pickup time for airport-hotel-airport service:',
-          this.bookingDetails.expressTrip.returnPickupTime
-        );
         return `${this.bookingDetails.returnDate} ${this.bookingDetails.expressTrip.returnPickupTime}`;
       }
     }
@@ -721,10 +626,6 @@ export class MobileCheckoutModalComponent
       this.bookingDetails?.returnTime &&
       this.bookingDetails?.destination !== 'Ámsterdam'
     ) {
-      console.log(
-        'Using return time for regular transfer:',
-        this.bookingDetails.returnTime
-      );
       return `${this.bookingDetails.returnDate} ${this.bookingDetails.returnTime}`;
     }
 
@@ -733,13 +634,11 @@ export class MobileCheckoutModalComponent
       this.bookingDetails?.expressTrip?.type === 'paris-tour-4h' ||
       this.bookingDetails?.expressTrip?.type === 'disney-transfer'
     ) {
-      console.log(`No return trip for ${this.bookingDetails.expressTrip.type}`);
       return undefined;
     }
 
     // Amsterdam transfers are one-way only
     if (this.bookingDetails?.destination === 'Ámsterdam') {
-      console.log('Amsterdam transfer is one-way only');
       return undefined;
     }
 
@@ -895,7 +794,7 @@ export class MobileCheckoutModalComponent
     this.dateFormatCache.clear();
 
     // Reset form data - TEST DATA FOR DEVELOPMENT (REMOVE IN PRODUCTION)
-    this.userInfo = {
+    /* this.userInfo = {
       firstName: 'Juan Carlos',
       lastName: 'García López',
       email: 'juan.garcia@example.com',
@@ -904,6 +803,17 @@ export class MobileCheckoutModalComponent
       dateOfBirth: '1985-03-15',
       passportNumber: 'P12345678',
       specialRequests: 'Asiento con vista, si es posible',
+    }; */
+
+    this.userInfo = {
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      nationality: '',
+      dateOfBirth: '',
+      passportNumber: '',
+      specialRequests: '',
     };
 
     this.paymentMethod = {
@@ -997,8 +907,6 @@ export class MobileCheckoutModalComponent
 
   // Store management methods
   private clearStoreState(): void {
-    console.log('🧹 Clearing mobile checkout store state...');
-
     // Dispatch action to clear store state
     this.store.dispatch(LandingActions.clearReservation());
 
@@ -1007,18 +915,13 @@ export class MobileCheckoutModalComponent
     this.reservationError = null;
     this.confirmationProcessing = false; // Reset confirmation flag
     this.stripeSetupInitialized = false; // Reset Stripe setup flag
-
-    console.log('✅ Store state cleared');
   }
 
   private setupStoreSubscriptions(): void {
-    console.log('📡 Setting up mobile checkout store subscriptions...');
-
     // Subscribe to reservation updates
     this.reservation$
       .pipe(takeUntil(this.unsubscribe$), distinctUntilChanged())
       .subscribe((reservation) => {
-        console.log('📦 Mobile reservation update received:', reservation);
         // Only show confirmation if we receive a NEW reservation after clearing state
         // and we're not already in confirmation mode
         if (
@@ -1032,8 +935,6 @@ export class MobileCheckoutModalComponent
           this.showConfirmation = true;
           this.isProcessingPayment = false;
           this.reservationError = null; // Clear any previous errors
-
-          console.log('✅ Payment successful - showing confirmation screen');
         }
       });
 
@@ -1041,7 +942,6 @@ export class MobileCheckoutModalComponent
     this.isProcessingReservation$
       .pipe(takeUntil(this.unsubscribe$), distinctUntilChanged())
       .subscribe((isProcessing) => {
-        console.log('⏳ Mobile processing state:', isProcessing);
         this.isProcessingPayment = isProcessing || false;
       });
 
@@ -1050,7 +950,6 @@ export class MobileCheckoutModalComponent
       .pipe(takeUntil(this.unsubscribe$), distinctUntilChanged())
       .subscribe((error) => {
         if (error) {
-          console.error('❌ Mobile reservation error:', error);
           this.reservationError = error;
           this.isProcessingPayment = false;
           // Handle error display here
@@ -1077,15 +976,11 @@ export class MobileCheckoutModalComponent
     // Check if the card element exists in DOM before mounting
     const cardElement = document.getElementById('mobile-card-element');
     if (!cardElement) {
-      console.warn(
-        'Mobile card element not found in DOM, skipping Stripe setup'
-      );
       return;
     }
 
     // If Stripe is already initialized, don't initialize again
     if (this.card) {
-      console.log('Mobile Stripe already initialized');
       return;
     }
 
@@ -1117,7 +1012,6 @@ export class MobileCheckoutModalComponent
         });
         this.card = this.elements.create('card', { style });
         this.card.mount('#mobile-card-element');
-        console.log('Mobile Stripe card element mounted successfully');
       }
     } catch (error) {
       console.error('Error setting up mobile Stripe:', error);
@@ -1131,7 +1025,6 @@ export class MobileCheckoutModalComponent
     }
     this.elements = null;
     this.stripe = null;
-    console.log('Mobile Stripe cleaned up');
   }
 
   ngOnDestroy(): void {

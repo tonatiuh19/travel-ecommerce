@@ -14,11 +14,13 @@ import { EnhancedFooterModule } from '../shared/components/enhanced-footer/enhan
 import { MobileEnhancedHeroModule } from '../shared/components/mobile-enhanced-hero/mobile-enhanced-hero.module';
 import { MobileVanTransferHeroModule } from '../shared/components/mobile-van-transfer-hero/mobile-van-transfer-hero.module';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [LandingComponent],
   imports: [
     CommonModule,
+    SharedModule,
     HeaderModule,
     FooterModule,
     PlaceCardModule,

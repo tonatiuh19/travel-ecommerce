@@ -48,6 +48,9 @@ import {
   faUsers,
   faUserCheck,
   faVanShuttle,
+  faInfoCircle,
+  faClock,
+  faExclamationTriangle,
 } from '@fortawesome/free-solid-svg-icons';
 import { Stripe, StripeElements, StripeCardElement } from '@stripe/stripe-js';
 import { StripeService } from '../../../landing/services/stripe.service';
@@ -206,6 +209,9 @@ export class CheckoutModalComponent
   faUsers = faUsers;
   faUserCheck = faUserCheck;
   faVanShuttle = faVanShuttle;
+  faInfoCircle = faInfoCircle;
+  faClock = faClock;
+  faExclamationTriangle = faExclamationTriangle;
 
   countries: string[] = [
     'Alemania',
@@ -261,8 +267,6 @@ export class CheckoutModalComponent
   }
 
   private clearStoreState(): void {
-    console.log('🧹 Clearing store state...');
-
     // Clear any previous reservation data from the store
     this.store.dispatch(LandingActions.clearReservation());
 
@@ -273,8 +277,6 @@ export class CheckoutModalComponent
     this.isProcessingPayment = false;
     this.confirmationProcessing = false; // Reset confirmation flag
     this.stripeSetupInitialized = false; // Reset Stripe setup flag
-
-    console.log('✅ Store state cleared');
   }
 
   private setupStoreSubscriptions(): void {
@@ -290,14 +292,11 @@ export class CheckoutModalComponent
           !this.showConfirmation &&
           !this.confirmationProcessing
         ) {
-          console.log('💡 Reservation received from store:', reservation);
           this.confirmationProcessing = true; // Set flag to prevent clearing
           this.reservation = reservation;
           this.showConfirmation = true;
           this.isProcessingPayment = false;
           this.reservationError = null; // Clear any previous errors
-
-          console.log('✅ Payment successful - showing confirmation screen');
           // Don't emit bookingConfirmed to prevent parent from resetting the form and causing page refresh
           // The thank-you component will handle the success display
         }
@@ -315,12 +314,10 @@ export class CheckoutModalComponent
       .pipe(takeUntil(this.unsubscribe$), distinctUntilChanged())
       .subscribe((error) => {
         if (error && !this.reservationError) {
-          console.log('❌ Error received from store:', error);
           this.confirmationProcessing = true; // Set flag to prevent clearing
           this.reservationError = error;
           this.isProcessingPayment = false;
           this.reservation = null; // Clear any previous reservation
-          console.error('❌ Reservation failed:', error);
 
           // Show confirmation screen with error state
           this.showConfirmation = true;
@@ -351,7 +348,6 @@ export class CheckoutModalComponent
       !this.confirmationProcessing &&
       !this.stripeSetupInitialized
     ) {
-      console.log('🔄 Modal becoming visible - setting up Stripe...');
       this.stripeSetupInitialized = true; // Set flag to prevent multiple setups
       setTimeout(() => {
         this.waitForElementAndSetupStripe();
@@ -411,7 +407,6 @@ export class CheckoutModalComponent
 
     // If Stripe is already initialized, don't initialize again
     if (this.card) {
-      console.log('Stripe already initialized');
       return;
     }
 
@@ -443,7 +438,6 @@ export class CheckoutModalComponent
         });
         this.card = this.elements.create('card', { style });
         this.card.mount('#card-element');
-        console.log('Stripe card element mounted successfully');
       }
     } catch (error) {
       console.error('Error setting up Stripe:', error);
@@ -601,8 +595,6 @@ export class CheckoutModalComponent
         return;
       }
 
-      console.log('Token generated successfully:', token.id);
-
       // Prepare user info for API
       const userInfo = {
         name: `${this.userInfo.firstName} ${this.userInfo.lastName}`,
@@ -642,12 +634,6 @@ export class CheckoutModalComponent
         status: 'confirmed',
       };
 
-      console.group('=== SENDING RESERVATION TO API ===');
-      console.log('📋 User Info:', userInfo);
-      console.log('🎫 Reservation Info:', reservationInfo);
-      console.log('💳 Token:', token.id);
-      console.groupEnd();
-
       // Dispatch create reservation action
       this.store.dispatch(
         LandingActions.createReservation({
@@ -658,7 +644,6 @@ export class CheckoutModalComponent
         })
       );
     } catch (error) {
-      console.error('❌ Payment processing failed:', error);
       this.isProcessingPayment = false;
     }
   }
@@ -698,10 +683,6 @@ export class CheckoutModalComponent
     ) {
       const arrivalTime = this.bookingDetails?.pickupInfo?.flightArrivalTime;
       if (arrivalTime) {
-        console.log(
-          `Using flight arrival time for ${this.bookingDetails.expressTrip.type}:`,
-          arrivalTime
-        );
         return `${this.bookingDetails.departureDate} ${arrivalTime}`;
       }
     }
@@ -712,20 +693,12 @@ export class CheckoutModalComponent
         // Disney transfer from airport - use flight arrival time
         const arrivalTime = this.bookingDetails?.pickupInfo?.flightArrivalTime;
         if (arrivalTime) {
-          console.log(
-            'Using flight arrival time for Disney transfer from airport:',
-            arrivalTime
-          );
           return `${this.bookingDetails.departureDate} ${arrivalTime}`;
         }
       } else {
         // Disney transfer from hotel - use departure time
         const time = this.bookingDetails?.departureTime;
         if (time) {
-          console.log(
-            'Using departure time for Disney transfer from hotel:',
-            time
-          );
           return `${this.bookingDetails.departureDate} ${time}`;
         }
       }
@@ -734,11 +707,9 @@ export class CheckoutModalComponent
     // For regular transfers, use departure time
     const time = this.bookingDetails?.departureTime;
     if (time) {
-      console.log('Using departure time for regular transfer:', time);
       return `${this.bookingDetails.departureDate} ${time}`;
     }
 
-    console.warn('No valid time found, using default 10:00');
     return `${this.bookingDetails.departureDate} 10:00`; // Default fallback
   }
 
@@ -752,10 +723,6 @@ export class CheckoutModalComponent
         this.bookingDetails?.returnDate &&
         this.bookingDetails?.expressTrip?.returnPickupTime
       ) {
-        console.log(
-          'Using return pickup time for airport-hotel-airport service:',
-          this.bookingDetails.expressTrip.returnPickupTime
-        );
         return `${this.bookingDetails.returnDate} ${this.bookingDetails.expressTrip.returnPickupTime}`;
       }
     }
@@ -766,10 +733,6 @@ export class CheckoutModalComponent
       this.bookingDetails?.returnTime &&
       this.bookingDetails?.destination !== 'Ámsterdam'
     ) {
-      console.log(
-        'Using return time for regular transfer:',
-        this.bookingDetails.returnTime
-      );
       return `${this.bookingDetails.returnDate} ${this.bookingDetails.returnTime}`;
     }
 
@@ -778,13 +741,11 @@ export class CheckoutModalComponent
       this.bookingDetails?.expressTrip?.type === 'paris-tour-4h' ||
       this.bookingDetails?.expressTrip?.type === 'disney-transfer'
     ) {
-      console.log(`No return trip for ${this.bookingDetails.expressTrip.type}`);
       return undefined;
     }
 
     // Amsterdam transfers are one-way only
     if (this.bookingDetails?.destination === 'Ámsterdam') {
-      console.log('Amsterdam transfer is one-way only');
       return undefined;
     }
 
@@ -892,7 +853,6 @@ export class CheckoutModalComponent
       specialNotes.push(`TERMINAL: ${this.bookingDetails.pickupInfo.terminal}`);
     }
 
-    console.log('Built special notes:', specialNotes);
     return specialNotes.length > 0 ? specialNotes.join(' | ') : undefined;
   }
 

@@ -5,6 +5,7 @@ import { LogoComponent } from './components/logo/logo.component';
 import { ThankYouModule } from './components/thank-you/thank-you.module';
 import { LoadingMaskComponent } from './components/loading-mask/loading-mask.component';
 import { PhoneInputPickerModule } from './components/phone-input-picker/phone-input-picker.module';
+import { MetaService } from './services/meta.service';
 
 @NgModule({
   declarations: [LogoComponent, LoadingMaskComponent],
@@ -20,5 +21,6 @@ import { PhoneInputPickerModule } from './components/phone-input-picker/phone-in
     LoadingMaskComponent,
     PhoneInputPickerModule,
   ],
+  providers: [MetaService],
 })
 export class SharedModule {}

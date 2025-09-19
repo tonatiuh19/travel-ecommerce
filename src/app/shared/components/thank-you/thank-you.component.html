@@ -42,22 +42,23 @@
           <!-- Confirmation Details -->
           <div class="confirmation-details mb-4">
             <div class="confirmation-card">
-              <div class="card-header text-center">
-                <div class="confirmation-number">
-                  <small class="text-muted">Número de Confirmación</small>
-                  <h3 class="text-primary fw-bold mb-0">
-                    {{ generateConfirmationNumber() }}
-                  </h3>
-                </div>
+              <!-- Confirmation Number Section -->
+              <div class="confirmation-number-section">
+                <small class="text-muted">NÚMERO DE CONFIRMACIÓN</small>
+                <h3 class="text-primary fw-bold mb-0">
+                  {{ confirmationNumber }}
+                </h3>
               </div>
-              <div class="card-body">
+
+              <!-- Confirmation Details Section -->
+              <div class="confirmation-info-section">
                 <div class="detail-row">
                   <fa-icon
                     [icon]="faCalendarAlt"
                     class="detail-icon text-info"
                   ></fa-icon>
                   <div class="detail-info">
-                    <span class="detail-label">Fecha de Confirmación</span>
+                    <span class="detail-label">FECHA DE CONFIRMACIÓN</span>
                     <span class="detail-value"
                       >{{ getCurrentDate() }} - {{ getCurrentTime() }}</span
                     >
@@ -69,7 +70,7 @@
                     class="detail-icon text-warning"
                   ></fa-icon>
                   <div class="detail-info">
-                    <span class="detail-label">Email de Confirmación</span>
+                    <span class="detail-label">EMAIL DE CONFIRMACIÓN</span>
                     <span class="detail-value">{{
                       userInfo.email || "No proporcionado"
                     }}</span>
@@ -105,7 +106,7 @@
                 <div class="error-number">
                   <small class="text-muted">Número de Error</small>
                   <h3 class="text-danger fw-bold mb-0">
-                    {{ generateConfirmationNumber() }}
+                    {{ confirmationNumber }}
                   </h3>
                 </div>
               </div>
@@ -185,7 +186,7 @@
           </div>
 
           <!-- Trip Information -->
-          <div class="trip-info mb-4">
+          <!--           <div class="trip-info mb-4">
             <div class="info-card">
               <div class="card-header bg-light">
                 <fa-icon
@@ -195,7 +196,7 @@
                 Información del Viaje
               </div>
               <div class="card-body">
-                <!-- Route -->
+
                 <div class="route-display mb-3">
                   <div class="route-cities">
                     <span class="city-from">{{
@@ -221,7 +222,7 @@
                   </div>
                 </div>
 
-                <!-- Trip Details Grid -->
+
                 <div class="row g-3">
                   <div class="col-sm-6">
                     <div class="trip-detail">
@@ -283,7 +284,7 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div> -->
 
           <!-- Pickup Information -->
           <div
@@ -486,7 +487,9 @@
                     }}</span>
                   </div>
                   <div *ngIf="bookingDetails?.serviceFee" class="price-item">
-                    <span class="price-label">Tarifa de servicio (7%):</span>
+                    <span class="price-label"
+                      >Comisión de servicio (no reembolsable):</span
+                    >
                     <span class="price-value">{{
                       formatCurrency(bookingDetails?.serviceFee || 0)
                     }}</span>
@@ -538,13 +541,13 @@
         <!-- Action Buttons -->
         <div class="action-buttons mt-5">
           <div *ngIf="paymentSuccessful" class="success-actions">
-            <button
+            <!--            <button
               class="btn btn-primary btn-lg mb-3 w-100"
               (click)="onDownloadConfirmation()"
             >
               <fa-icon [icon]="faDownload" class="me-2"></fa-icon>
               Descargar Confirmación PDF
-            </button>
+            </button> -->
             <button
               class="btn btn-outline-primary btn-lg w-100"
               (click)="close()"

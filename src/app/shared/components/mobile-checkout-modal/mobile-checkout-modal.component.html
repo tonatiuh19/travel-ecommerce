@@ -482,7 +482,7 @@
 
             <!-- Service Fee -->
             <div class="price-item">
-              <span>Tarifa de servicio (7%):</span>
+              <span>Comisión de servicio (no reembolsable):</span>
               <span>{{ formatCurrency(bookingDetails?.serviceFee || 0) }}</span>
             </div>
 
@@ -491,7 +491,7 @@
               *ngIf="bookingDetails?.urgencyFee"
               class="price-item text-warning"
             >
-              <span>Tarifa urgencia (mañana, 10%):</span>
+              <span>Comisión de urgencia (mañana):</span>
               <span>{{ formatCurrency(bookingDetails?.urgencyFee || 0) }}</span>
             </div>
 
@@ -546,18 +546,62 @@
               <span class="security-text">Transacción 100% segura</span>
             </div>
 
+            <!-- Reimbursement Policies -->
+            <div class="reimbursement-policies-mobile mb-3">
+              <div class="card border-warning">
+                <div class="card-header bg-warning text-dark p-2">
+                  <h6 class="mb-0 fw-bold small">
+                    <fa-icon [icon]="faInfoCircle" class="me-2"></fa-icon>
+                    Políticas de Reembolso
+                  </h6>
+                </div>
+                <div class="card-body p-3">
+                  <div class="row g-2">
+                    <div class="col-12">
+                      <div class="d-flex align-items-start mb-2">
+                        <fa-icon
+                          [icon]="faClock"
+                          class="text-success me-2 mt-1 small"
+                        ></fa-icon>
+                        <div class="flex-grow-1">
+                          <strong class="text-dark small"
+                            >Tolerancia de Cancelación</strong
+                          >
+                          <p class="mb-0 text-muted" style="font-size: 0.8rem">
+                            Puede cancelar hasta
+                            <strong>2 días antes</strong> del servicio sin
+                            penalización.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12">
+                      <div class="d-flex align-items-start">
+                        <fa-icon
+                          [icon]="faExclamationTriangle"
+                          class="text-danger me-2 mt-1 small"
+                        ></fa-icon>
+                        <div class="flex-grow-1">
+                          <strong class="text-dark small"
+                            >Penalización por Cancelación Tardía</strong
+                          >
+                          <p class="mb-0 text-muted" style="font-size: 0.8rem">
+                            Cancelaciones con menos de 2 días:
+                            <span class="fw-bold text-danger">€100</span> de
+                            multa.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- Terms -->
             <div class="form-check">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                id="terms"
-                [(ngModel)]="acceptedTerms"
-                name="acceptedTerms"
-                required
-              />
               <label class="form-check-label" for="terms">
-                Acepto los
+                Al pagar acepto los
                 <a
                   href="/terms-and-conditions"
                   class="link"
@@ -610,6 +654,7 @@
           [isVisible]="showConfirmation"
           [paymentSuccessful]="true"
           [bookingDetails]="thankYouBookingDetails"
+          [reservationData]="reservationData"
           [userInfo]="thankYouUserInfo"
           [paymentMethod]="thankYouPaymentMethod"
           (closed)="close()"

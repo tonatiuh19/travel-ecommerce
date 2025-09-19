@@ -173,17 +173,63 @@
                   ></div>
                 </div>
 
+                <!-- Reimbursement Policies Section -->
+                <div class="reimbursement-policies mt-4 mb-4">
+                  <div class="card border-warning">
+                    <div class="card-header bg-warning text-dark">
+                      <h6 class="mb-0 fw-bold">
+                        <fa-icon [icon]="faInfoCircle" class="me-2"></fa-icon>
+                        Políticas de Reembolso
+                      </h6>
+                    </div>
+                    <div class="card-body">
+                      <div class="row g-3">
+                        <div class="col-md-6">
+                          <div class="d-flex align-items-start">
+                            <fa-icon
+                              [icon]="faClock"
+                              class="text-success me-2 mt-1"
+                            ></fa-icon>
+                            <div>
+                              <strong class="text-dark"
+                                >Tolerancia de Cancelación</strong
+                              >
+                              <p class="mb-0 text-muted small mt-1">
+                                Puede cancelar hasta
+                                <strong>2 días antes</strong> del servicio sin
+                                penalización.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="d-flex align-items-start">
+                            <fa-icon
+                              [icon]="faExclamationTriangle"
+                              class="text-danger me-2 mt-1"
+                            ></fa-icon>
+                            <div>
+                              <strong class="text-dark"
+                                >Penalización por Cancelación Tardía</strong
+                              >
+                              <p class="mb-0 text-muted small mt-1">
+                                Cancelaciones con menos de 2 días:
+                                <span class="fw-bold text-danger">€100</span> de
+                                multa.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <!-- Terms and Conditions -->
                 <div class="terms-section mt-4">
                   <div class="form-check form-check-lg">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      id="terms"
-                      required
-                    />
                     <label class="form-check-label" for="terms">
-                      Acepto los
+                      Al pagar acepto los
                       <a
                         href="/terms-and-conditions"
                         class="text-primary"
@@ -779,7 +825,7 @@
                       class="price-item service"
                     >
                       <span class="price-label"
-                        >Comisión de servicio (7%):
+                        >Comisión de servicio (no reembolsable):
                       </span>
                       <span class="price-value"
                         >+{{

@@ -37,6 +37,7 @@ interface PickupInfo {
   airport?: string; // CDG or ORY
   flightNumber?: string;
   flightArrivalTime?: string;
+  flightDepartureTime?: string;
   airline?: string;
   terminal?: string;
   hotelName?: string;
@@ -147,6 +148,13 @@ export class VanTransferHeroComponent implements OnInit {
       destination: 'Bruselas',
       duration: '3h 20min',
       distance: '265 km',
+    },
+    {
+      id: 'paris-mont-saint-michel',
+      origin: 'París',
+      destination: 'Mont Saint-Michel',
+      duration: '3h 45min',
+      distance: '320 km',
     },
   ];
 
@@ -291,8 +299,6 @@ export class VanTransferHeroComponent implements OnInit {
     this.showResults = false;
     this.hideValidationMessage();
 
-    console.log('Date changed to:', this.selectedDate); // Debug log
-
     // Ensure return date is not before departure date
     if (
       this.selectedReturnDate &&
@@ -313,10 +319,6 @@ export class VanTransferHeroComponent implements OnInit {
   private updateBookingDetails(): void {
     if (this.bookingCalculation) {
       this.currentBookingDetails = this.getBookingDetailsForCheckout();
-      console.log(
-        'Updated booking details due to date change:',
-        this.currentBookingDetails
-      );
     }
   }
 
@@ -968,10 +970,6 @@ export class VanTransferHeroComponent implements OnInit {
   openCheckoutModal(): void {
     // Refresh booking details before opening modal
     this.currentBookingDetails = this.getBookingDetailsForCheckout();
-    console.log(
-      'Opening checkout modal with booking details:',
-      this.currentBookingDetails
-    );
 
     this.showCheckoutModal = true;
     document.body.style.overflow = 'hidden';
@@ -983,7 +981,6 @@ export class VanTransferHeroComponent implements OnInit {
   }
 
   onBookingConfirmed(confirmation: any): void {
-    console.log('Booking confirmed:', confirmation);
     // Here you would typically:
     // 1. Send confirmation to backend
     // 2. Send confirmation email
@@ -1044,11 +1041,6 @@ export class VanTransferHeroComponent implements OnInit {
       return null;
     }
 
-    console.log(
-      'Creating booking details with selectedDate:',
-      this.selectedDate
-    ); // Debug log
-
     const bookingDetails = {
       bookingId: 'VT' + Date.now().toString(36).toUpperCase(),
       origin: this.selectedOrigin,
@@ -1069,8 +1061,6 @@ export class VanTransferHeroComponent implements OnInit {
       pickupInfo: this.pickupInfo,
       expressTrip: this.expressTrip,
     };
-
-    console.log('Booking details created:', bookingDetails); // Debug log
     return bookingDetails;
   }
 }

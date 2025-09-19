@@ -190,6 +190,21 @@
                           </option>
                         </select>
                       </div>
+                      <div class="col-6">
+                        <label class="form-label"
+                          >Hora Salida Próximo Vuelo</label
+                        >
+                        <select
+                          class="form-select"
+                          [(ngModel)]="airportPickup.departureTime"
+                          name="parisDepartureTime"
+                        >
+                          <option value="">Selecciona hora</option>
+                          <option *ngFor="let time of times" [value]="time">
+                            {{ time }}
+                          </option>
+                        </select>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1005,7 +1020,7 @@
 
             <!-- Service Fee -->
             <div class="d-flex justify-content-between mb-2">
-              <span>Tarifa de servicio (7%):</span>
+              <span>Comisión de servicio:</span>
               <span class="fw-bold">€{{ bookingCalculation.serviceFee }}</span>
             </div>
 
@@ -1014,7 +1029,7 @@
               *ngIf="bookingCalculation.urgencyFee"
               class="d-flex justify-content-between mb-2 text-warning"
             >
-              <span>Tarifa urgencia (mañana, 10%):</span>
+              <span>Comisión de urgencia (mañana):</span>
               <span class="fw-bold">€{{ bookingCalculation.urgencyFee }}</span>
             </div>
 
@@ -1035,6 +1050,58 @@
             <fa-icon [icon]="faVanShuttle" class="me-2"></fa-icon>
             Reservar Ahora
           </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reimbursement Rules Section -->
+  <div class="container-fluid mt-4">
+    <div class="row">
+      <div class="col-12">
+        <div class="reimbursement-rules-card">
+          <div class="card border-warning">
+            <div class="card-header bg-warning text-dark">
+              <h6 class="mb-0 fw-bold">
+                <fa-icon [icon]="faInfoCircle" class="me-2"></fa-icon>
+                Políticas de Reembolso
+              </h6>
+            </div>
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-12">
+                  <div class="d-flex align-items-start">
+                    <fa-icon
+                      [icon]="faClock"
+                      class="text-success me-2 mt-1"
+                    ></fa-icon>
+                    <div>
+                      <strong>Tolerancia de Cancelación:</strong>
+                      <p class="mb-0 text-muted small">
+                        Puede cancelar hasta 2 días antes del servicio sin
+                        penalización.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="d-flex align-items-start">
+                    <fa-icon
+                      [icon]="faExclamationTriangle"
+                      class="text-danger me-2 mt-1"
+                    ></fa-icon>
+                    <div>
+                      <strong>Penalización por Cancelación Tardía:</strong>
+                      <p class="mb-0 text-muted small">
+                        Cancelaciones con menos de 2 días:
+                        <span class="fw-bold text-danger">€100</span> de multa.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
