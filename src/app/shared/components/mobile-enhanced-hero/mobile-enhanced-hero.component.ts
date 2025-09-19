@@ -78,20 +78,6 @@ export class MobileEnhancedHeroComponent
   // Statistics data
   stats = [
     {
-      number: 25000,
-      target: 25000,
-      suffix: '+',
-      label: 'Clientes Satisfechos',
-      icon: faUsers,
-    },
-    {
-      number: 500,
-      target: 500,
-      suffix: '+',
-      label: 'Destinos Únicos',
-      icon: faLocationDot,
-    },
-    {
       number: 4.9,
       target: 4.9,
       suffix: '★',

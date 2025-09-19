@@ -1,0 +1,451 @@
+<div class="reservation-container">
+  <div class="container py-4">
+    <!-- Header -->
+    <div class="reservation-header text-center mb-4">
+      <h1 class="h2 mb-2">Consulta tu Reserva</h1>
+      <p class="">Ingresa tu código de reserva para ver los detalles</p>
+    </div>
+
+    <!-- Search Form -->
+    <div *ngIf="showSearchForm" class="search-form-container">
+      <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+          <div class="card shadow-sm">
+            <div class="card-body p-4">
+              <form (ngSubmit)="searchReservation()" class="reservation-form">
+                <div class="mb-3">
+                  <label for="reservationCode" class="form-label fw-semibold">
+                    Código de Reserva
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control form-control-lg"
+                    id="reservationCode"
+                    [(ngModel)]="reservationCode"
+                    name="reservationCode"
+                    placeholder="Ej: RES123456"
+                    required
+                    autocomplete="off"
+                  />
+                </div>
+                <div class="d-grid">
+                  <button
+                    type="submit"
+                    class="btn btn-primary btn-lg"
+                    [disabled]="(loading$ | async) || !reservationCode.trim()"
+                  >
+                    <span
+                      *ngIf="loading$ | async"
+                      class="spinner-border spinner-border-sm me-2"
+                      role="status"
+                    ></span>
+                    {{ (loading$ | async) ? "Buscando..." : "Buscar Reserva" }}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="(loading$ | async) && !showSearchForm" class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+      <p class="mt-3 text-muted">Buscando tu reserva...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error$ | async as error" class="row justify-content-center">
+      <div class="col-md-8 col-lg-6">
+        <div class="alert alert-danger d-flex align-items-center" role="alert">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          <div><strong>Error:</strong> {{ error }}</div>
+        </div>
+        <div class="text-center">
+          <button class="btn btn-outline-primary" (click)="newSearch()">
+            Intentar de nuevo
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reservation Details -->
+    <div
+      *ngIf="reservation$ | async as reservation"
+      class="reservation-details"
+    >
+      <!-- Success Header -->
+      <div class="row justify-content-center mb-4">
+        <div class="col-md-10">
+          <div
+            class="alert alert-success d-flex align-items-center"
+            role="alert"
+          >
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <div>
+              <strong>¡Reserva encontrada!</strong> Aquí están los detalles de
+              tu reserva.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reservation Cards -->
+      <div class="row justify-content-center">
+        <div class="col-md-10">
+          <!-- Basic Info Card -->
+          <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-primary">
+              <h5 class="mb-0 d-flex align-items-center">
+                <i class="bi bi-info-circle me-2"></i>
+                Información de la Reserva
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <strong>Código de Reserva:</strong><br />
+                  <span class="badge bg-secondary fs-6">{{
+                    reservation.reservation_code
+                  }}</span>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <strong>Tipo de Servicio:</strong><br />
+                  <span class="text-primary fw-semibold">{{
+                    getServiceTypeDisplay(reservation.service_type)
+                  }}</span>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <strong>Estado:</strong><br />
+                  <span
+                    class="badge"
+                    [class.bg-success]="reservation.status === 'confirmed'"
+                    [class.bg-warning]="reservation.status === 'pending'"
+                    [class.bg-danger]="reservation.status === 'cancelled'"
+                  >
+                    {{ reservation.status }}
+                  </span>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <strong>Fecha de Reserva:</strong><br />
+                  {{ formatDate(reservation.created_at) }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- User Information Card -->
+          <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-info text-white">
+              <h5 class="mb-0 d-flex align-items-center">
+                <i class="bi bi-person me-2"></i>
+                Información del Cliente
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <strong>Nombre:</strong><br />
+                  {{ reservation.user_name }}
+                </div>
+                <div class="col-md-6 mb-3">
+                  <strong>Email:</strong><br />
+                  <a
+                    [href]="'mailto:' + reservation.user_email"
+                    class="text-decoration-none"
+                  >
+                    {{ reservation.user_email }}
+                  </a>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <strong>Teléfono:</strong><br />
+                  <a
+                    [href]="'tel:' + reservation.user_phone"
+                    class="text-decoration-none"
+                  >
+                    {{ reservation.user_phone }}
+                  </a>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <strong>País:</strong><br />
+                  {{ reservation.user_country }}
+                </div>
+                <div class="col-md-6 mb-3" *ngIf="reservation.user_birth_date">
+                  <strong>Fecha de Nacimiento:</strong><br />
+                  {{ formatDate(reservation.user_birth_date) }}
+                </div>
+                <div class="col-md-6 mb-3" *ngIf="reservation.user_passport_no">
+                  <strong>Número de Pasaporte:</strong><br />
+                  {{ reservation.user_passport_no }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Service Details Card -->
+          <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-success text-white">
+              <h5 class="mb-0 d-flex align-items-center">
+                <i class="bi bi-calendar-event me-2"></i>
+                Detalles del Servicio
+              </h5>
+            </div>
+            <div class="card-body">
+              <!-- Package Service -->
+              <div *ngIf="reservation.service_type === 'package'">
+                <div class="row">
+                  <div class="col-md-6 mb-3" *ngIf="reservation.start_date">
+                    <strong>Fecha de Inicio:</strong><br />
+                    {{ formatDate(reservation.start_date) }}
+                  </div>
+                  <div class="col-md-6 mb-3" *ngIf="reservation.end_date">
+                    <strong>Fecha de Fin:</strong><br />
+                    {{ formatDate(reservation.end_date) }}
+                  </div>
+                  <div class="col-md-6 mb-3" *ngIf="reservation.adults">
+                    <strong>Adultos:</strong><br />
+                    {{ reservation.adults }}
+                  </div>
+                  <div class="col-md-6 mb-3" *ngIf="reservation.children">
+                    <strong>Niños:</strong><br />
+                    {{ reservation.children }}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Van Transfer Service -->
+              <div *ngIf="reservation.service_type === 'van_transfer'">
+                <div class="row">
+                  <div
+                    class="col-md-6 mb-3"
+                    *ngIf="reservation.pickup_location || reservation.origin"
+                  >
+                    <strong>Lugar de Recogida:</strong><br />
+                    {{ reservation.pickup_location || reservation.origin }}
+                  </div>
+                  <div class="col-md-6 mb-3" *ngIf="reservation.destination">
+                    <strong>Destino:</strong><br />
+                    {{ reservation.destination }}
+                  </div>
+                  <div
+                    class="col-md-6 mb-3"
+                    *ngIf="
+                      reservation.pickup_date || reservation.pickup_datetime
+                    "
+                  >
+                    <strong>Fecha y Hora de Recogida:</strong><br />
+                    {{
+                      formatDateTime(
+                        reservation.pickup_date || reservation.pickup_datetime
+                      )
+                    }}
+                  </div>
+                  <div class="col-md-6 mb-3" *ngIf="reservation.pickup_time">
+                    <strong>Hora de Recogida:</strong><br />
+                    {{ reservation.pickup_time }}
+                  </div>
+                  <div class="col-md-6 mb-3" *ngIf="reservation.passengers">
+                    <strong>Pasajeros:</strong><br />
+                    {{ reservation.passengers }}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tour Services (paris_tour, city_tour, airport_tour, etc.) -->
+              <div *ngIf="reservation.service_type.includes('tour')">
+                <div class="row">
+                  <div class="col-md-6 mb-3" *ngIf="reservation.origin">
+                    <strong>Ciudad/Origen:</strong><br />
+                    {{ reservation.origin }}
+                  </div>
+                  <div
+                    class="col-md-6 mb-3"
+                    *ngIf="reservation.pickup_datetime"
+                  >
+                    <strong>Fecha y Hora:</strong><br />
+                    {{ formatDateTime(reservation.pickup_datetime) }}
+                  </div>
+                  <div class="col-md-6 mb-3" *ngIf="reservation.passengers">
+                    <strong>Número de Pasajeros:</strong><br />
+                    {{ reservation.passengers }}
+                  </div>
+                  <div
+                    class="col-md-6 mb-3"
+                    *ngIf="reservation.return_datetime"
+                  >
+                    <strong>Fecha de Retorno:</strong><br />
+                    {{ formatDateTime(reservation.return_datetime) }}
+                  </div>
+
+                  <!-- Airport-specific fields -->
+                  <div
+                    class="col-12 mb-3"
+                    *ngIf="
+                      reservation.pickup_airport ||
+                      reservation.pickup_flight_number
+                    "
+                  >
+                    <div class="card bg-light">
+                      <div class="card-header">
+                        <strong
+                          ><i class="bi bi-airplane me-2"></i>Detalles del
+                          Vuelo</strong
+                        >
+                      </div>
+                      <div class="card-body">
+                        <div class="row">
+                          <div
+                            class="col-md-6 mb-2"
+                            *ngIf="reservation.pickup_airport"
+                          >
+                            <strong>Aeropuerto:</strong><br />
+                            <span class="badge bg-info">{{
+                              reservation.pickup_airport
+                            }}</span>
+                          </div>
+                          <div
+                            class="col-md-6 mb-2"
+                            *ngIf="reservation.pickup_flight_number"
+                          >
+                            <strong>Número de Vuelo:</strong><br />
+                            <span class="badge bg-secondary">{{
+                              reservation.pickup_flight_number
+                            }}</span>
+                          </div>
+                          <div
+                            class="col-md-6 mb-2"
+                            *ngIf="reservation.pickup_airline"
+                          >
+                            <strong>Aerolínea:</strong><br />
+                            {{ reservation.pickup_airline }}
+                          </div>
+                          <div
+                            class="col-md-6 mb-2"
+                            *ngIf="reservation.pickup_terminal"
+                          >
+                            <strong>Terminal:</strong><br />
+                            <span class="badge bg-warning text-dark">{{
+                              reservation.pickup_terminal
+                            }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Hotel pickup fields -->
+                  <div
+                    class="col-md-6 mb-3"
+                    *ngIf="reservation.pickup_hotel_name"
+                  >
+                    <strong>Hotel de Recogida:</strong><br />
+                    {{ reservation.pickup_hotel_name }}
+                  </div>
+                  <div class="col-md-6 mb-3" *ngIf="reservation.pickup_address">
+                    <strong>Dirección de Recogida:</strong><br />
+                    {{ reservation.pickup_address }}
+                  </div>
+
+                  <!-- Accessibility -->
+                  <div
+                    class="col-md-6 mb-3"
+                    *ngIf="reservation.wheelchair_access"
+                  >
+                    <strong>Acceso para Silla de Ruedas:</strong><br />
+                    <span class="badge bg-info">
+                      <i class="bi bi-universal-access-circle me-1"></i>
+                      {{ reservation.wheelchair_access ? "Sí" : "No" }}
+                    </span>
+                  </div>
+
+                  <!-- Urgency indicator -->
+                  <div class="col-md-6 mb-3" *ngIf="reservation.urgency_trip">
+                    <strong>Viaje Urgente:</strong><br />
+                    <span class="badge bg-danger">
+                      <i class="bi bi-exclamation-triangle me-1"></i>
+                      Urgente
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Common fields for all service types -->
+              <div
+                class="row"
+                *ngIf="reservation.special_requests || reservation.special_note"
+              >
+                <div class="col-12">
+                  <strong>{{
+                    reservation.special_note
+                      ? "Detalles Especiales:"
+                      : "Solicitudes Especiales:"
+                  }}</strong
+                  ><br />
+                  <div class="border rounded p-3 bg-light">
+                    <div *ngIf="reservation.special_note" class="mb-2">
+                      <i class="bi bi-info-circle text-primary me-2"></i>
+                      {{ reservation.special_note }}
+                    </div>
+                    <div *ngIf="reservation.special_requests">
+                      <i class="bi bi-chat-left-text text-secondary me-2"></i>
+                      {{ reservation.special_requests }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Payment Information Card -->
+          <div
+            class="card mb-4 shadow-sm"
+            *ngIf="reservation.total_amount || reservation.price"
+          >
+            <div class="card-header bg-warning text-dark">
+              <h5 class="mb-0 d-flex align-items-center">
+                <i class="bi bi-credit-card me-2"></i>
+                Información de Pago
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <strong>Monto Total:</strong><br />
+                  <span class="h4 text-success">{{
+                    formatCurrency(
+                      reservation.total_amount || reservation.price
+                    )
+                  }}</span>
+                </div>
+                <div class="col-md-6 mb-3" *ngIf="reservation.payment_status">
+                  <strong>Estado del Pago:</strong><br />
+                  <span
+                    class="badge"
+                    [class.bg-success]="reservation.payment_status === 'paid'"
+                    [class.bg-warning]="
+                      reservation.payment_status === 'pending'
+                    "
+                    [class.bg-danger]="reservation.payment_status === 'failed'"
+                  >
+                    {{ reservation.payment_status }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="text-center mb-4">
+            <button class="btn btn-outline-primary me-3" (click)="newSearch()">
+              <i class="bi bi-search me-1"></i>
+              Nueva Búsqueda
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,5 @@
 import { Component, HostListener, Input } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -9,6 +10,8 @@ export class HeaderComponent {
   @Input() isMain = true;
   public isColorDark = true;
   public isLogoSmall = false;
+
+  constructor(private router: Router) {}
 
   @HostListener('window:scroll', [])
   onWindowScroll() {
@@ -34,5 +37,9 @@ export class HeaderComponent {
     } else {
       navbar ? navbar.classList.add('bg-primary') : null;
     }
+  }
+
+  navigateToReservation() {
+    this.router.navigate(['/reserva']);
   }
 }

@@ -10,6 +10,7 @@ export class LandingService {
   public GET_PACKAGES = `${DOMAIN}/getPackages.php`;
   public GET_PACKAGES_BY_ID = `${DOMAIN}/getPackagesById.php`;
   public CREATE_RESERVATION = `${DOMAIN}/createReservation.php`;
+  public GET_RESERVATION_BY_CODE = `${DOMAIN}/getReservationByCode.php`;
 
   constructor(private httpClient: HttpClient) {}
 
@@ -121,5 +122,17 @@ export class LandingService {
         return response;
       })
     );
+  }
+
+  public getReservationByCode(reservationCode: string): Observable<any> {
+    return this.httpClient
+      .post(this.GET_RESERVATION_BY_CODE, {
+        reservation_code: reservationCode,
+      })
+      .pipe(
+        map((response) => {
+          return response;
+        })
+      );
   }
 }

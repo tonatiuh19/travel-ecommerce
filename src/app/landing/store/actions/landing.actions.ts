@@ -64,3 +64,22 @@ export const createReservationFailure = createAction(
 );
 
 export const clearReservation = createAction(`${actor} Clear Reservation`);
+
+export const getReservationByCode = createAction(
+  `${actor} Get Reservation By Code`,
+  props<{ reservationCode: string }>()
+);
+
+export const getReservationByCodeSuccess = createAction(
+  `${actor} Get Reservation By Code Success`,
+  props<{ reservation: any }>()
+);
+
+export const getReservationByCodeFailure = createAction(
+  `${actor} Get Reservation By Code Failure`,
+  props<{ error: string }>()
+);
+
+export const clearReservationLookup = createAction(
+  `${actor} Clear Reservation Lookup`
+);

@@ -1,0 +1,380 @@
+.reservation-container {
+  min-height: 100vh;
+  background: linear-gradient(
+    135deg,
+    var(--color-blue-gray) 0%,
+    var(--color-dark-slate) 100%
+  );
+  background-attachment: fixed;
+}
+
+.reservation-header h1 {
+  color: #fff;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.reservation-header p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.1rem;
+}
+
+.search-form-container {
+  margin-top: 2rem;
+}
+
+.card {
+  border: none;
+  border-radius: 15px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 15px rgba(17, 45, 53, 0.1);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(17, 45, 53, 0.15) !important;
+}
+
+.card-header {
+  border-radius: 15px 15px 0 0 !important;
+  padding: 1.25rem 1.5rem;
+}
+
+.card-header.bg-primary {
+  background: var(--color-blue-gray) !important;
+  color: white;
+}
+
+.card-header.bg-info {
+  background: var(--color-soft-blue) !important;
+  color: var(--color-dark-slate);
+}
+
+.card-header.bg-success {
+  background: linear-gradient(
+    45deg,
+    var(--color-warm-terracotta),
+    #a55a4a
+  ) !important;
+  color: white;
+}
+
+.card-header.bg-warning {
+  background: linear-gradient(
+    45deg,
+    #d4a574,
+    var(--color-warm-terracotta)
+  ) !important;
+  color: var(--color-dark-slate);
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.form-control-lg {
+  border-radius: 10px;
+  border: 2px solid var(--color-soft-blue);
+  transition: all 0.3s ease;
+}
+
+.form-control-lg:focus {
+  border-color: var(--color-blue-gray);
+  box-shadow: 0 0 0 0.2rem rgba(106, 143, 167, 0.25);
+}
+
+.btn-primary {
+  background: var(--color-blue-gray);
+  border-color: var(--color-blue-gray);
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: var(--color-dark-slate);
+  border-color: var(--color-dark-slate);
+  transform: translateY(-1px);
+  box-shadow: 0 5px 15px rgba(17, 45, 53, 0.3);
+}
+
+.btn-outline-primary {
+  border: 2px solid var(--color-blue-gray);
+  color: var(--color-blue-gray);
+  border-radius: 10px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+  background: var(--color-blue-gray);
+  border-color: var(--color-blue-gray);
+  transform: translateY(-1px);
+  color: white;
+}
+
+.btn-outline-secondary {
+  border: 2px solid var(--color-warm-terracotta);
+  color: var(--color-warm-terracotta);
+  border-radius: 10px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-secondary:hover {
+  background: var(--color-warm-terracotta);
+  border-color: var(--color-warm-terracotta);
+  transform: translateY(-1px);
+  color: white;
+}
+
+.reservation-details {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.badge {
+  font-size: 0.875em;
+  font-weight: 500;
+}
+
+.badge.bg-secondary {
+  background: var(--color-dark-slate) !important;
+}
+
+.alert {
+  border-radius: 10px;
+  border: none;
+}
+
+.alert-success {
+  background: linear-gradient(45deg, var(--color-warm-terracotta), #a55a4a);
+  color: white;
+}
+
+.alert-danger {
+  background: linear-gradient(45deg, #dc3545, #c82333);
+  color: white;
+}
+
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+}
+
+.text-primary {
+  color: var(--color-blue-gray) !important;
+}
+
+.h4.text-success {
+  color: var(--color-warm-terracotta) !important;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+  .reservation-container {
+    padding: 0;
+  }
+
+  .container {
+    padding: 1rem;
+  }
+
+  .reservation-header {
+    margin-bottom: 2rem;
+    padding: 2rem 1rem;
+  }
+
+  .reservation-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .reservation-header p {
+    font-size: 1rem;
+  }
+
+  .card-body {
+    padding: 1rem;
+  }
+
+  .card-header {
+    padding: 1rem 1.25rem;
+  }
+
+  .card-header h5 {
+    font-size: 1rem;
+  }
+
+  .col-md-6 {
+    margin-bottom: 1rem;
+  }
+
+  .btn {
+    font-size: 0.9rem;
+    padding: 0.6rem 1.2rem;
+  }
+
+  .me-3 {
+    margin-right: 1rem !important;
+    margin-bottom: 0.5rem;
+  }
+
+  .text-center .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .text-center .btn:last-child {
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .reservation-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .form-control-lg {
+    font-size: 1rem;
+  }
+
+  .card {
+    margin-bottom: 1rem;
+  }
+
+  .h4 {
+    font-size: 1.25rem;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .reservation-container {
+    background: white !important;
+    color: black !important;
+  }
+
+  .card {
+    border: 1px solid #ddd !important;
+    box-shadow: none !important;
+  }
+
+  .card-header {
+    background: #f8f9fa !important;
+    color: #333 !important;
+  }
+
+  .btn,
+  .alert {
+    display: none !important;
+  }
+
+  .badge {
+    border: 1px solid #333 !important;
+    color: #333 !important;
+    background: transparent !important;
+  }
+}
+
+/* Loading Animation */
+.spinner-border {
+  animation: spinner-border 0.75s linear infinite;
+}
+
+@keyframes spinner-border {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Enhanced hover effects for cards */
+.reservation-details .card {
+  position: relative;
+  overflow: hidden;
+}
+
+.reservation-details .card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(157, 180, 194, 0.1),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.reservation-details .card:hover::before {
+  left: 100%;
+}
+
+/* Status badge enhancements */
+.badge.bg-success {
+  background: linear-gradient(
+    45deg,
+    var(--color-warm-terracotta),
+    #a55a4a
+  ) !important;
+}
+
+.badge.bg-warning {
+  background: linear-gradient(
+    45deg,
+    #d4a574,
+    var(--color-warm-terracotta)
+  ) !important;
+  color: var(--color-dark-slate) !important;
+}
+
+.badge.bg-danger {
+  background: linear-gradient(45deg, #dc3545, #c82333) !important;
+}
+
+/* Custom link colors */
+a {
+  color: var(--color-blue-gray);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--color-dark-slate);
+  text-decoration: underline;
+}
+
+/* Background pattern for visual interest */
+.reservation-container::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(
+      circle at 25% 25%,
+      rgba(157, 180, 194, 0.1) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 75% 75%,
+      rgba(106, 143, 167, 0.1) 0%,
+      transparent 50%
+    );
+  pointer-events: none;
+  z-index: -1;
+}

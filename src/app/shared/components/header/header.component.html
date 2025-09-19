@@ -20,16 +20,22 @@
       >
       </app-logo>
     </a>
+
+    <div class="navbar-button-container">
+      <button
+        class="btn btn-sm btn-outline-light order-0 btn-mobile-xs"
+        type="button"
+        (click)="navigateToReservation()"
+      >
+        Ver mi reserva
+      </button>
+    </div>
+
     <div
       class="collapse navbar-collapse border-lg-0 mt-4 mt-lg-0"
       id="navbarSupportedContent"
     >
       <ul class="navbar-nav mx-auto pt-2 ms-2 pt-lg-0 font-base"></ul>
-      <div>
-        <button class="btn btn-sm btn-outline-light order-0" type="button">
-          Ver mi reserva
-        </button>
-      </div>
     </div>
   </div>
 </nav>

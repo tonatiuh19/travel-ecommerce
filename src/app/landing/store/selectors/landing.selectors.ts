@@ -29,3 +29,9 @@ export const selectReservationError = createSelector(
   selectLandingState,
   (state: LandingState) => state.reservationError
 );
+
+// Aliases for reservation lookup functionality
+export const selectReservationLoading = createSelector(
+  selectLandingState,
+  (state: LandingState) => state.isProcessingReservation
+);

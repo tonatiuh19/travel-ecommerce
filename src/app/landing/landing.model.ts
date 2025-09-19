@@ -2,11 +2,11 @@ export const DOMAIN = 'https://garbrix.com/travel-ecommerce/api';
 
 export interface LandingState {
   packages: PackageModel[];
-  isLoading?: boolean;
-  isError?: boolean;
-  reservation?: any;
-  isProcessingReservation?: boolean;
-  reservationError?: any;
+  isLoading: boolean;
+  isError: boolean;
+  reservation: any;
+  isProcessingReservation: boolean;
+  reservationError: any;
 }
 
 export interface PackageModel {

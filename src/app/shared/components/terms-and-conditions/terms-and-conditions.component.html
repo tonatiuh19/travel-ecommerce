@@ -1,0 +1,363 @@
+<div class="legal-document-container">
+  <div class="container py-4">
+    <!-- Header -->
+    <div class="document-header text-center mb-4">
+      <div class="header-actions" *ngIf="showBackButton">
+        <button class="btn btn-outline-primary me-2" (click)="goBack()">
+          <i class="bi bi-arrow-left me-1"></i>
+          Volver
+        </button>
+        <button class="btn btn-outline-secondary" (click)="printContent()">
+          <i class="bi bi-printer me-1"></i>
+          Imprimir
+        </button>
+      </div>
+    </div>
+
+    <!-- Content Container -->
+    <div class="row justify-content-center">
+      <div class="col-lg-10 col-xl-8">
+        <div class="card shadow-sm">
+          <div class="card-body p-4 p-md-5">
+            <!-- HTML Content -->
+            <div class="legal-content" [class]="customCssClass">
+              <main class="container" role="main" aria-labelledby="titulo">
+                <header>
+                  <h1 id="titulo">
+                    TÉRMINOS Y CONDICIONES GENERALES DE CONTRATACIÓN Y USO
+                  </h1>
+                  <div class="meta">
+                    Servicio de transporte en París provisto por
+                    <strong>Latinos Por Europa Company</strong>. Plataforma
+                    digital y procesamiento de pagos provistos por
+                    <strong>Garbrix</strong>.
+                  </div>
+                  <div class="small" style="margin-top: 8px">
+                    Última actualización: <strong>[DD/MM/AAAA]</strong>
+                  </div>
+                </header>
+
+                <nav aria-label="Índice">
+                  <a href="#objeto">Objeto</a>
+                  <a href="#partes">Partes</a>
+                  <a href="#naturaleza">Naturaleza de la relación</a>
+                  <a href="#responsabilidad">Limitación de responsabilidad</a>
+                  <a href="#registro">Registro y obligaciones</a>
+                  <a href="#pagos">Tarifas y pagos</a>
+                  <a href="#cancelaciones">Cancelaciones y reembolsos</a>
+                  <a href="#datos">Datos personales</a>
+                  <a href="#jurisdiccion">Legislación y jurisdicción</a>
+                  <a href="#firmas">Firmas</a>
+                </nav>
+
+                <section id="introduccion">
+                  <p>
+                    El presente documento (en adelante los
+                    <strong>"Términos"</strong>) regula la contratación y
+                    utilización de los servicios de transporte prestados en la
+                    ciudad de <strong>París, Francia</strong>, por
+                    <strong>Latinos Por Europa Company</strong> mediante la
+                    plataforma digital operada por <strong>Garbrix</strong>. La
+                    aceptación de estos Términos es obligatoria para cualquier
+                    persona que utilice la plataforma, solicite o contrate los
+                    servicios (en adelante el <strong>"Usuario"</strong>).
+                  </p>
+                </section>
+
+                <section id="objeto" class="clause">
+                  <h2>1. Objeto</h2>
+                  <p>
+                    Regular las condiciones bajo las cuales el Usuario podrá
+                    acceder, solicitar, contratar y pagar los servicios de
+                    transporte privado ofrecidos por Latinos Por Europa Company
+                    (en adelante, <strong>"LPE"</strong>) en París, Francia,
+                    mediante la plataforma y los servicios digitales prestados
+                    por Garbrix.
+                  </p>
+                </section>
+
+                <section id="partes" class="clause">
+                  <h2>2. Partes intervinientes</h2>
+                  <ol>
+                    <li>
+                      <strong>Latinos Por Europa Company (LPE)</strong>:
+                      responsable exclusivo de la prestación material del
+                      servicio de transporte (vehículos, conductores, operación,
+                      seguridad y cumplimiento de la normativa aplicable en
+                      Francia).
+                    </li>
+                    <li>
+                      <strong>Garbrix</strong>: sociedad de derecho mexicano que
+                      presta exclusivamente servicios digitales —entre ellos, la
+                      infraestructura de la plataforma, el procesamiento de
+                      pagos y la intermediación tecnológica— sin intervenir ni
+                      responsabilizarse por la prestación material del servicio
+                      de transporte.
+                    </li>
+                    <li>
+                      <strong>Usuario</strong>: persona física o moral que
+                      utiliza la plataforma, se registra o contrata el servicio
+                      de transporte.
+                    </li>
+                  </ol>
+                </section>
+
+                <section id="naturaleza" class="clause">
+                  <h2>3. Naturaleza de la relación</h2>
+                  <p>
+                    El Usuario acepta que la relación contractual para la
+                    prestación del traslado se celebra con LPE. Garbrix actúa
+                    únicamente como proveedor de la plataforma digital y
+                    pasarela de cobro; en ningún caso Garbrix será considerado
+                    prestador del servicio de transporte, agente, co-responsable
+                    o asegurador del mismo.
+                  </p>
+                </section>
+
+                <section id="responsabilidad" class="clause">
+                  <h2>
+                    4. Exoneración y limitación de responsabilidad de Garbrix
+                  </h2>
+                  <p>
+                    En atención a lo anterior, el Usuario reconoce y acepta
+                    expresamente que:
+                  </p>
+                  <ul>
+                    <li>
+                      Garbrix no es propietario, arrendador ni operador de los
+                      vehículos utilizados para el transporte.
+                    </li>
+                    <li>
+                      Garbrix no contrata, supervisa ni instruye a los
+                      conductores que prestan el servicio.
+                    </li>
+                    <li>
+                      Garbrix no garantiza la puntualidad, seguridad, confort,
+                      idoneidad, ni la conformidad del servicio de transporte.
+                    </li>
+                    <li>
+                      Las reclamaciones, demandas, responsabilidades civiles,
+                      penales o administrativas que se refieran a la prestación
+                      del transporte deberán dirigirse exclusivamente contra LPE
+                      conforme a la legislación aplicable a dicha prestación.
+                    </li>
+                    <li>
+                      Garbrix solo será responsable por fallas técnicas
+                      objetivas relacionadas con la operación de su plataforma o
+                      con el procesamiento de pagos cuando tales fallas sean
+                      directamente imputables a Garbrix, y en ningún caso por
+                      daños indirectos, lucro cesante o daño emergente derivados
+                      del servicio de transporte.
+                    </li>
+                  </ul>
+                </section>
+
+                <section id="registro" class="clause">
+                  <h2>5. Registro y obligaciones del Usuario</h2>
+                  <ol>
+                    <li>
+                      El Usuario se obliga a proporcionar datos veraces,
+                      completos y actualizados en el registro y a mantenerlos
+                      así durante la vigencia de la relación.
+                    </li>
+                    <li>
+                      El Usuario es responsable por el uso que se haga con sus
+                      credenciales y por cualquier actividad que se realice a
+                      través de su cuenta.
+                    </li>
+                    <li>
+                      El Usuario declara ser mayor de edad y estar en pleno
+                      ejercicio de su capacidad legal para contratar. En caso de
+                      contratar a nombre de una persona moral, declara contar
+                      con las facultades necesarias.
+                    </li>
+                  </ol>
+                </section>
+
+                <section id="pagos" class="clause">
+                  <h2>6. Tarifas, facturación y procesamiento de pagos</h2>
+                  <ol>
+                    <li>
+                      Las tarifas por la prestación del transporte son fijadas
+                      por LPE y se mostrarán al Usuario previamente a la
+                      confirmación del servicio.
+                    </li>
+                    <li>
+                      El pago del servicio se realiza a través de la pasarela
+                      tecnológica administrada por Garbrix. Garbrix podrá
+                      aplicar las comisiones y deducciones que correspondan por
+                      la prestación de sus servicios digitales, las cuales
+                      aparecerán reflejadas en el comprobante o en la interfaz
+                      al momento de la transacción.
+                    </li>
+                    <li>
+                      Garbrix actuará únicamente como receptor y gestor técnico
+                      de la operación de cobro, remitiendo las cantidades a LPE
+                      conforme a los términos comerciales entre ambas empresas.
+                      Cualquier disputa respecto de tarifas deberá notificarse a
+                      LPE; Garbrix podrá colaborar técnicamente para la
+                      verificación del pago cuando sea requerido.
+                    </li>
+                  </ol>
+                </section>
+
+                <section id="cancelaciones" class="clause">
+                  <h2>7. Cancelaciones, cambios y reembolsos</h2>
+                  <ol>
+                    <li>
+                      Las políticas de cancelación, modificación y reembolso del
+                      servicio son establecidas por LPE. El Usuario deberá
+                      consultar las condiciones aplicables antes de confirmar la
+                      reserva.
+                    </li>
+                    <li>
+                      Garbrix no asume obligación de efectuar reembolsos
+                      asociados a la prestación del transporte, salvo cuando
+                      exista un error comprobable en su sistema de cobro. En
+                      esos casos Garbrix podrá devolver las cantidades cobradas
+                      indebidamente o colaborar en la gestión del reembolso
+                      conforme a su política interna.
+                    </li>
+                  </ol>
+                </section>
+
+                <section id="propiedad" class="clause">
+                  <h2>8. Propiedad intelectual y uso de la plataforma</h2>
+                  <p>
+                    Todos los derechos de propiedad intelectual e industrial
+                    relativos a la plataforma, software, diseño, contenidos,
+                    marcas y demás elementos son titularidad de Garbrix o de sus
+                    licenciantes. El Usuario se obliga a no copiar, reproducir,
+                    distribuir, transformar ni explotar comercialmente dichos
+                    elementos sin autorización previa y por escrito.
+                  </p>
+                </section>
+
+                <section id="datos" class="clause">
+                  <h2>9. Protección de datos personales</h2>
+                  <p>
+                    El tratamiento de los datos personales de los Usuarios se
+                    sujetará a los avisos de privacidad y a la normativa
+                    aplicable en materia de protección de datos personales. El
+                    Usuario autoriza la transferencia entre LPE y Garbrix de los
+                    datos necesarios para la correcta prestación del servicio
+                    (incluyendo contacto, detalles de la reserva y datos de
+                    pago), dentro de los límites legalmente permitidos.
+                  </p>
+                </section>
+
+                <section id="seguridad" class="clause">
+                  <h2>10. Seguridad y obligaciones de las partes</h2>
+                  <ol>
+                    <li>
+                      LPE se obliga a prestar el servicio conforme a la
+                      normativa francesa aplicable en materia de transporte y a
+                      mantener los seguros y autorizaciones requeridas por la
+                      ley para la operación en París.
+                    </li>
+                    <li>
+                      Garbrix se obliga a mantener las medidas técnicas y
+                      administrativas razonables para la protección de la
+                      plataforma y los datos de pago, conforme a buenas
+                      prácticas de la industria.
+                    </li>
+                    <li>
+                      El Usuario se obliga a usar la plataforma de conformidad
+                      con la ley, la moral y estos Términos, y a abstenerse de
+                      emplear la plataforma para actividades ilícitas.
+                    </li>
+                  </ol>
+                </section>
+
+                <section id="jurisdiccion" class="clause">
+                  <h2>11. Legislación aplicable y jurisdicción</h2>
+                  <ol>
+                    <li>
+                      En lo relativo a la plataforma digital y a cualquier
+                      controversia con Garbrix, las Partes se someten a la
+                      legislación de los Estados Unidos Mexicanos y a la
+                      jurisdicción de los tribunales competentes de la Ciudad de
+                      México, renunciando a cualquier otro fuero que pudiera
+                      corresponderles.
+                    </li>
+                    <li>
+                      En lo relativo a la prestación material del servicio de
+                      transporte en París, las controversias se regirán por la
+                      legislación francesa y corresponderán a la jurisdicción
+                      competente en la ciudad de París, Francia.
+                    </li>
+                  </ol>
+                </section>
+
+                <section id="indemnizacion" class="clause">
+                  <h2>12. Indemnización</h2>
+                  <p>
+                    El Usuario se obliga a indemnizar y mantener indemne a
+                    Garbrix frente a cualquier reclamación, daño, costo, gasto o
+                    responsabilidad que surja por el uso indebido de la
+                    plataforma o por actos u omisiones del Usuario relacionados
+                    con la contratación o prestación del servicio de transporte.
+                    Asimismo, LPE indemnizará a Garbrix por reclamaciones
+                    originadas por la prestación material del servicio en París
+                    que resulten de incumplimiento por parte de LPE.
+                  </p>
+                </section>
+
+                <section id="modificaciones" class="clause">
+                  <h2>13. Modificaciones a los Términos</h2>
+                  <p>
+                    Garbrix y LPE podrán modificar en cualquier momento los
+                    presentes Términos. Las modificaciones se publicarán en la
+                    plataforma y entrarán en vigor en la fecha indicada en la
+                    misma. El uso continuado de la plataforma después de la
+                    publicación constituirá aceptación expresa de las nuevas
+                    condiciones.
+                  </p>
+                </section>
+
+                <section id="vigencia" class="clause">
+                  <h2>14. Vigencia y terminación</h2>
+                  <p>
+                    Los presentes Términos estarán vigentes mientras el Usuario
+                    utilice la plataforma o hasta que cualquiera de las partes
+                    decida terminarlos conforme a la ley aplicable. Garbrix y
+                    LPE podrán suspender o dar de baja cuentas de Usuarios por
+                    incumplimiento de estos Términos o por razones de seguridad
+                    o fraude, avisando cuando ello sea razonablemente posible.
+                  </p>
+                </section>
+
+                <section id="aceptacion" class="clause">
+                  <h2>15. Aceptación expresa</h2>
+                  <p>
+                    El Usuario declara haber leído íntegramente y comprendido
+                    estos Términos, así como los Avisos de Privacidad
+                    aplicables, y acepta de manera libre, expresa y consciente
+                    las condiciones aquí establecidas. La aceptación podrá
+                    constar mediante el clic en el botón o casilla de aceptación
+                    en la interfaz de la plataforma o mediante el
+                    registro/contratación del servicio.
+                  </p>
+                </section>
+              </main>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="text-center mt-4" *ngIf="htmlContent && showBackButton">
+      <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <button class="btn btn-primary" (click)="goBack()">
+          <i class="bi bi-check-circle me-1"></i>
+          He leído y acepto
+        </button>
+        <button class="btn btn-outline-secondary" (click)="printContent()">
+          <i class="bi bi-download me-1"></i>
+          Descargar como PDF
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

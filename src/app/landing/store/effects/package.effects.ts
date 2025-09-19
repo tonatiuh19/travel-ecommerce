@@ -64,6 +64,34 @@ export class LandingEffects {
     );
   });
 
+  gettingReservationByCode$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(LandingActions.getReservationByCode),
+      switchMap(({ reservationCode }) => {
+        return this.landingService.getReservationByCode(reservationCode).pipe(
+          map((response) => {
+            // Check if response has error
+            if (response && response.error) {
+              return LandingActions.getReservationByCodeFailure({
+                error: response.error,
+              });
+            }
+            return LandingActions.getReservationByCodeSuccess({
+              reservation: response,
+            });
+          }),
+          catchError((error) => {
+            return of(
+              LandingActions.getReservationByCodeFailure({
+                error: error.message || 'Error al buscar la reserva',
+              })
+            );
+          })
+        );
+      })
+    );
+  });
+
   constructor(
     private actions$: Actions,
     private store: Store,

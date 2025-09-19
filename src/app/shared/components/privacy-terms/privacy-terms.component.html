@@ -1,0 +1,258 @@
+<div class="legal-document-container" [ngClass]="customCssClass">
+  <div class="container py-4">
+    <!-- Header -->
+    <div class="document-header text-center mb-4">
+      <div class="header-actions" *ngIf="showBackButton">
+        <button
+          type="button"
+          class="btn btn-outline-primary me-2"
+          (click)="goBack()"
+          aria-label="Volver a la página anterior"
+        >
+          <i class="bi bi-arrow-left me-2" aria-hidden="true"></i>
+          Volver
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          (click)="printContent()"
+          aria-label="Imprimir política de privacidad"
+        >
+          <i class="bi bi-printer me-2" aria-hidden="true"></i>
+          Imprimir
+        </button>
+      </div>
+    </div>
+
+    <!-- Content Card -->
+    <div class="row justify-content-center">
+      <div class="col-lg-10 col-xl-8">
+        <div class="card shadow-lg">
+          <div class="card-body p-4 p-md-5">
+            <!-- Dynamic HTML Content -->
+            <div
+              class="legal-content"
+              tabindex="0"
+              role="main"
+              [attr.aria-label]="'Contenido de ' + title"
+            >
+              <h1>Aviso de Privacidad</h1>
+
+              <p>
+                En cumplimiento con lo dispuesto por la
+                <strong
+                  >Ley Federal de Protección de Datos Personales en Posesión de
+                  los Particulares</strong
+                >
+                (LFPDPPP), Garbrix, S.A. de C.V. y Latinos Por Europa Company
+                hacen de su conocimiento el presente Aviso de Privacidad.
+              </p>
+
+              <h2>1. Responsable</h2>
+              <p>El responsable del tratamiento de sus datos personales es:</p>
+              <ul>
+                <li>
+                  <strong>Nombre o denominación:</strong> Garbrix, S.A. de C.V.
+                </li>
+                <li>
+                  <strong>Domicilio:</strong> [Dirección completa en Ciudad de
+                  México, México]
+                </li>
+                <li>
+                  <strong>Correo electrónico de contacto:</strong>
+                  [correo&#64;garbrix.example]
+                </li>
+                <li><strong>Teléfono:</strong> [+52 …]</li>
+              </ul>
+
+              <h2>2. Datos personales que se recaban</h2>
+              <p>
+                Para las finalidades que se señalan en este Aviso de Privacidad,
+                recabamos los siguientes datos personales:
+              </p>
+              <ul>
+                <li>
+                  Datos de identificación: nombre completo, fecha de nacimiento,
+                  nacionalidad.
+                </li>
+                <li>
+                  Datos de contacto: dirección, correo electrónico, teléfono.
+                </li>
+                <li>
+                  Datos de ubicación y georreferenciación cuando se utiliza el
+                  servicio de transporte.
+                </li>
+                <li>
+                  Datos de pago: datos bancarios o de tarjeta, información
+                  necesaria para procesar el pago.
+                </li>
+                <li>
+                  Datos sensibles (cuando sea aplicable y con su consentimiento
+                  expreso).
+                </li>
+              </ul>
+
+              <h2>3. Finalidades del tratamiento</h2>
+              <p>Los datos personales que recabamos serán utilizados para:</p>
+              <ul>
+                <li>Proveer el servicio de la plataforma digital.</li>
+                <li>Procesar pagos y facturación.</li>
+                <li>
+                  Comunicar confirmaciones, notificaciones, avisos y servicio al
+                  cliente.
+                </li>
+                <li>Verificar identidad y prevenir fraudes.</li>
+                <li>Cumplir obligaciones legales, fiscales y contables.</li>
+                <li>Mejorar la experiencia del usuario en la plataforma.</li>
+              </ul>
+
+              <h2>4. Exclusión de responsabilidad</h2>
+              <p>
+                <strong
+                  >Garbrix, S.A. de C.V. únicamente funge como proveedor de la
+                  plataforma digital para gestionar pagos, reservas y uso de la
+                  aplicación.</strong
+                >
+                Garbrix no presta, ni directa ni indirectamente, el servicio de
+                transporte en París, el cual es ofrecido de manera exclusiva por
+                <strong>Latinos Por Europa Company</strong>. En consecuencia:
+              </p>
+              <ul>
+                <li>
+                  Garbrix no es responsable de la calidad, seguridad,
+                  puntualidad, cumplimiento, accidentes, daños, pérdidas, costos
+                  o cualquier otra situación derivada del servicio de
+                  transporte.
+                </li>
+                <li>
+                  Latinos Por Europa Company es la única responsable de la
+                  prestación, logística y operación del transporte contratado
+                  por el usuario.
+                </li>
+                <li>
+                  La aceptación de este aviso implica que el usuario entiende y
+                  acepta esta delimitación de responsabilidades.
+                </li>
+              </ul>
+
+              <h2>
+                5. Opciones y medios para limitar el uso o divulgación de datos
+              </h2>
+              <p>
+                El titular de los datos podrá limitar el uso o divulgación de
+                sus datos personales mediante solicitud a
+                <strong>[correo&#64;garbrix.example]</strong>.
+              </p>
+
+              <h2>
+                6. Derechos ARCO: Acceso, Rectificación, Cancelación y Oposición
+              </h2>
+              <p>
+                Usted tiene derecho a ejercer Acceso, Rectificación, Cancelación
+                y Oposición (ARCO), enviando una solicitud al correo electrónico
+                antes mencionado, siguiendo el procedimiento establecido por la
+                LFPDPPP.
+              </p>
+
+              <h2>7. Transferencias</h2>
+              <p>Los datos podrán ser transferidos a:</p>
+              <ul>
+                <li>
+                  Latinos Por Europa Company, para la correcta prestación del
+                  servicio de transporte.
+                </li>
+                <li>
+                  Proveedores de servicios de pago y autoridades competentes.
+                </li>
+              </ul>
+
+              <h2>8. Medidas de seguridad</h2>
+              <p>
+                Se implementan medidas administrativas, técnicas y físicas para
+                proteger sus datos personales contra acceso no autorizado, daño
+                o pérdida.
+              </p>
+
+              <h2>9. Conservación de datos</h2>
+              <p>
+                Los datos serán conservados mientras sea necesario para cumplir
+                las finalidades descritas. Posteriormente serán bloqueados y
+                eliminados, salvo obligación legal.
+              </p>
+
+              <h2>10. Cambios al aviso</h2>
+              <p>
+                Este Aviso podrá modificarse en cualquier momento. Las
+                modificaciones serán publicadas en la plataforma digital.
+              </p>
+
+              <h2>11. Contacto</h2>
+              <p>
+                Para dudas o quejas respecto a sus datos personales, contáctenos
+                en <strong>[correo&#64;garbrix.example]</strong>.
+              </p>
+
+              <hr />
+              <p style="font-size: 0.9em; color: #666">
+                Fecha de última actualización: [DD/MM/AAAA]. Este Aviso se emite
+                conforme a la Ley Federal de Protección de Datos Personales en
+                Posesión de los Particulares. Para mayor información consulte:
+                <a
+                  href="https://www.diputados.gob.mx/LeyesBiblio/pdf/LFPDPPP.pdf"
+                  target="_blank"
+                  >LFPDPPP</a
+                >.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div
+      class="row justify-content-center mt-4"
+      *ngIf="htmlContent && htmlContent.trim().length > 0"
+    >
+      <div class="col-lg-8 col-xl-6">
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+          <button
+            type="button"
+            class="btn btn-outline-primary"
+            (click)="scrollToTop()"
+            aria-label="Volver al inicio del documento"
+          >
+            <i class="bi bi-arrow-up me-2" aria-hidden="true"></i>
+            Ir arriba
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="goBack()"
+            *ngIf="showBackButton"
+            aria-label="Volver a la página anterior"
+          >
+            <i class="bi bi-check-circle me-2" aria-hidden="true"></i>
+            He leído y acepto
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer note -->
+    <div
+      class="row justify-content-center mt-5"
+      *ngIf="htmlContent && htmlContent.trim().length > 0"
+    >
+      <div class="col-lg-8">
+        <div class="text-center">
+          <small class="text-muted">
+            <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
+            Última actualización: {{ getCurrentDate() }}
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

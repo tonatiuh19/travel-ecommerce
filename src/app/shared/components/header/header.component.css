@@ -99,6 +99,33 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
 
+/* Button container for better positioning */
+.navbar-button-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+/* Make container flex to properly align logo and button */
+.navbar .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+/* Navbar collapse should not interfere with button positioning */
+.navbar-collapse {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+  margin: 0;
+  padding: 0;
+}
+
 /* Logo positioning to extend until van-transfers */
 @media (min-width: 769px) {
   .navbar-brand svg {
@@ -252,7 +279,35 @@
   }
 
   .navbar-collapse {
-    margin-top: 0.75rem;
-    padding: 0.75rem;
+    margin-top: 0;
+    padding: 0;
+    display: none !important; /* Hide on mobile since button is now outside */
+    position: static;
+    transform: none;
+    left: auto;
+    width: 100%;
+  }
+
+  /* Mobile button styling */
+  .btn-mobile-xs {
+    font-size: 0.7rem !important;
+    padding: 0.25rem 0.6rem !important;
+    border-width: 1px !important;
+  }
+
+  /* Button container positioning on mobile */
+  .navbar-button-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    right: 15px;
+  }
+
+  /* Adjust container on mobile */
+  .navbar .container {
+    position: relative;
   }
 }
