@@ -71,7 +71,7 @@ export class DestinationsShowcaseComponent implements OnInit, OnDestroy {
         'Montmartre',
       ],
       price: 'Desde €45',
-      duration: '8 horas',
+      duration: 'Desde 4 horas',
     },
     {
       id: 'amsterdam',
@@ -90,7 +90,7 @@ export class DestinationsShowcaseComponent implements OnInit, OnDestroy {
         'Vondelpark',
       ],
       price: 'Desde €40',
-      duration: '6 horas',
+      duration: 'Todo el dia (solo ida)',
     },
     {
       id: 'bruges',
@@ -108,7 +108,7 @@ export class DestinationsShowcaseComponent implements OnInit, OnDestroy {
         'Chocolaterías',
       ],
       price: 'Desde €35',
-      duration: '5 horas',
+      duration: 'Todo el dia',
     },
   ];
 

@@ -1,17 +1,50 @@
-import { Component, HostListener, Input } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  Input,
+  OnInit,
+  OnDestroy,
+} from '@angular/core';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { Observable, Subject, Subscription, takeUntil } from 'rxjs';
+import { selectIsTesting } from '../../../landing/store/selectors/landing.selectors';
+import { fromLanding } from '../../../landing/store/selectors';
+import { LandingActions } from '../../../landing/store/actions';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit, OnDestroy {
   @Input() isMain = true;
   public isColorDark = true;
   public isLogoSmall = false;
+  public getStripeTest$ = this.store.select(fromLanding.selectIsTesting);
+  public isTestingModeEnabled = false;
 
-  constructor(private router: Router) {}
+  private unsubscribe$ = new Subject<void>();
+
+  constructor(private router: Router, private store: Store) {}
+
+  ngOnInit(): void {
+    this.store.dispatch(LandingActions.getStripeTest());
+
+    this.getStripeTest$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((isEnabled) => {
+        if (isEnabled) {
+          console.log('Testing mode status:', isEnabled);
+          this.isTestingModeEnabled = isEnabled;
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+  }
 
   @HostListener('window:scroll', [])
   onWindowScroll() {

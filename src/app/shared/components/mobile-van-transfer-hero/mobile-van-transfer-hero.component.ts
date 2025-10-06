@@ -637,14 +637,21 @@ export class MobileVanTransferHeroComponent implements OnInit, OnDestroy {
     }
 
     let totalPrice = basePrice;
-    const serviceFee = Math.round(totalPrice * 0.07);
+    const serviceFee = Math.round(totalPrice * 0.085);
 
     // Calculate urgency fee (10% if traveling tomorrow)
     let urgencyFee = 0;
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
     const selectedDateObj = new Date(this.selectedDate);
-    if (selectedDateObj.toDateString() === tomorrow.toDateString()) {
+    const tomorrowString = tomorrow.toISOString().split('T')[0];
+
+    // Use both string and date comparison for robustness
+    if (
+      this.selectedDate === tomorrowString ||
+      selectedDateObj.toDateString() === tomorrow.toDateString()
+    ) {
       urgencyFee = Math.round(totalPrice * 0.1);
     }
 

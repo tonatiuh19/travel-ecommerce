@@ -339,6 +339,20 @@
                         </option>
                       </select>
                     </div>
+                    <div class="col-6">
+                      <label class="form-label">Hora de Llegada</label>
+                      <select
+                        class="form-select"
+                        [(ngModel)]="pickupInfo.flightArrivalTime"
+                        name="regularFlightArrivalTime"
+                        required
+                      >
+                        <option value="">Selecciona hora</option>
+                        <option *ngFor="let time of times" [value]="time">
+                          {{ time }}
+                        </option>
+                      </select>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -764,7 +778,7 @@
               class="row g-3 mb-3"
               *ngIf="expressTrip.type !== 'airport-hotel-airport'"
             >
-              <div class="col-7">
+              <div class="col-6">
                 <label class="form-label fw-semibold">
                   <fa-icon
                     [icon]="faCalendarAlt"
@@ -782,10 +796,10 @@
                   (change)="onDepartureDateChange()"
                 />
               </div>
-              <div class="col-5">
+              <div class="col-6">
                 <label class="form-label fw-semibold">
                   <fa-icon [icon]="faClock" class="me-2 text-warning"></fa-icon>
-                  Hora
+                  Hora de recogida
                 </label>
                 <select
                   class="form-select form-select-lg"
@@ -806,7 +820,7 @@
               class="row g-3 mb-3"
               *ngIf="expressTrip.type === 'airport-hotel-airport'"
             >
-              <div class="col-7">
+              <div class="col-6">
                 <label class="form-label fw-semibold">
                   <fa-icon
                     [icon]="faCalendarAlt"
@@ -824,7 +838,7 @@
                   (change)="onDepartureDateChange()"
                 />
               </div>
-              <div class="col-5">
+              <div class="col-6">
                 <label class="form-label fw-semibold">
                   <fa-icon [icon]="faClock" class="me-2 text-warning"></fa-icon>
                   Hora de Llegada

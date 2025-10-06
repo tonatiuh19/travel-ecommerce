@@ -164,6 +164,19 @@
                   </h5>
                 </div>
 
+                <!-- General Error Display -->
+                <div
+                  *ngIf="generalError"
+                  class="alert alert-danger mb-3"
+                  role="alert"
+                >
+                  <fa-icon
+                    [icon]="faExclamationTriangle"
+                    class="me-2"
+                  ></fa-icon>
+                  {{ generalError }}
+                </div>
+
                 <!-- Payment Forms -->
                 <div class="payment-form-section">
                   <!-- Credit Card Form -->
@@ -171,6 +184,11 @@
                     id="card-element"
                     class="form-control custom-input-payment"
                   ></div>
+
+                  <!-- Stripe Error Display -->
+                  <div *ngIf="stripeError" class="error-message mt-2">
+                    {{ stripeError }}
+                  </div>
                 </div>
 
                 <!-- Reimbursement Policies Section -->

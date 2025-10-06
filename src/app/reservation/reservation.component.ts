@@ -3,8 +3,9 @@ import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { LandingState } from '../landing/landing.model';
+import { LandingState, VisitorSection } from '../landing/landing.model';
 import { getReservationByCode } from '../landing/store/actions/landing.actions';
+import { LandingActions } from '../landing/store/actions';
 import {
   selectReservation,
   selectReservationLoading,
@@ -35,6 +36,9 @@ export class ReservationComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Track reservation page visit
+    this.trackReservationVisit();
+
     // Check if reservation code is provided via query params
     this.route.queryParams
       .pipe(takeUntil(this.destroy$))
@@ -114,5 +118,11 @@ export class ReservationComponent implements OnInit, OnDestroy {
       style: 'currency',
       currency: 'EUR',
     }).format(amount);
+  }
+
+  private trackReservationVisit(): void {
+    this.store.dispatch(
+      LandingActions.trackVisitor({ section: VisitorSection.RESERVATION })
+    );
   }
 }

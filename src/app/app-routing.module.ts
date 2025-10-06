@@ -34,6 +34,17 @@ const routes: Routes = [
       description: 'Conoce cómo protegemos tu privacidad y datos personales',
     },
   },
+  {
+    path: 'admin_test',
+    loadChildren: () =>
+      import('./shared/components/admin-test/admin-test.module').then(
+        (m) => m.AdminTestModule
+      ),
+    data: {
+      title: 'Panel de Administración - Testing',
+      description: 'Panel de control para el modo de pruebas',
+    },
+  },
 ];
 
 @NgModule({

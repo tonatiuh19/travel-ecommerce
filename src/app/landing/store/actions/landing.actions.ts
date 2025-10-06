@@ -1,4 +1,5 @@
 import { createAction, props } from '@ngrx/store';
+import { VisitorData } from '../../landing.model';
 
 const actor = '[Landing]';
 
@@ -45,11 +46,13 @@ export const createReservation = createAction(
       wheelchair_access?: number;
       special_note?: string;
       price: number;
+      price_eur: string;
       urgency_trip?: number;
       status?: string;
     };
     stripeToken: string;
     payment_type: string;
+    displayCurrency?: 'EUR' | 'MXN';
   }>()
 );
 
@@ -82,4 +85,73 @@ export const getReservationByCodeFailure = createAction(
 
 export const clearReservationLookup = createAction(
   `${actor} Clear Reservation Lookup`
+);
+
+// Visitor tracking actions
+export const trackVisitor = createAction(
+  `${actor} Track Visitor`,
+  props<{ section: string }>()
+);
+
+export const trackVisitorSuccess = createAction(
+  `${actor} Track Visitor Success`,
+  props<{ response: any }>()
+);
+
+export const trackVisitorFailure = createAction(
+  `${actor} Track Visitor Failure`,
+  props<{ error: any }>()
+);
+
+// Exchange rate actions
+export const getExchangeRate = createAction(
+  `${actor} Get Exchange Rate`,
+  props<{ fromCurrency: string; toCurrency: string }>()
+);
+
+export const getExchangeRateSuccess = createAction(
+  `${actor} Get Exchange Rate Success`,
+  props<{ exchangeRate: number; lastUpdated: string }>()
+);
+
+export const getExchangeRateFailure = createAction(
+  `${actor} Get Exchange Rate Failure`,
+  props<{ error: any }>()
+);
+
+export const authenticateAdmin = createAction(
+  `${actor} Authenticate Admin`,
+  props<{ password: string }>()
+);
+
+export const authenticateAdminSuccess = createAction(
+  `${actor} Authenticate Admin Success`
+);
+
+export const authenticateAdminFailure = createAction(
+  `${actor} Authenticate Admin Failure`
+);
+
+export const toggleTestingMode = createAction(
+  `${actor} Toggle Testing Mode`,
+  props<{ isEnabled: boolean }>()
+);
+
+export const logoutAdmin = createAction(`${actor} Logout Admin`);
+
+export const convertCurrency = createAction(
+  `${actor} Convert Currency`,
+  props<{ amount: number; fromCurrency: string; toCurrency: string }>()
+);
+
+export const getStripeTest = createAction(`${actor} Get Stripe Test`);
+
+export const getStripeTestSuccess = createAction(
+  `${actor} Get Stripe Test Success`,
+  props<{ response: any }>()
+);
+
+export const getStripeTestFailure = createAction(
+  `${actor} Get Stripe Test Failure`,
+  props<{ error: any }>()
 );

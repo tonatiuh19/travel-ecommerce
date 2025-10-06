@@ -89,7 +89,6 @@ export class EnhancedFooterComponent implements OnInit {
   subscribeNewsletter() {
     if (this.newsletterEmail && this.isValidEmail(this.newsletterEmail)) {
       // Handle newsletter subscription
-      console.log('Newsletter subscription:', this.newsletterEmail);
       // Show success message
       this.showNotification('¡Gracias por suscribirte!', 'success');
       this.newsletterEmail = '';

@@ -519,6 +519,16 @@
             Datos de Pago
           </h6>
 
+          <!-- General Error Display -->
+          <div
+            *ngIf="generalError"
+            class="alert alert-danger mt-3"
+            role="alert"
+          >
+            <fa-icon [icon]="faExclamationTriangle" class="me-2"></fa-icon>
+            {{ generalError }}
+          </div>
+
           <form class="mobile-form">
             <div class="form-group">
               <label class="form-label">Nombre en la Tarjeta *</label>
@@ -537,6 +547,10 @@
               <label class="form-label">Información de la Tarjeta *</label>
               <div id="mobile-card-element" class="stripe-card-element">
                 <!-- Stripe Elements will create form elements here -->
+              </div>
+              <!-- Stripe Error Display -->
+              <div *ngIf="stripeError" class="error-message mt-2">
+                {{ stripeError }}
               </div>
             </div>
 

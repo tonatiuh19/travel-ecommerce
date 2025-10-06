@@ -1,7 +1,9 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { fromLanding } from './store/selectors';
+import { LandingActions } from './store/actions';
 import { MetaService } from '../shared/services/meta.service';
+import { VisitorSection } from './landing.model';
 import {
   faPlane,
   faCompass,
@@ -61,6 +63,13 @@ export class LandingComponent implements OnInit {
     this.detectDevice();
     this.typeQuote();
     this.preventHorizontalScroll();
+    this.trackMainVisit();
+  }
+
+  private trackMainVisit(): void {
+    this.store.dispatch(
+      LandingActions.trackVisitor({ section: VisitorSection.MAIN })
+    );
   }
 
   private setupMetaTags() {
@@ -270,6 +279,13 @@ export class LandingComponent implements OnInit {
   scrollToSection(elementId: string) {
     const element = document.getElementById(elementId);
     if (element) {
+      // Track section visits
+      if (elementId === 'van-transfers') {
+        this.store.dispatch(
+          LandingActions.trackVisitor({ section: VisitorSection.PACKAGE_LIST })
+        );
+      }
+
       element.scrollIntoView({
         behavior: 'smooth',
         block: 'start',

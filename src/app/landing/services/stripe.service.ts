@@ -9,10 +9,12 @@ export class StripeService {
   private stripePromise: Promise<Stripe | null>;
 
   constructor() {
-    this.stripePromiseTest = loadStripe('');
+    this.stripePromiseTest = loadStripe(
+      'pk_test_51S5zZyRqF6G0XdPCAmNBcXWUNu2brkTqu6GsJZWqQwRHrjgQQpVfSyB6yXK8FmIAF8bjrLyTgMbbhxOXpi7SUN7B005PLkL44p'
+    );
 
     this.stripePromise = loadStripe(
-      'pk_test_51S5zZyRqF6G0XdPCAmNBcXWUNu2brkTqu6GsJZWqQwRHrjgQQpVfSyB6yXK8FmIAF8bjrLyTgMbbhxOXpi7SUN7B005PLkL44p'
+      'pk_live_51S5zZq2OM2B9pYuKWyFG00CU9NX9pvf83krYT0PpglGRoSD1Pn01ur4SnycQwovSzrPW5YrP3geGwfC4oyGXb3B300zkP3rAM5'
     );
   }
 

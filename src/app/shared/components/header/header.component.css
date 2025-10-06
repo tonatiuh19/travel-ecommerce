@@ -311,3 +311,83 @@
     position: relative;
   }
 }
+
+/* Testing Mode Flag Styles */
+.testing-flag-container {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1050;
+}
+
+.testing-flag {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+  animation: testingPulse 2s ease-in-out infinite;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.testing-flag i {
+  font-size: 0.875rem;
+  animation: testingShake 1.5s ease-in-out infinite;
+}
+
+@keyframes testingPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(255, 107, 107, 0.5);
+  }
+}
+
+@keyframes testingShake {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-5deg);
+  }
+  75% {
+    transform: rotate(5deg);
+  }
+}
+
+/* Responsive adjustments for testing flag */
+@media (max-width: 991px) {
+  .testing-flag-container {
+    position: static;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+
+  .testing-flag {
+    position: relative;
+  }
+}
+
+@media (max-width: 576px) {
+  .testing-flag {
+    font-size: 0.6rem;
+    padding: 4px 8px;
+  }
+
+  .testing-flag i {
+    font-size: 0.75rem;
+  }
+}

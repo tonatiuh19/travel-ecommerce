@@ -64,6 +64,7 @@ import {
   selectReservationError,
 } from '../../../landing/store/selectors/landing.selectors';
 import { PhoneValue } from '../phone-input-picker/phone-input-picker.component';
+import { fromLanding } from '../../../landing/store/selectors';
 
 interface UserInfo {
   firstName: string;
@@ -141,13 +142,15 @@ export class CheckoutModalComponent
   @Output() closeModal = new EventEmitter<void>();
   @Output() bookingConfirmed = new EventEmitter<any>();
 
+  public getStripeTest$ = this.store.select(fromLanding.selectIsTesting);
+
   // Form steps - Single step checkout
   currentStep: number = 1;
   totalSteps: number = 1;
 
   // User information
   // Form data - TEST DATA FOR DEVELOPMENT (REMOVE IN PRODUCTION)
-  userInfo: UserInfo = {
+  /*userInfo: UserInfo = {
     firstName: 'María Elena',
     lastName: 'Rodríguez Santos',
     email: 'maria.rodriguez@example.com',
@@ -157,6 +160,17 @@ export class CheckoutModalComponent
     passportNumber: 'P87654321',
     specialRequests:
       'Necesito asiento accesible para persona con movilidad reducida',
+  };*/
+
+  userInfo: UserInfo = {
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    nationality: '',
+    dateOfBirth: '',
+    passportNumber: '',
+    specialRequests: '',
   };
 
   // Passenger information (for multiple passengers)
@@ -181,6 +195,10 @@ export class CheckoutModalComponent
   showConfirmation: boolean = false;
   private confirmationProcessing: boolean = false; // Flag to prevent state clearing during confirmation flow
   private stripeSetupInitialized: boolean = false; // Flag to prevent Stripe setup loop
+
+  // Error handling
+  stripeError: string | null = null;
+  generalError: string | null = null;
 
   // Store observables
   reservation$ = this.store.select(selectReservation);
@@ -252,7 +270,7 @@ export class CheckoutModalComponent
   private elements: StripeElements | null = null;
   private card: StripeCardElement | null = null;
 
-  private isTesting = false;
+  private isTesting = true;
 
   private unsubscribe$ = new Subject<void>();
   private dateFormatCache = new Map<string, string>();
@@ -326,6 +344,39 @@ export class CheckoutModalComponent
   }
 
   ngOnInit(): void {
+    this.getStripeTest$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((isEnabled) => {
+        if (isEnabled) {
+          console.log('Testing checkout mode status:', isEnabled);
+          this.isTesting = isEnabled;
+        } else {
+          this.isTesting = isEnabled;
+        }
+
+        this.userInfo = this.isTesting
+          ? {
+              firstName: 'María Elena',
+              lastName: 'Rodríguez Santos',
+              email: 'maria.rodriguez@example.com',
+              phone: '+34 687 123 456',
+              nationality: 'España',
+              dateOfBirth: '1990-07-22',
+              passportNumber: 'P87654321',
+              specialRequests:
+                'Necesito asiento accesible para persona con movilidad reducida',
+            }
+          : {
+              firstName: '',
+              lastName: '',
+              email: '',
+              phone: '',
+              nationality: '',
+              dateOfBirth: '',
+              passportNumber: '',
+              specialRequests: '',
+            };
+      });
     this.initializePassengers();
     // Clear any existing store state BEFORE setting up subscriptions
     this.clearStoreState();
@@ -339,6 +390,11 @@ export class CheckoutModalComponent
   ngOnChanges(): void {
     if (this.bookingDetails) {
       this.initializePassengers();
+    }
+
+    // Clear errors when modal becomes visible
+    if (this.isVisible) {
+      this.clearErrors();
     }
 
     // Setup Stripe only when modal becomes visible for the first time and hasn't been initialized yet
@@ -436,11 +492,31 @@ export class CheckoutModalComponent
         this.elements = this.stripe.elements({
           locale: 'es', // Set the locale to Spanish
         });
-        this.card = this.elements.create('card', { style });
+        this.card = this.elements.create('card', {
+          style,
+          hidePostalCode: true, // Disable postal code field
+        });
         this.card.mount('#card-element');
+
+        // Add error event listener
+        this.card.on('change', (event) => {
+          if (event.error) {
+            this.stripeError = this.translateStripeError(event.error.message);
+          } else {
+            this.stripeError = null;
+          }
+        });
+
+        // Clear general errors when user starts interacting with card
+        this.card.on('focus', () => {
+          this.generalError = null;
+          this.stripeError = null;
+        });
       }
     } catch (error) {
       console.error('Error setting up Stripe:', error);
+      this.stripeError =
+        'Error al configurar el sistema de pagos. Por favor, recarga la página e intenta de nuevo.';
     }
   }
 
@@ -578,13 +654,19 @@ export class CheckoutModalComponent
   // Payment processing
   async processPayment(): Promise<void> {
     if (!this.stripe || !this.card) {
+      this.stripeError =
+        'Error del sistema de pagos. Por favor, recarga la página e intenta de nuevo.';
       return;
     }
 
     if (!this.validateAllInfo()) {
-      alert('Por favor, complete toda la información requerida.');
+      this.stripeError = 'Por favor, complete toda la información requerida.';
       return;
     }
+
+    // Clear any previous errors
+    this.clearErrors();
+    this.isProcessingPayment = true;
 
     try {
       // Create Stripe token
@@ -592,6 +674,10 @@ export class CheckoutModalComponent
 
       if (error) {
         console.error('Stripe token error:', error);
+        this.isProcessingPayment = false;
+        this.stripeError = this.translateStripeError(
+          error.message || 'Error procesando el pago'
+        );
         return;
       }
 
@@ -617,6 +703,11 @@ export class CheckoutModalComponent
           this.bookingDetails?.grandTotal ||
           this.bookingDetails?.totalPrice ||
           0,
+        price_eur: String(
+          this.bookingDetails?.grandTotal ||
+            this.bookingDetails?.totalPrice ||
+            0
+        ),
         urgency_trip: this.bookingDetails?.urgencyFee ? 1 : 0,
         special_note: this.buildSpecialNote(),
         pickup_type: this.bookingDetails?.pickupInfo?.type || undefined,
@@ -644,7 +735,10 @@ export class CheckoutModalComponent
         })
       );
     } catch (error) {
+      console.error('Error processing payment:', error);
       this.isProcessingPayment = false;
+      this.stripeError =
+        'Error inesperado procesando el pago. Por favor, intenta de nuevo.';
     }
   }
 
@@ -1079,6 +1173,77 @@ export class CheckoutModalComponent
 
   get paymentSuccessful(): boolean {
     return !!(this.reservation && !this.reservationError);
+  }
+
+  // Translate Stripe error messages to Spanish
+  private translateStripeError(message: string): string {
+    const translations: { [key: string]: string } = {
+      // Card validation errors
+      'Your card number is incomplete.':
+        'El número de tarjeta está incompleto.',
+      'Your card number is invalid.': 'El número de tarjeta no es válido.',
+      "Your card's expiration date is incomplete.":
+        'La fecha de vencimiento está incompleta.',
+      "Your card's expiration date is invalid.":
+        'La fecha de vencimiento no es válida.',
+      "Your card's security code is incomplete.":
+        'El código de seguridad está incompleto.',
+      "Your card's security code is invalid.":
+        'El código de seguridad no es válido.',
+      'Your postal code is incomplete.': 'El código postal está incompleto.',
+      'Your postal code is invalid.': 'El código postal no es válido.',
+
+      // Payment processing errors
+      'Your card was declined.':
+        'Su tarjeta fue rechazada. Por favor, contacte a su banco o use otra tarjeta.',
+      'Your card has insufficient funds.':
+        'Su tarjeta no tiene fondos suficientes.',
+      'Your card has expired.':
+        'Su tarjeta ha vencido. Por favor, use una tarjeta válida.',
+      "Your card's security code is incorrect.":
+        'El código de seguridad de su tarjeta es incorrecto.',
+      'Processing error': 'Error de procesamiento',
+
+      // Specific Stripe error codes
+      card_declined:
+        'Su tarjeta fue rechazada. Por favor, contacte a su banco o use otra tarjeta.',
+      insufficient_funds: 'Su tarjeta no tiene fondos suficientes.',
+      lost_card:
+        'Su tarjeta ha sido reportada como perdida. Contacte a su banco.',
+      stolen_card:
+        'Su tarjeta ha sido reportada como robada. Contacte a su banco.',
+      expired_card: 'Su tarjeta ha vencido. Por favor, use una tarjeta válida.',
+      incorrect_cvc: 'El código de seguridad (CVC) es incorrecto.',
+      incorrect_number: 'El número de tarjeta es incorrecto.',
+      invalid_expiry_month: 'El mes de vencimiento no es válido.',
+      invalid_expiry_year: 'El año de vencimiento no es válido.',
+    };
+
+    // Check for live mode test card error (common Spanish message)
+    if (
+      message.includes('modo "directo"') &&
+      message.includes('tarjeta de prueba')
+    ) {
+      return 'No se pueden usar tarjetas de prueba en el modo de pago real. Por favor, use una tarjeta válida.';
+    }
+
+    // Check for specific decline codes in the message
+    if (message.includes('live_mode_test_card')) {
+      return 'No se pueden usar tarjetas de prueba. Por favor, use una tarjeta válida.';
+    }
+
+    // Return translated message or original if not found
+    return (
+      translations[message] ||
+      message ||
+      'Error procesando el pago. Por favor, intente de nuevo.'
+    );
+  }
+
+  // Clear all error messages
+  clearErrors(): void {
+    this.stripeError = null;
+    this.generalError = null;
   }
 
   retryPayment(): void {

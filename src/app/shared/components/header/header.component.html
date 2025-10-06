@@ -29,6 +29,16 @@
       >
         Ver mi reserva
       </button>
+      <button
+        *ngIf="isTestingModeEnabled"
+        class="btn btn-sm btn-danger ms-1 order-0 btn-mobile-xs"
+        type="button"
+      >
+        <span class="testing-flag">
+          <i class="fas fa-flask"></i>
+          TESTING
+        </span>
+      </button>
     </div>
 
     <div

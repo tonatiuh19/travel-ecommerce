@@ -112,5 +112,77 @@ export const LandingReducer = createRehydrateReducer(
       isProcessingReservation: false,
       reservationError: null,
     };
-  })
+  }),
+  on(LandingActions.getExchangeRate, (state: LandingState) => {
+    return {
+      ...state,
+      exchangeRates: {
+        ...state.exchangeRates,
+        isLoading: true,
+        error: null,
+      },
+    };
+  }),
+  on(
+    LandingActions.getExchangeRateSuccess,
+    (state: LandingState, { exchangeRate, lastUpdated }) => {
+      return {
+        ...state,
+        exchangeRates: {
+          ...state.exchangeRates,
+          eurToMxn: exchangeRate,
+          isLoading: false,
+          error: null,
+          lastUpdated,
+        },
+      };
+    }
+  ),
+  on(
+    LandingActions.getExchangeRateFailure,
+    (state: LandingState, { error }) => {
+      return {
+        ...state,
+        exchangeRates: {
+          ...state.exchangeRates,
+          isLoading: false,
+          error: error,
+        },
+      };
+    }
+  ),
+  on(LandingActions.logoutAdmin, (state: LandingState) => {
+    return {
+      ...state,
+      testingMode: {
+        isEnabled: false,
+        isAuthenticated: false,
+      },
+    };
+  }),
+  on(LandingActions.getStripeTest, (state: LandingState) => {
+    return {
+      ...state,
+      isLoading: true,
+    };
+  }),
+  on(
+    LandingActions.getStripeTestSuccess,
+    (state: LandingState, { response }: any) => {
+      return {
+        ...state,
+        isLoading: false,
+        isTesting: response,
+      };
+    }
+  ),
+  on(
+    LandingActions.getStripeTestFailure,
+    (state: LandingState, { error }: any) => {
+      return {
+        ...state,
+        isLoading: false,
+      };
+    }
+  )
 );

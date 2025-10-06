@@ -561,12 +561,13 @@ export class VanTransferHeroComponent implements OnInit {
 
     // Check for high urgency fee if trip is for tomorrow
     let urgencyFee = 0;
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
     const tomorrowString = tomorrow.toISOString().split('T')[0];
 
     if (this.selectedDate === tomorrowString) {
-      urgencyFee = basePrice * 0.15; // 15% urgency fee for tomorrow trips
+      urgencyFee = Math.round(basePrice * 0.15); // 15% urgency fee for tomorrow trips
     }
 
     // For airport-hotel-airport round trip, double the price
@@ -578,7 +579,7 @@ export class VanTransferHeroComponent implements OnInit {
     }
 
     const totalPrice = basePrice + (urgencyFee || 0);
-    const serviceFee = totalPrice * 0.07; // 7% service fee when payment
+    const serviceFee = totalPrice * 0.085; // 7% service fee when payment
     const grandTotal = totalPrice + serviceFee;
 
     return {

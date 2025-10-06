@@ -1,0 +1,176 @@
+<div class="admin-test-container">
+  <div class="admin-card">
+    <!-- Header -->
+    <div class="admin-header">
+      <h2 class="admin-title">
+        <fa-icon [icon]="faLock" class="me-2"></fa-icon>
+        Panel de Administración - Testing
+      </h2>
+      <p class="admin-subtitle">Controla el modo de pruebas para desarrollo</p>
+    </div>
+
+    <!-- Authentication Section -->
+    <div class="auth-section" *ngIf="!isAuthenticated">
+      <div class="auth-card">
+        <div class="auth-header">
+          <fa-icon [icon]="faLock" class="auth-icon"></fa-icon>
+          <h3>Autenticación Requerida</h3>
+          <p>Ingresa la contraseña de administrador para acceder</p>
+        </div>
+
+        <form (ngSubmit)="authenticate()" class="auth-form">
+          <div class="password-input-group">
+            <label for="password" class="form-label">Contraseña:</label>
+            <div class="password-input-wrapper">
+              <input
+                id="password"
+                [type]="showPassword ? 'text' : 'password'"
+                class="form-control password-input"
+                [(ngModel)]="password"
+                name="password"
+                placeholder="Ingresa la contraseña"
+                [class.is-invalid]="authError"
+                (keydown)="onEnterKey($event)"
+                autocomplete="off"
+              />
+              <button
+                type="button"
+                class="btn btn-outline-secondary password-toggle"
+                (click)="togglePasswordVisibility()"
+              >
+                <fa-icon [icon]="showPassword ? faEyeSlash : faEye"></fa-icon>
+              </button>
+            </div>
+            <div class="invalid-feedback" *ngIf="authError">
+              <fa-icon [icon]="faTimes" class="me-1"></fa-icon>
+              Contraseña incorrecta
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-primary btn-lg w-100 auth-button"
+            [disabled]="isAuthenticating || !password.trim()"
+          >
+            <fa-icon
+              [icon]="isAuthenticating ? faUnlock : faLock"
+              class="me-2"
+              [class.fa-spin]="isAuthenticating"
+            ></fa-icon>
+            <span *ngIf="!isAuthenticating">Autenticar</span>
+            <span *ngIf="isAuthenticating">Verificando...</span>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Control Panel Section -->
+    <div class="control-section" *ngIf="isAuthenticated">
+      <div class="success-header">
+        <fa-icon [icon]="faCheck" class="success-icon"></fa-icon>
+        <h3>Acceso Autorizado</h3>
+        <p>Panel de control del modo de pruebas</p>
+      </div>
+
+      <!-- Current Status -->
+      <div class="status-card">
+        <h4 class="status-title">Estado Actual</h4>
+        <div class="status-info">
+          <div class="status-item">
+            <fa-icon
+              [icon]="faDesktop"
+              class="status-icon desktop-icon"
+            ></fa-icon>
+            <span class="status-label">Versión Desktop:</span>
+            <span
+              class="status-value"
+              [class.testing-active]="isTestingModeEnabled"
+              [class.testing-inactive]="!isTestingModeEnabled"
+            >
+              {{ isTestingModeEnabled ? "Modo Testing" : "Modo Producción" }}
+            </span>
+          </div>
+
+          <div class="status-item">
+            <fa-icon
+              [icon]="faMobile"
+              class="status-icon mobile-icon"
+            ></fa-icon>
+            <span class="status-label">Versión Mobile:</span>
+            <span
+              class="status-value"
+              [class.testing-active]="isTestingModeEnabled"
+              [class.testing-inactive]="!isTestingModeEnabled"
+            >
+              {{ isTestingModeEnabled ? "Modo Testing" : "Modo Producción" }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls-card">
+        <h4 class="controls-title">Controles</h4>
+
+        <div class="toggle-control">
+          <div class="toggle-info">
+            <label class="toggle-label">Modo Testing</label>
+            <small class="toggle-description">
+              Activa/desactiva el modo de pruebas para Stripe y otras funciones
+            </small>
+          </div>
+
+          <button
+            type="button"
+            class="btn toggle-button"
+            [class.btn-success]="isTestingModeEnabled"
+            [class.btn-outline-secondary]="!isTestingModeEnabled"
+            (click)="toggleTestingMode()"
+          >
+            <fa-icon
+              [icon]="isTestingModeEnabled ? faToggleOn : faToggleOff"
+              class="toggle-icon"
+            ></fa-icon>
+            <span class="ms-2">
+              {{ isTestingModeEnabled ? "Activado" : "Desactivado" }}
+            </span>
+          </button>
+        </div>
+
+        <div class="logout-section">
+          <button
+            type="button"
+            class="btn btn-outline-danger"
+            (click)="logout()"
+          >
+            <fa-icon [icon]="faSignOutAlt" class="me-2"></fa-icon>
+            Cerrar Sesión
+          </button>
+        </div>
+      </div>
+
+      <!-- Information Section -->
+      <div class="info-card">
+        <h4 class="info-title">Información</h4>
+        <div class="info-content">
+          <div class="info-item">
+            <strong>Modo Testing Activado:</strong>
+            <ul>
+              <li>Stripe utilizará las claves de prueba</li>
+              <li>Los pagos serán simulados</li>
+              <li>Se mostrará una bandera visual en el header</li>
+            </ul>
+          </div>
+          <div class="info-item">
+            <strong>Modo Producción:</strong>
+            <ul>
+              <li>Stripe utilizará las claves reales</li>
+              <li>Los pagos serán procesados normalmente</li>
+              <li>No se mostrará ninguna bandera</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

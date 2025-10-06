@@ -35,3 +35,35 @@ export const selectReservationLoading = createSelector(
   selectLandingState,
   (state: LandingState) => state.isProcessingReservation
 );
+
+// Exchange rate selectors
+export const selectExchangeRates = createSelector(
+  selectLandingState,
+  (state: LandingState) => state.exchangeRates
+);
+
+export const selectEurToMxnRate = createSelector(
+  selectExchangeRates,
+  (exchangeRates) => exchangeRates.eurToMxn
+);
+
+export const selectExchangeRateLoading = createSelector(
+  selectExchangeRates,
+  (exchangeRates) => exchangeRates.isLoading
+);
+
+export const selectExchangeRateError = createSelector(
+  selectExchangeRates,
+  (exchangeRates) => exchangeRates.error
+);
+
+export const selectExchangeRateLastUpdated = createSelector(
+  selectExchangeRates,
+  (exchangeRates) => exchangeRates.lastUpdated
+);
+
+// Testing mode selectors
+export const selectIsTesting = createSelector(
+  selectLandingState,
+  (state: LandingState) => state.isTesting
+);
