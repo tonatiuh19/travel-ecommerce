@@ -478,6 +478,51 @@
                 <fa-icon [icon]="faReceipt" class="me-2"></fa-icon>
                 {{ paymentSuccessful ? "Resumen de Pago" : "Total Pendiente" }}
               </div>
+
+              <!-- Reimbursement Policies Section -->
+              <div class="reimbursement-policies-section mb-4">
+                <div class="card border-warning shadow-lg">
+                  <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0 fw-bold">
+                      <fa-icon [icon]="faInfoCircle" class="me-2"></fa-icon>
+                      Políticas de Reembolso
+                    </h5>
+                  </div>
+                  <div class="card-body">
+                    <div class="row g-4">
+                      <div class="col-md-6">
+                        <div class="d-flex align-items-start">
+                          <div
+                            class="icon-wrapper bg-danger bg-opacity-20 rounded-circle p-3 me-3"
+                          >
+                            <fa-icon
+                              [icon]="faExclamationTriangle"
+                              class="text-danger fa-lg"
+                            ></fa-icon>
+                          </div>
+                          <div>
+                            <h6 class="fw-bold text-dark">
+                              Cancelaciones y Penalización
+                            </h6>
+                            <p class="mb-0 text-muted">
+                              Las cancelaciones
+                              <strong
+                                >no son posibles si faltan menos de 24
+                                horas</strong
+                              >
+                              para el viaje.<br />
+                              Cualquier cancelación será
+                              <strong
+                                >cobrada con una penalización de €100</strong
+                              >.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
               <div class="card-body">
                 <div class="price-breakdown">
                   <div class="price-item">
