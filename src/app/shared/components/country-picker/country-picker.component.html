@@ -1,0 +1,93 @@
+<div class="country-picker-wrapper" [class.disabled]="disabled">
+  <!-- Label -->
+  <label *ngIf="label" class="form-label">
+    {{ label }}
+    <span *ngIf="required" class="text-danger">*</span>
+  </label>
+
+  <!-- Trigger Button -->
+  <div
+    class="country-picker-trigger"
+    [class.is-invalid]="errorMessage && isTouched"
+    [class.open]="isDropdownOpen"
+    [class.has-value]="selectedCountry"
+    (click)="toggleDropdown()"
+  >
+    <div class="selected-country">
+      <span class="country-flag" *ngIf="selectedCountry">{{
+        selectedCountry.flag
+      }}</span>
+      <fa-icon
+        *ngIf="!selectedCountry"
+        [icon]="faGlobe"
+        class="globe-icon"
+      ></fa-icon>
+      <span class="country-name" *ngIf="selectedCountry">{{
+        selectedCountry.name
+      }}</span>
+      <span class="placeholder" *ngIf="!selectedCountry">{{
+        placeholder
+      }}</span>
+    </div>
+    <fa-icon
+      [icon]="faChevronDown"
+      class="dropdown-icon"
+      [class.rotated]="isDropdownOpen"
+    ></fa-icon>
+  </div>
+
+  <!-- Dropdown Menu -->
+  <div
+    class="country-picker-dropdown"
+    *ngIf="isDropdownOpen"
+    (click)="$event.stopPropagation()"
+  >
+    <!-- Search Input -->
+    <div class="dropdown-search">
+      <fa-icon [icon]="faSearch" class="search-icon"></fa-icon>
+      <input
+        type="text"
+        class="form-control form-control-sm"
+        [(ngModel)]="searchQuery"
+        (input)="filterCountries()"
+        placeholder="Buscar país..."
+        (click)="$event.stopPropagation()"
+      />
+    </div>
+
+    <!-- Country List -->
+    <div class="country-list">
+      <div
+        *ngFor="let country of filteredCountries"
+        class="country-item"
+        [class.selected]="selectedCountry?.code === country.code"
+        (click)="selectCountry(country)"
+      >
+        <span class="country-flag">{{ country.flag }}</span>
+        <span class="country-name">{{ country.name }}</span>
+        <fa-icon
+          *ngIf="selectedCountry?.code === country.code"
+          [icon]="faCheck"
+          class="check-icon"
+        ></fa-icon>
+      </div>
+
+      <!-- No results -->
+      <div *ngIf="filteredCountries.length === 0" class="no-results">
+        No se encontraron países
+      </div>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  <div class="invalid-feedback d-block" *ngIf="errorMessage && isTouched">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Overlay for closing dropdown -->
+  <div
+    class="country-picker-overlay"
+    *ngIf="isDropdownOpen"
+    (click)="toggleDropdown()"
+  ></div>
+</div>

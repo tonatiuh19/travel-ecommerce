@@ -27,6 +27,7 @@ import {
 })
 export class LandingComponent implements OnInit {
   public selectPackages$ = this.store.select(fromLanding.selectPackages);
+  public selectIsLoading$ = this.store.select(fromLanding.selectIsLoading);
 
   // Device Detection
   public isMobile: boolean = false;

@@ -4,6 +4,7 @@ import { LandingComponent } from './landing/landing.component';
 import { PackageComponent } from './package/package.component';
 import { TermsAndConditionsComponent } from './shared/components/terms-and-conditions/terms-and-conditions.component';
 import { PrivacyTermsComponent } from './shared/components/privacy-terms/privacy-terms.component';
+import { ThankYouComponent } from './shared/components/thank-you/thank-you.component';
 
 const routes: Routes = [
   { path: '', component: LandingComponent },
@@ -17,6 +18,17 @@ const routes: Routes = [
       import('./reservation/reservation.module').then(
         (m) => m.ReservationModule
       ),
+  },
+  {
+    path: 'van-transfer-checkout',
+    loadChildren: () =>
+      import(
+        './shared/components/van-transfer-checkout/van-transfer-checkout.module'
+      ).then((m) => m.VanTransferCheckoutModule),
+    data: {
+      title: 'Finalizar Reserva - Transfer VIP',
+      description: 'Complete su reserva de transfer desde París',
+    },
   },
   {
     path: 'terms-and-conditions',
@@ -35,14 +47,11 @@ const routes: Routes = [
     },
   },
   {
-    path: 'admin_test',
-    loadChildren: () =>
-      import('./shared/components/admin-test/admin-test.module').then(
-        (m) => m.AdminTestModule
-      ),
+    path: 'thank-you',
+    component: ThankYouComponent,
     data: {
-      title: 'Panel de Administración - Testing',
-      description: 'Panel de control para el modo de pruebas',
+      title: 'Reserva Confirmada',
+      description: 'Su reserva ha sido procesada exitosamente',
     },
   },
 ];

@@ -1,25 +1,27 @@
 <section class="enhanced-hero-section" id="enhanced-hero">
-  <!-- Particle Canvas Background -->
-  <canvas id="particleCanvas" class="particle-canvas"></canvas>
+  <!-- Particle Canvas Background - Desktop Only -->
+  <canvas
+    id="particleCanvas"
+    class="particle-canvas d-none d-lg-block"
+  ></canvas>
 
-  <!-- Video Background (Optional) -->
+  <!-- Video Background (Optional) - Desktop Only -->
   <video
     #videoBackground
-    class="video-background"
+    class="video-background d-none d-lg-block"
     autoplay
     muted
     loop
     playsinline
   >
     <source src="assets/videos/hero-bg.mp4" type="video/mp4" />
-    <!-- Fallback if video not available -->
   </video>
 
   <!-- Gradient Overlay -->
   <div class="gradient-overlay"></div>
 
-  <!-- Floating Elements -->
-  <div class="floating-elements">
+  <!-- Floating Elements - Desktop Only -->
+  <div class="floating-elements d-none d-lg-block">
     <div class="floating-icon floating-icon-1">
       <fa-icon [icon]="faGlobe" size="2x"></fa-icon>
     </div>
@@ -42,8 +44,8 @@
       <!-- Centered Main Content -->
       <div class="col-lg-8 col-xl-6 col-md-10 col-12">
         <div class="hero-content text-center">
-          <!-- Hero Badge -->
-          <div class="hero-badge mb-4">
+          <!-- Hero Badge - Desktop Only -->
+          <div class="hero-badge mb-4 d-none d-lg-block">
             <span class="badge-premium">
               <fa-icon [icon]="faVanShuttle" class="me-2"></fa-icon>
               <span class="badge-text">Transfers Premium</span>
@@ -52,31 +54,42 @@
           </div>
 
           <!-- Dynamic Title -->
-          <h1 class="hero-title mb-4">
+          <h1
+            class="hero-title mb-3 mb-lg-4"
+            [class.pt-4]="isMobile"
+            [class.pt-lg-0]="!isMobile"
+            id="van-transfers"
+          >
             <span class="title-static">Explora Destinos Únicos</span>
           </h1>
 
           <!-- Enhanced Subtitle -->
-          <p class="hero-subtitle mb-5">
+          <p class="hero-subtitle mb-4 mb-lg-5 px-2 px-lg-0">
             Conectamos destinos extraordinarios con nuestro servicio premium de
             transfers VIP. Vehículos de lujo, conductores certificados y
             experiencias que trascienden lo ordinario.
           </p>
 
           <!-- CTA Buttons -->
-          <div class="hero-actions mb-5">
+          <div class="hero-actions mb-4 mb-lg-5">
             <button
-              class="btn btn-primary-gradient btn-lg me-3 mb-3"
+              class="btn btn-primary-gradient btn-lg me-lg-3 mb-3 mb-lg-0"
+              [class.w-100]="isMobile"
+              [class.mx-auto]="isMobile"
+              style="max-width: 400px"
               (click)="scrollToSection('van-transfers')"
             >
               <fa-icon [icon]="faVanShuttle" class="me-2"></fa-icon>
               Reservar Ahora
-              <fa-icon [icon]="faArrowRight" class="ms-2"></fa-icon>
+              <fa-icon
+                [icon]="faArrowRight"
+                class="ms-2 d-none d-lg-inline"
+              ></fa-icon>
             </button>
           </div>
 
           <!-- Trust Indicators -->
-          <div class="trust-indicators">
+          <div class="trust-indicators mb-3 mb-lg-0">
             <div class="row justify-content-center">
               <div class="col-auto">
                 <div
@@ -84,7 +97,8 @@
                 >
                   <div class="trust-badge">
                     <fa-icon [icon]="faShieldAlt" class="trust-icon"></fa-icon>
-                    <span>100% Seguro</span>
+                    <span class="d-none d-lg-inline">100% Seguro</span>
+                    <span class="d-lg-none">Seguro</span>
                   </div>
                   <div class="trust-badge">
                     <fa-icon [icon]="faCheck" class="trust-icon"></fa-icon>
@@ -92,8 +106,30 @@
                   </div>
                   <div class="trust-badge">
                     <fa-icon [icon]="faInfinity" class="trust-icon"></fa-icon>
-                    <span>Experiencias Únicas</span>
+                    <span class="d-none d-lg-inline">Experiencias Únicas</span>
+                    <span class="d-lg-none">Únicos</span>
                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mobile Stats - Hidden on all devices -->
+          <div class="mobile-stats-container mt-3 mt-md-4 d-none">
+            <div class="row g-2 g-md-3">
+              <div class="col-6" *ngFor="let stat of stats; let i = index">
+                <div class="mobile-stat-item">
+                  <div class="stat-icon mb-1 mb-md-2">
+                    <fa-icon [icon]="stat.icon" size="lg"></fa-icon>
+                  </div>
+                  <h3 class="stat-number mb-1">
+                    {{
+                      stat.target === 4.9
+                        ? (stat.number | number : "1.1-1")
+                        : (stat.number | number)
+                    }}{{ stat.suffix }}
+                  </h3>
+                  <p class="stat-label mb-0">{{ stat.label }}</p>
                 </div>
               </div>
             </div>
@@ -103,8 +139,8 @@
     </div>
   </div>
 
-  <!-- Scroll Indicator -->
-  <div class="scroll-indicator">
+  <!-- Scroll Indicator - Desktop Only -->
+  <div class="scroll-indicator d-none d-lg-block">
     <div class="scroll-mouse">
       <div class="scroll-wheel"></div>
     </div>
@@ -112,8 +148,8 @@
     <fa-icon [icon]="faChevronDown" class="scroll-arrow"></fa-icon>
   </div>
 
-  <!-- Decorative Elements -->
-  <div class="decorative-elements">
+  <!-- Decorative Elements - Desktop Only -->
+  <div class="decorative-elements d-none d-lg-block">
     <div class="deco-circle deco-circle-1"></div>
     <div class="deco-circle deco-circle-2"></div>
     <div class="deco-circle deco-circle-3"></div>

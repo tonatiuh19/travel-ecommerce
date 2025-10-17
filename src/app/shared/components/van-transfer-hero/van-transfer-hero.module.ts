@@ -1,12 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { VanTransferHeroComponent } from './van-transfer-hero.component';
-import { CheckoutModalModule } from '../checkout-modal/checkout-modal.module';
+import { SharedModule } from '../../shared.module';
 
 @NgModule({
   declarations: [VanTransferHeroComponent],
-  imports: [CommonModule, FormsModule, CheckoutModalModule],
+  imports: [CommonModule, FormsModule, FontAwesomeModule, SharedModule],
   exports: [VanTransferHeroComponent],
 })
 export class VanTransferHeroModule {}

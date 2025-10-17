@@ -1,0 +1,514 @@
+<!-- Success Screen -->
+<div class="success-overlay" *ngIf="showSuccess">
+  <div class="success-content">
+    <div class="success-icon">
+      <fa-icon [icon]="faCheckCircle" size="4x"></fa-icon>
+    </div>
+    <h2>¡Reserva Confirmada!</h2>
+    <p class="lead">Su reserva ha sido procesada exitosamente.</p>
+    <p class="text-muted">Redirigiendo al inicio...</p>
+    <div class="spinner-border text-primary mt-3" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+  </div>
+</div>
+
+<!-- Checkout Page -->
+<div class="checkout-page" *ngIf="!showSuccess && bookingData">
+  <!-- Header -->
+  <div class="checkout-header">
+    <div class="container">
+      <button class="btn-back" (click)="goBack()" type="button">
+        <fa-icon [icon]="faArrowLeft"></fa-icon>
+        <span *ngIf="!isMobile">Volver</span>
+      </button>
+      <h1 class="checkout-title">
+        <fa-icon [icon]="faVanShuttle" class="me-2"></fa-icon>
+        Finalizar Reserva
+        <span *ngIf="isTesting" class="badge bg-warning text-dark ms-2">
+          Modo Prueba
+        </span>
+      </h1>
+      <div class="secure-badge">
+        <fa-icon [icon]="faLock" class="me-1"></fa-icon>
+        <span *ngIf="!isMobile">Pago Seguro</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="checkout-container">
+    <div class="container">
+      <div class="row g-4">
+        <!-- Left Column - Form -->
+        <div class="col-lg-7">
+          <form (submit)="processPayment()" #checkoutForm="ngForm">
+            <!-- Customer Information Card -->
+            <div class="checkout-card">
+              <div class="card-header">
+                <fa-icon [icon]="faUserCircle" class="me-2"></fa-icon>
+                <h3>Información del Cliente</h3>
+                <!-- Test Data Button (only in test mode) -->
+                <button
+                  *ngIf="isTesting"
+                  type="button"
+                  class="btn btn-sm btn-outline-primary ms-auto"
+                  (click)="fillTestData()"
+                  title="Rellenar con datos de prueba"
+                >
+                  <fa-icon [icon]="faCheck" class="me-1"></fa-icon>
+                  Datos de Prueba
+                </button>
+              </div>
+              <div class="card-body">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label for="firstName" class="form-label">Nombre *</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      [class.is-invalid]="formErrors['firstName']"
+                      id="firstName"
+                      name="firstName"
+                      [(ngModel)]="customerInfo.firstName"
+                      (blur)="validateForm()"
+                      (input)="validateForm()"
+                      placeholder="Ingrese su nombre"
+                      required
+                    />
+                    <div
+                      class="invalid-feedback"
+                      *ngIf="formErrors['firstName']"
+                    >
+                      {{ formErrors["firstName"] }}
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="lastName" class="form-label">Apellido *</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      [class.is-invalid]="formErrors['lastName']"
+                      id="lastName"
+                      name="lastName"
+                      [(ngModel)]="customerInfo.lastName"
+                      (blur)="validateForm()"
+                      (input)="validateForm()"
+                      placeholder="Ingrese su apellido"
+                      required
+                    />
+                    <div
+                      class="invalid-feedback"
+                      *ngIf="formErrors['lastName']"
+                    >
+                      {{ formErrors["lastName"] }}
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="email" class="form-label">Email *</label>
+                    <input
+                      type="email"
+                      class="form-control"
+                      [class.is-invalid]="formErrors['email']"
+                      id="email"
+                      name="email"
+                      [(ngModel)]="customerInfo.email"
+                      (blur)="validateForm()"
+                      (input)="validateForm()"
+                      placeholder="correo@ejemplo.com"
+                      required
+                    />
+                    <div class="invalid-feedback" *ngIf="formErrors['email']">
+                      {{ formErrors["email"] }}
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <app-phone-input-picker
+                      label="Teléfono"
+                      [required]="true"
+                      [(ngModel)]="customerInfo.phone"
+                      name="phone"
+                      (ngModelChange)="validateForm()"
+                      [errorMessage]="formErrors['phone']"
+                      placeholder="Número de teléfono"
+                      size="md"
+                    ></app-phone-input-picker>
+                  </div>
+
+                  <div class="col-md-6">
+                    <app-country-picker
+                      label="País"
+                      [required]="true"
+                      [(ngModel)]="customerInfo.country"
+                      name="country"
+                      (ngModelChange)="validateForm()"
+                      [errorMessage]="formErrors['country']"
+                      placeholder="Seleccione su país"
+                    ></app-country-picker>
+                  </div>
+
+                  <div class="col-12">
+                    <label for="specialRequests" class="form-label"
+                      >Solicitudes Especiales (Opcional)</label
+                    >
+                    <textarea
+                      class="form-control"
+                      id="specialRequests"
+                      name="specialRequests"
+                      [(ngModel)]="customerInfo.specialRequests"
+                      rows="3"
+                      placeholder="Cualquier requisito especial o información adicional..."
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Payment Information Card -->
+            <div class="checkout-card mt-4">
+              <div class="card-header">
+                <fa-icon [icon]="faCreditCard" class="me-2"></fa-icon>
+                <h3>Información de Pago</h3>
+                <div class="secure-badge-small ms-auto">
+                  <fa-icon [icon]="faLock" class="me-1"></fa-icon>
+                  Seguro
+                </div>
+              </div>
+              <div class="card-body">
+                <!-- Stripe Card Element -->
+                <div class="form-group">
+                  <label class="form-label">Tarjeta de Crédito/Débito *</label>
+                  <div
+                    class="stripe-card-element"
+                    [class.is-invalid]="stripeError"
+                    #cardElement
+                  ></div>
+                  <div class="invalid-feedback d-block" *ngIf="stripeError">
+                    {{ stripeError }}
+                  </div>
+                  <div class="card-icons mt-2">
+                    <span class="text-muted small"
+                      >Aceptamos Visa, Mastercard, American Express</span
+                    >
+                  </div>
+                </div>
+
+                <!-- Terms and Conditions -->
+                <div class="form-check mt-4">
+                  <input
+                    class="form-check-input"
+                    [class.is-invalid]="formErrors['terms']"
+                    type="checkbox"
+                    id="acceptTerms"
+                    name="acceptTerms"
+                    [(ngModel)]="acceptedTerms"
+                    (change)="validateForm()"
+                    required
+                  />
+                  <label class="form-check-label" for="acceptTerms">
+                    Acepto los
+                    <a href="/terms-and-conditions" target="_blank"
+                      >términos y condiciones</a
+                    >
+                    y la
+                    <a href="/privacy-terms" target="_blank"
+                      >política de privacidad</a
+                    >
+                    *
+                  </label>
+                  <div class="invalid-feedback" *ngIf="formErrors['terms']">
+                    {{ formErrors["terms"] }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="checkout-actions mt-4">
+              <button
+                type="submit"
+                class="btn btn-primary btn-lg w-100"
+                [disabled]="!isFormValid || isProcessing"
+              >
+                <span *ngIf="!isProcessing">
+                  <fa-icon [icon]="faLock" class="me-2"></fa-icon>
+                  Pagar €{{ bookingData.totalPrice.toFixed(2) }}
+                </span>
+                <span *ngIf="isProcessing">
+                  <fa-icon
+                    [icon]="faSpinner"
+                    [animation]="'spin'"
+                    class="me-2"
+                  ></fa-icon>
+                  Procesando Pago...
+                </span>
+              </button>
+              <p class="text-center text-muted small mt-3 mb-0">
+                <fa-icon [icon]="faInfoCircle" class="me-1"></fa-icon>
+                Tu pago está protegido con encriptación SSL
+              </p>
+            </div>
+          </form>
+        </div>
+
+        <!-- Right Column - Summary -->
+        <div class="col-lg-5">
+          <!-- Mobile Toggle Button (Fixed at bottom on mobile) -->
+          <button
+            type="button"
+            class="btn btn-primary w-100 d-lg-none summary-toggle-fab"
+            (click)="toggleSummary()"
+          >
+            <fa-icon [icon]="faVanShuttle" class="me-2"></fa-icon>
+            Ver Resumen - €{{ bookingData.totalPrice.toFixed(2) }}
+          </button>
+
+          <!-- Mobile Bottom Sheet Overlay -->
+          <div
+            class="bottom-sheet-overlay d-lg-none"
+            *ngIf="showSummary"
+            (click)="toggleSummary()"
+          ></div>
+
+          <!-- Summary Card - Bottom Sheet on Mobile, Static on Desktop -->
+          <div
+            class="summary-card"
+            [class.bottom-sheet]="isMobile"
+            [class.bottom-sheet-open]="showSummary && isMobile"
+          >
+            <!-- Mobile Bottom Sheet Header -->
+            <div class="bottom-sheet-header d-lg-none">
+              <div class="bottom-sheet-handle"></div>
+              <h3 class="summary-title-mobile">
+                <fa-icon [icon]="faVanShuttle" class="me-2"></fa-icon>
+                Resumen de Reserva
+              </h3>
+              <button
+                type="button"
+                class="btn-close-sheet"
+                (click)="toggleSummary()"
+              >
+                <fa-icon [icon]="faTimes"></fa-icon>
+              </button>
+            </div>
+
+            <!-- Desktop Title -->
+            <h3 class="summary-title d-none d-lg-block">
+              <fa-icon [icon]="faVanShuttle" class="me-2"></fa-icon>
+              Resumen de Reserva
+            </h3>
+
+            <!-- Transfer Type -->
+            <div class="summary-section">
+              <h4 class="section-label">Servicio</h4>
+              <div class="summary-item">
+                <span class="item-label">
+                  <fa-icon [icon]="faVanShuttle" class="me-2"></fa-icon>
+                  Tipo de Servicio
+                </span>
+                <span class="item-value">{{
+                  bookingData.transferTypeName
+                }}</span>
+              </div>
+            </div>
+
+            <!-- Destination (if applicable) -->
+            <div class="summary-section" *ngIf="bookingData.destinationName">
+              <div class="summary-item">
+                <span class="item-label">
+                  <fa-icon [icon]="faMapMarkerAlt" class="me-2"></fa-icon>
+                  Destino
+                </span>
+                <span class="item-value">{{
+                  bookingData.destinationName
+                }}</span>
+              </div>
+            </div>
+
+            <!-- Trip Details -->
+            <div class="summary-section">
+              <h4 class="section-label">Detalles del Viaje</h4>
+              <div class="summary-item">
+                <span class="item-label">
+                  <fa-icon [icon]="faUsers" class="me-2"></fa-icon>
+                  Pasajeros
+                </span>
+                <span class="item-value">{{ bookingData.passengerCount }}</span>
+              </div>
+
+              <div class="summary-item" *ngIf="bookingData.isRoundTrip">
+                <span class="item-label">
+                  <fa-icon [icon]="faExchangeAlt" class="me-2"></fa-icon>
+                  Tipo de Viaje
+                </span>
+                <span class="item-value">Ida y Vuelta</span>
+              </div>
+
+              <div
+                class="summary-item"
+                *ngIf="bookingData.requiresWheelchairAccess"
+              >
+                <span class="item-label">
+                  <fa-icon [icon]="faWheelchair" class="me-2"></fa-icon>
+                  Accesibilidad
+                </span>
+                <span class="item-value text-success">Silla de ruedas</span>
+              </div>
+            </div>
+
+            <!-- Pickup Details -->
+            <div class="summary-section">
+              <h4 class="section-label">Punto de Recogida</h4>
+              <div class="summary-item">
+                <span class="item-label">
+                  <fa-icon
+                    [icon]="
+                      bookingData.pickupType === 'hotel'
+                        ? faHotel
+                        : bookingData.pickupType === 'airport'
+                        ? faPlane
+                        : faHome
+                    "
+                    class="me-2"
+                  ></fa-icon>
+                  {{ getPickupTypeLabel() }}
+                </span>
+                <span class="item-value">{{ getPickupDetails() }}</span>
+              </div>
+
+              <div class="summary-item" *ngIf="bookingData.flightNumber">
+                <span class="item-label">
+                  <fa-icon [icon]="faPlane" class="me-2"></fa-icon>
+                  Vuelo
+                </span>
+                <span class="item-value">{{ bookingData.flightNumber }}</span>
+              </div>
+            </div>
+
+            <!-- Service Date & Time -->
+            <div class="summary-section">
+              <h4 class="section-label">Fecha y Hora</h4>
+              <div class="summary-item">
+                <span class="item-label">
+                  <fa-icon [icon]="faCalendarAlt" class="me-2"></fa-icon>
+                  Servicio
+                </span>
+                <span class="item-value">
+                  {{ bookingData.serviceDate | date : "dd/MM/yyyy" }} -
+                  {{ bookingData.serviceTime }}
+                </span>
+              </div>
+
+              <div
+                class="summary-item"
+                *ngIf="bookingData.isRoundTrip && bookingData.returnDate"
+              >
+                <span class="item-label">
+                  <fa-icon [icon]="faCalendarAlt" class="me-2"></fa-icon>
+                  Regreso
+                </span>
+                <span class="item-value">
+                  {{ bookingData.returnDate | date : "dd/MM/yyyy" }} -
+                  {{ bookingData.returnTime }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Emergency Fee Warning -->
+            <div
+              class="alert alert-warning"
+              *ngIf="bookingData.isEmergencyBooking"
+            >
+              <fa-icon [icon]="faExclamationTriangle" class="me-2"></fa-icon>
+              <small>
+                <strong>Reserva de Emergencia:</strong> Cargo adicional del 10%
+                aplicado.
+              </small>
+            </div>
+
+            <!-- Price Breakdown -->
+            <div class="price-breakdown">
+              <div class="price-item">
+                <span class="price-label">Precio Base</span>
+                <span class="price-value"
+                  >€{{ bookingData.basePrice.toFixed(2) }}</span
+                >
+              </div>
+
+              <div class="price-item" *ngIf="bookingData.emergencyFee > 0">
+                <span class="price-label text-warning"
+                  >Cargo de Emergencia (10%)</span
+                >
+                <span class="price-value text-warning"
+                  >€{{ bookingData.emergencyFee.toFixed(2) }}</span
+                >
+              </div>
+
+              <div class="price-item">
+                <span class="price-label">Cargo por Servicio</span>
+                <span class="price-value"
+                  >€{{ bookingData.serviceFee.toFixed(2) }}</span
+                >
+              </div>
+
+              <div class="price-divider"></div>
+
+              <div class="price-item price-total">
+                <span class="price-label">Total a Pagar</span>
+                <span class="price-value"
+                  >€{{ bookingData.totalPrice.toFixed(2) }}</span
+                >
+              </div>
+            </div>
+
+            <!-- Trust Badges -->
+            <div class="trust-badges">
+              <div class="badge-item">
+                <fa-icon [icon]="faLock"></fa-icon>
+                <span>Pago Seguro</span>
+              </div>
+              <div class="badge-item">
+                <fa-icon [icon]="faCheckCircle"></fa-icon>
+                <span>Confirmación Inmediata</span>
+              </div>
+            </div>
+
+            <!-- Mobile Payment Button in Bottom Sheet -->
+            <div class="mobile-summary-actions d-lg-none">
+              <button
+                type="button"
+                class="btn btn-primary btn-lg w-100"
+                (click)="toggleSummary()"
+              >
+                <fa-icon [icon]="faCheckCircle" class="me-2"></fa-icon>
+                Continuar al Pago
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- No Booking Data -->
+<div class="no-booking" *ngIf="!bookingData && !showSuccess">
+  <div class="container text-center py-5">
+    <fa-icon
+      [icon]="faExclamationTriangle"
+      size="3x"
+      class="text-warning mb-3"
+    ></fa-icon>
+    <h2>No hay datos de reserva</h2>
+    <p class="lead text-muted">
+      Por favor, inicie una nueva búsqueda desde la página principal.
+    </p>
+    <button class="btn btn-primary mt-3" (click)="goBack()">
+      <fa-icon [icon]="faHome" class="me-2"></fa-icon>
+      Volver al Inicio
+    </button>
+  </div>
+</div>

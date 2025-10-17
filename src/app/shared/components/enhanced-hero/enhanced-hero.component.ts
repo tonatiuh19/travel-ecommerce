@@ -79,6 +79,9 @@ export class EnhancedHeroComponent implements OnInit, OnDestroy, AfterViewInit {
   public isTyping = true;
   public typewriterInterval: any;
 
+  // Mobile detection
+  public isMobile: boolean = false;
+
   // Particle animation
   public particles: Array<{
     x: number;
@@ -129,10 +132,17 @@ export class EnhancedHeroComponent implements OnInit, OnDestroy, AfterViewInit {
   private observer!: IntersectionObserver;
 
   ngOnInit() {
+    this.checkMobile();
+    window.addEventListener('resize', () => this.checkMobile());
     this.startTypewriter();
     this.initParticles();
     this.animateParticles();
     this.initScrollObserver();
+
+    // Disable zoom on mobile
+    if (this.isMobile) {
+      this.disableZoom();
+    }
   }
 
   ngAfterViewInit() {
@@ -152,6 +162,51 @@ export class EnhancedHeroComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.observer) {
       this.observer.disconnect();
     }
+
+    // Re-enable zoom on mobile
+    if (this.isMobile) {
+      this.enableZoom();
+    }
+  }
+
+  // Mobile detection method
+  checkMobile() {
+    this.isMobile = window.innerWidth <= 991.98;
+  }
+
+  // Zoom prevention methods for mobile
+  private disableZoom(): void {
+    let viewport = document.querySelector(
+      'meta[name="viewport"]'
+    ) as HTMLMetaElement;
+    if (!viewport) {
+      viewport = document.createElement('meta');
+      viewport.name = 'viewport';
+      document.head.appendChild(viewport);
+    }
+
+    if (!viewport.getAttribute('data-original-content')) {
+      viewport.setAttribute('data-original-content', viewport.content || '');
+    }
+
+    viewport.content =
+      'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+    document.body.style.touchAction = 'manipulation';
+  }
+
+  private enableZoom(): void {
+    const viewport = document.querySelector(
+      'meta[name="viewport"]'
+    ) as HTMLMetaElement;
+    if (viewport) {
+      const originalContent = viewport.getAttribute('data-original-content');
+      if (originalContent) {
+        viewport.content = originalContent;
+      } else {
+        viewport.content = 'width=device-width, initial-scale=1.0';
+      }
+    }
+    document.body.style.touchAction = 'auto';
   }
 
   startTypewriter() {

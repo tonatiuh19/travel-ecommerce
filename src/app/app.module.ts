@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { LandingModule } from './landing/landing.module';
 import { PackageModule } from './package/package.module';
 import { SharedModule } from './shared/shared.module';
+import { VanTransferStoreModule } from './shared/store/van-transfer.store.module';
 import { StoreModule as NgrxStoreModule } from '@ngrx/store';
 import { StoreRouterConnectingModule, routerReducer } from '@ngrx/router-store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
@@ -27,6 +28,7 @@ import { provideHttpClient } from '@angular/common/http';
     StoreDevtoolsModule.instrument({
       maxAge: 25,
     }),
+    VanTransferStoreModule,
     LandingModule,
     PackageModule,
     SharedModule,

@@ -1,25 +1,19 @@
 <main class="main" id="top">
+  <!-- Loading Mask -->
+  <app-loading-mask
+    [isVisible]="(selectIsLoading$ | async) || false"
+    iconType="van"
+    size="large"
+    message="Cargando paquetes de viaje..."
+  ></app-loading-mask>
+
   <app-header [isMain]="true"></app-header>
 
-  <!-- Enhanced Hero Section - Desktop & Tablet -->
-  <div *ngIf="!isMobile">
-    <app-enhanced-hero></app-enhanced-hero>
-  </div>
+  <!-- Enhanced Hero Section - Unified responsive component -->
+  <app-enhanced-hero></app-enhanced-hero>
 
-  <!-- Enhanced Hero Section - Mobile -->
-  <div *ngIf="isMobile">
-    <app-mobile-enhanced-hero></app-mobile-enhanced-hero>
-  </div>
-
-  <!-- Van Transfer Hero Section - Desktop & Tablet -->
-  <div *ngIf="!isMobile">
-    <app-van-transfer-hero id="van-transfers"></app-van-transfer-hero>
-  </div>
-
-  <!-- Van Transfer Hero Section - Mobile -->
-  <div *ngIf="isMobile">
-    <app-mobile-van-transfer-hero></app-mobile-van-transfer-hero>
-  </div>
+  <!-- Van Transfer Hero Section - Unified responsive component -->
+  <app-van-transfer-hero id="van-transfers"></app-van-transfer-hero>
 
   <!-- Video Info Section -->
   <app-video-info-section></app-video-info-section>

@@ -1,4 +1,8 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import {
   faCheckCircle,
   faTimesCircle,
@@ -26,6 +30,12 @@ import {
   faRefresh,
   faArrowLeft,
 } from '@fortawesome/free-solid-svg-icons';
+import {
+  selectBookingResponse,
+  selectBookingError,
+} from '../../store/selectors/van-transfer.selectors';
+import * as VanTransferActions from '../../store/actions/van-transfer.actions';
+import { LoggerService } from '../../services/logger.service';
 
 export interface BookingDetails {
   // Basic booking info
@@ -102,16 +112,21 @@ export interface PaymentMethod {
   templateUrl: './thank-you.component.html',
   styleUrls: ['./thank-you.component.css'],
 })
-export class ThankYouComponent implements OnInit {
-  @Input() isVisible: boolean = false;
-  @Input() paymentSuccessful: boolean = true;
-  @Input() bookingDetails: BookingDetails | null = null;
-  @Input() userInfo: UserInfo = {};
-  @Input() paymentMethod: PaymentMethod = {};
-  @Input() reservationData: any = null;
-  @Output() closed = new EventEmitter<void>();
-  @Output() downloadConfirmation = new EventEmitter<void>();
-  @Output() tryAgain = new EventEmitter<void>();
+export class ThankYouComponent implements OnInit, OnDestroy {
+  // Component state (no more @Input/@Output)
+  isVisible: boolean = true;
+  paymentSuccessful: boolean = false;
+  bookingDetails: BookingDetails | null = null;
+  userInfo: UserInfo = {};
+  paymentMethod: PaymentMethod = {};
+  reservationData: any = null;
+
+  // Store data
+  bookingResponse: any = null;
+  bookingError: any = null;
+
+  // Unsubscribe subject
+  private destroy$ = new Subject<void>();
 
   // FontAwesome icons
   faCheckCircle = faCheckCircle;
@@ -142,15 +157,126 @@ export class ThankYouComponent implements OnInit {
 
   confirmationNumber: string = '';
 
+  constructor(
+    private router: Router,
+    private store: Store,
+    private logger: LoggerService
+  ) {}
+
   ngOnInit(): void {
-    this.confirmationNumber = this.generateConfirmationNumber();
+    this.logger.log('🎉 Thank You page loaded');
+
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Subscribe to booking response from store
+    this.store
+      .select(selectBookingResponse)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((response) => {
+        if (response) {
+          this.logger.log('✅ Booking response from store:', response);
+          this.logger.log(
+            '📊 Response structure:',
+            JSON.stringify(response, null, 2)
+          );
+          this.bookingResponse = response;
+
+          // Check for success at both root level and booking level
+          const isSuccessful = response.success === true;
+          const paymentStatus =
+            response.payment_status || response.booking?.payment_status;
+
+          this.logger.log('🔍 Debug payment status check:');
+          this.logger.log('  - response.success:', response.success);
+          this.logger.log('  - isSuccessful:', isSuccessful);
+          this.logger.log(
+            '  - response.payment_status:',
+            response.payment_status
+          );
+          this.logger.log(
+            '  - response.booking?.payment_status:',
+            response.booking?.payment_status
+          );
+          this.logger.log('  - paymentStatus:', paymentStatus);
+          this.logger.log(
+            '  - paymentStatus === "paid":',
+            paymentStatus === 'paid'
+          );
+
+          this.paymentSuccessful = isSuccessful && paymentStatus === 'paid';
+          this.logger.log(
+            '  - Final paymentSuccessful:',
+            this.paymentSuccessful
+          );
+
+          this.reservationData = response;
+
+          // Map van transfer booking data to BookingDetails format
+          if (response.booking) {
+            this.bookingDetails = {
+              origin: 'Paris',
+              destination:
+                response.booking.destination_name ||
+                response.booking.transfer_type_name,
+              departureDate: response.booking.service_date,
+              departureTime: response.booking.service_time,
+              returnDate: response.booking.return_date,
+              returnTime: response.booking.return_time,
+              passengers: response.booking.passenger_count,
+              isRoundTrip: response.booking.is_round_trip,
+              totalPrice: response.booking.total_price,
+            };
+
+            this.userInfo = {
+              firstName: response.booking.first_name,
+              lastName: response.booking.last_name,
+              email: response.booking.email,
+              phone: response.booking.phone,
+              specialRequests: response.booking.special_requests,
+            };
+          }
+
+          this.confirmationNumber = this.generateConfirmationNumber();
+          this.logger.log('📋 Confirmation number:', this.confirmationNumber);
+        } else {
+          this.logger.warn('⚠️ No booking response found in store');
+        }
+      });
+
+    // Subscribe to booking errors from store
+    this.store
+      .select(selectBookingError)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((error) => {
+        if (error) {
+          this.logger.error('❌ Booking error from store:', error);
+          this.bookingError = error;
+          this.paymentSuccessful = false;
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+
+    // Clear booking state when leaving the page
+    this.store.dispatch(VanTransferActions.clearVanTransferBooking());
   }
 
   generateConfirmationNumber(): string {
+    // Try different possible paths for the booking reference
+    if (this.reservationData?.booking_reference) {
+      return this.reservationData.booking_reference;
+    }
+    if (this.reservationData?.booking?.booking_reference) {
+      return this.reservationData.booking.booking_reference;
+    }
     if (this.reservationData?.reservation?.reservation_code) {
       return this.reservationData.reservation.reservation_code;
     }
-    return '';
+    return 'PENDING';
   }
 
   formatDate(date: string): string {
@@ -189,14 +315,23 @@ export class ThankYouComponent implements OnInit {
   }
 
   close() {
-    this.closed.emit();
+    this.logger.log('👋 Closing thank you page');
+    this.goHome();
   }
 
   onDownloadConfirmation() {
-    this.downloadConfirmation.emit();
+    this.logger.log('📄 Download confirmation requested');
+    // TODO: Implement PDF download functionality
+    alert('La funcionalidad de descarga estará disponible próximamente');
   }
 
   onTryAgain() {
-    this.tryAgain.emit();
+    this.logger.log('🔄 Retry payment requested');
+    this.goHome();
+  }
+
+  goHome() {
+    this.logger.log('🏠 Navigating to home');
+    this.router.navigate(['/']);
   }
 }
