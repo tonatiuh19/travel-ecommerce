@@ -371,7 +371,7 @@ export class VanTransferHeroComponent implements OnInit, OnDestroy {
       basePrice = basePrice * 2;
     }
 
-    const isEmergencyBooking = this.isWithin72Hours();
+    const isEmergencyBooking = this.isWithin48Hours();
     const emergencyFee = isEmergencyBooking ? basePrice * 0.1 : 0;
 
     const subtotal = basePrice + emergencyFee;
@@ -389,7 +389,7 @@ export class VanTransferHeroComponent implements OnInit, OnDestroy {
     };
   }
 
-  private isWithin72Hours(): boolean {
+  private isWithin48Hours(): boolean {
     if (!this.serviceDate || !this.serviceTime) {
       return false;
     }
@@ -397,7 +397,7 @@ export class VanTransferHeroComponent implements OnInit, OnDestroy {
     const now = new Date();
     const hoursDifference =
       (serviceDateTime.getTime() - now.getTime()) / (1000 * 60 * 60);
-    return hoursDifference <= 72;
+    return hoursDifference <= 48;
   }
 
   onSearchTransfers(): void {
