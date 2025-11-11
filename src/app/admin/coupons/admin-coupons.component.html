@@ -1,0 +1,351 @@
+<div class="admin-coupons-container">
+  <!-- Header with Navigation -->
+  <header class="admin-header">
+    <div class="header-content">
+      <div class="d-flex align-items-center gap-3">
+        <button
+          class="btn-back"
+          routerLink="/admin/trips"
+          title="Volver a Viajes"
+        >
+          ← Viajes
+        </button>
+        <h1 class="mb-0">🎟️ Panel de Administración - Gestión de Cupones</h1>
+      </div>
+      <div class="header-actions">
+        <button class="btn-logout" (click)="logout()">Cerrar Sesión</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Content -->
+  <div class="admin-content">
+    <div class="page-header">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <p class="text-muted mb-0">Administra los códigos de descuento</p>
+        </div>
+        <button class="btn btn-primary" (click)="openCreateModal()">
+          <fa-icon [icon]="faPlus" class="me-2"></fa-icon>
+          Crear Cupón
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div class="text-center my-5" *ngIf="isLoading && coupons.length === 0">
+      <fa-icon
+        [icon]="faSpinner"
+        [animation]="'spin'"
+        size="3x"
+        class="text-primary"
+      ></fa-icon>
+      <p class="mt-3">Cargando cupones...</p>
+    </div>
+
+    <!-- Error Message -->
+    <div class="alert alert-danger" *ngIf="error">
+      {{ error }}
+    </div>
+
+    <!-- Coupons Table -->
+    <div class="card" *ngIf="!isLoading || coupons.length > 0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Código</th>
+              <th>Descripción</th>
+              <th>Descuento</th>
+              <th>Compra Mín.</th>
+              <th>Usos</th>
+              <th>Vigencia</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let coupon of coupons">
+              <td>
+                <strong>{{ coupon.code }}</strong>
+              </td>
+              <td>
+                <small class="text-muted">{{
+                  coupon.description || "-"
+                }}</small>
+              </td>
+              <td>
+                <span
+                  class="badge"
+                  [ngClass]="{
+                    'bg-success': coupon.discountType === 'percentage',
+                    'bg-info': coupon.discountType === 'fixed_amount'
+                  }"
+                >
+                  {{ getDiscountDisplay(coupon) }}
+                </span>
+              </td>
+              <td>€{{ coupon.minPurchaseAmount.toFixed(2) }}</td>
+              <td>
+                {{ coupon.usageCount }}
+                <span *ngIf="coupon.usageLimit">/ {{ coupon.usageLimit }}</span>
+                <span *ngIf="!coupon.usageLimit" class="text-muted">/ ∞</span>
+                <br />
+                <small class="text-muted"
+                  >{{ coupon.bookingsCount || 0 }} reservas</small
+                >
+              </td>
+              <td>
+                <small *ngIf="coupon.validFrom || coupon.validUntil">
+                  <div *ngIf="coupon.validFrom">
+                    Desde: {{ coupon.validFrom | date : "dd/MM/yyyy" }}
+                  </div>
+                  <div
+                    *ngIf="coupon.validUntil"
+                    [class.text-danger]="isExpired(coupon)"
+                  >
+                    Hasta: {{ coupon.validUntil | date : "dd/MM/yyyy" }}
+                  </div>
+                </small>
+                <small
+                  *ngIf="!coupon.validFrom && !coupon.validUntil"
+                  class="text-muted"
+                >
+                  Sin límite
+                </small>
+              </td>
+              <td>
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    [checked]="coupon.isActive"
+                    (change)="toggleCouponStatus(coupon)"
+                    [disabled]="isExpired(coupon)"
+                  />
+                </div>
+                <span *ngIf="isExpired(coupon)" class="badge bg-danger"
+                  >Expirado</span
+                >
+              </td>
+              <td>
+                <div class="btn-group btn-group-sm">
+                  <button
+                    class="btn btn-outline-primary"
+                    (click)="openEditModal(coupon)"
+                    title="Editar"
+                  >
+                    <fa-icon [icon]="faEdit"></fa-icon>
+                  </button>
+                  <button
+                    class="btn btn-outline-danger"
+                    (click)="deleteCoupon(coupon)"
+                    title="Eliminar"
+                  >
+                    <fa-icon [icon]="faTrash"></fa-icon>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="coupons.length === 0">
+              <td colspan="8" class="text-center text-muted py-4">
+                No hay cupones creados
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create/Edit Modal -->
+<div
+  class="modal fade show d-block"
+  *ngIf="showCreateModal || showEditModal"
+  tabindex="-1"
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <fa-icon [icon]="faTicket" class="me-2"></fa-icon>
+          {{ showCreateModal ? "Crear Cupón" : "Editar Cupón" }}
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          (click)="closeModals()"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="row g-3">
+            <!-- Code -->
+            <div class="col-md-6">
+              <label class="form-label">Código *</label>
+              <input
+                type="text"
+                class="form-control text-uppercase"
+                [(ngModel)]="couponForm.code"
+                name="code"
+                placeholder="SUMMER2025"
+                required
+              />
+            </div>
+
+            <!-- Discount Type -->
+            <div class="col-md-6">
+              <label class="form-label">Tipo de Descuento *</label>
+              <select
+                class="form-select"
+                [(ngModel)]="couponForm.discountType"
+                name="discountType"
+              >
+                <option value="percentage">Porcentaje</option>
+                <option value="fixed_amount">Monto Fijo</option>
+              </select>
+            </div>
+
+            <!-- Discount Value -->
+            <div class="col-md-6">
+              <label class="form-label">Valor del Descuento *</label>
+              <div class="input-group">
+                <input
+                  type="number"
+                  class="form-control"
+                  [(ngModel)]="couponForm.discountValue"
+                  name="discountValue"
+                  min="0"
+                  step="0.01"
+                  required
+                />
+                <span class="input-group-text">
+                  {{ couponForm.discountType === "percentage" ? "%" : "€" }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Min Purchase Amount -->
+            <div class="col-md-6">
+              <label class="form-label">Compra Mínima (€)</label>
+              <input
+                type="number"
+                class="form-control"
+                [(ngModel)]="couponForm.minPurchaseAmount"
+                name="minPurchaseAmount"
+                min="0"
+                step="0.01"
+              />
+            </div>
+
+            <!-- Max Discount Amount (for percentage only) -->
+            <div
+              class="col-md-6"
+              *ngIf="couponForm.discountType === 'percentage'"
+            >
+              <label class="form-label">Descuento Máximo (€)</label>
+              <input
+                type="number"
+                class="form-control"
+                [(ngModel)]="couponForm.maxDiscountAmount"
+                name="maxDiscountAmount"
+                min="0"
+                step="0.01"
+              />
+            </div>
+
+            <!-- Usage Limit -->
+            <div class="col-md-6">
+              <label class="form-label">Límite de Usos</label>
+              <input
+                type="number"
+                class="form-control"
+                [(ngModel)]="couponForm.usageLimit"
+                name="usageLimit"
+                min="0"
+                placeholder="Ilimitado"
+              />
+            </div>
+
+            <!-- Valid From -->
+            <div class="col-md-6">
+              <label class="form-label">Válido Desde</label>
+              <input
+                type="datetime-local"
+                class="form-control"
+                [(ngModel)]="couponForm.validFrom"
+                name="validFrom"
+              />
+            </div>
+
+            <!-- Valid Until -->
+            <div class="col-md-6">
+              <label class="form-label">Válido Hasta</label>
+              <input
+                type="datetime-local"
+                class="form-control"
+                [(ngModel)]="couponForm.validUntil"
+                name="validUntil"
+              />
+            </div>
+
+            <!-- Description -->
+            <div class="col-12">
+              <label class="form-label">Descripción</label>
+              <textarea
+                class="form-control"
+                [(ngModel)]="couponForm.description"
+                name="description"
+                rows="3"
+                placeholder="Descripción del cupón..."
+              ></textarea>
+            </div>
+
+            <!-- Is Active -->
+            <div class="col-12">
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  [(ngModel)]="couponForm.isActive"
+                  name="isActive"
+                  id="isActive"
+                />
+                <label class="form-check-label" for="isActive">
+                  Cupón activo
+                </label>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModals()">
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="showCreateModal ? createCoupon() : updateCoupon()"
+          [disabled]="
+            !couponForm.code || !couponForm.discountValue || isLoading
+          "
+        >
+          <fa-icon
+            [icon]="faSpinner"
+            [animation]="'spin'"
+            *ngIf="isLoading"
+            class="me-2"
+          ></fa-icon>
+          {{ showCreateModal ? "Crear" : "Guardar" }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div
+  class="modal-backdrop fade show"
+  *ngIf="showCreateModal || showEditModal"
+  (click)="closeModals()"
+></div>

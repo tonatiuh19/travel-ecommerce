@@ -345,15 +345,16 @@
   left: 0;
   right: 0;
   z-index: 1050;
-  max-height: 85vh;
+  max-height: 90vh;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-  border-radius: 20px 20px 0 0 !important;
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+  border-radius: 24px 24px 0 0 !important;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.2);
   transform: translateY(100%);
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   padding: 0;
   overscroll-behavior: contain; /* Prevent scroll chaining */
+  background: white;
 }
 
 .bottom-sheet-open {
@@ -366,10 +367,10 @@
     transform: translateY(100%);
   }
   60% {
-    transform: translateY(-10px);
+    transform: translateY(-15px);
   }
   80% {
-    transform: translateY(5px);
+    transform: translateY(8px);
   }
   100% {
     transform: translateY(0);
@@ -378,20 +379,31 @@
 
 /* Bottom Sheet Header */
 .bottom-sheet-header {
-  position: relative;
-  padding: 0.5rem 1.5rem 1rem;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 10;
+  padding: 0.75rem 1.5rem 1rem;
   border-bottom: 1px solid #e0e0e0;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .bottom-sheet-handle {
-  width: 40px;
-  height: 4px;
-  background: #ddd;
-  border-radius: 2px;
+  width: 48px;
+  height: 5px;
+  background: #d0d0d0;
+  border-radius: 3px;
+  cursor: grab;
+  transition: background 0.2s ease;
+}
+
+.bottom-sheet-handle:active {
+  cursor: grabbing;
+  background: #b0b0b0;
 }
 
 .summary-title-mobile {
@@ -406,11 +418,11 @@
 .btn-close-sheet {
   position: absolute;
   right: 1rem;
-  top: 0.5rem;
+  top: 1rem;
   background: rgba(0, 0, 0, 0.05);
   border: none;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -421,9 +433,11 @@
   padding: 0;
 }
 
-.btn-close-sheet:hover {
+.btn-close-sheet:hover,
+.btn-close-sheet:active {
   background: rgba(0, 0, 0, 0.1);
   color: #333;
+  transform: scale(1.05);
 }
 
 /* Bottom Sheet Overlay */
@@ -433,9 +447,11 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
   z-index: 1040;
   animation: fadeIn 0.3s ease-in-out;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 /* Mobile FAB Button (Fixed at bottom) */
@@ -453,15 +469,20 @@
     z-index: 1030;
     margin: 0;
     border-radius: 0;
-    padding: 1rem;
+    padding: 1.25rem 1rem;
     font-size: 1.1rem;
     font-weight: 700;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border: none;
-    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
     align-items: center;
     justify-content: center;
     animation: slideUpFab 0.3s ease-out;
+    transition: all 0.3s ease;
+  }
+
+  .summary-toggle-fab:hover {
+    box-shadow: 0 -6px 25px rgba(0, 0, 0, 0.25);
   }
 
   .summary-toggle-fab:active {
@@ -470,7 +491,7 @@
 
   /* Add padding to bottom of form to prevent FAB overlap */
   .checkout-actions {
-    padding-bottom: 80px;
+    padding-bottom: 90px; /* Increased for better spacing */
   }
 
   /* Adjust bottom sheet content padding */
@@ -653,16 +674,30 @@
 
 /* Mobile Summary Actions */
 .mobile-summary-actions {
-  padding: 1rem 1.5rem 1.5rem;
+  padding: 1.25rem 1.5rem 1.5rem;
   border-top: 1px solid #e0e0e0;
-  background: white;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 1) 10%,
+    rgba(255, 255, 255, 1) 100%
+  );
   position: sticky;
   bottom: 0;
   margin-top: 1rem;
+  z-index: 5;
 }
 
 .mobile-summary-actions .btn {
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.35);
+  font-size: 1.1rem;
+  padding: 1rem;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.mobile-summary-actions .btn:active {
+  transform: scale(0.97);
 }
 
 /* ============================================
@@ -789,11 +824,18 @@
   }
 
   .checkout-container {
-    padding: 1rem 0;
+    padding: 1rem 0 6rem; /* Extra bottom padding for FAB */
+  }
+
+  .checkout-card {
+    scroll-margin-top: 80px; /* Space from sticky header when scrolling */
   }
 
   .checkout-card .card-header {
     padding: 1rem;
+    position: relative; /* Remove sticky on mobile to prevent overlap */
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 1px solid #e0e0e0;
   }
 
   .checkout-card .card-header h3 {
@@ -832,6 +874,41 @@
     font-size: 0.9rem;
     max-width: 50%;
   }
+
+  /* Improve form spacing on mobile */
+  .form-label {
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    font-size: 0.9rem;
+  }
+
+  /* Better input focus states on mobile */
+  .form-control:focus,
+  .form-select:focus {
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+    border-color: #667eea;
+  }
+
+  /* Improve stripe card element on mobile */
+  .stripe-card-element {
+    padding: 1rem;
+  }
+
+  /* Better checkbox alignment on mobile */
+  .form-check {
+    padding-left: 2rem;
+  }
+
+  .form-check-input {
+    margin-left: -2rem;
+    margin-top: 0.15rem;
+  }
+
+  /* Smoother scrolling on mobile */
+  html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 @media (max-width: 575px) {
@@ -866,13 +943,36 @@
 
   .form-control,
   .form-select {
-    padding: 0.65rem 0.85rem;
-    font-size: 0.95rem;
+    padding: 0.75rem 1rem;
+    font-size: 16px; /* Prevents iOS zoom on focus */
+    min-height: 48px; /* Better touch target */
   }
 
   .btn-primary {
-    padding: 0.875rem 1.5rem;
-    font-size: 1rem;
+    padding: 1rem 1.5rem;
+    font-size: 1.05rem;
+    min-height: 52px; /* Better touch target */
+  }
+
+  /* Improve checkbox touch targets */
+  .form-check-input {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.2rem;
+  }
+
+  .form-check-label {
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  /* Better spacing for small screens */
+  .checkout-card {
+    margin-bottom: 1rem;
+  }
+
+  .checkout-card .card-body {
+    padding: 1.25rem;
   }
 }
 

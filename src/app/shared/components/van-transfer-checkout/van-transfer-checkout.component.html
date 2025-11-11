@@ -167,6 +167,75 @@
               </div>
             </div>
 
+            <!-- Coupon Code Card -->
+            <div class="checkout-card mt-4">
+              <div class="card-header">
+                <fa-icon [icon]="faTicket" class="me-2"></fa-icon>
+                <h3>Código de Descuento</h3>
+              </div>
+              <div class="card-body">
+                <div class="row g-3">
+                  <div class="col-12">
+                    <label for="couponCode" class="form-label"
+                      >¿Tienes un código de descuento?</label
+                    >
+                    <div class="input-group">
+                      <input
+                        type="text"
+                        class="form-control"
+                        [class.is-invalid]="couponError"
+                        [class.is-valid]="appliedCoupon"
+                        id="couponCode"
+                        name="couponCode"
+                        [(ngModel)]="couponCode"
+                        [disabled]="!!appliedCoupon || isValidatingCoupon"
+                        placeholder="Ingrese su código"
+                        (keyup.enter)="applyCoupon()"
+                      />
+                      <button
+                        class="btn"
+                        [ngClass]="{
+                          'btn-outline-primary': !appliedCoupon,
+                          'btn-outline-danger': appliedCoupon
+                        }"
+                        type="button"
+                        (click)="appliedCoupon ? removeCoupon() : applyCoupon()"
+                        [disabled]="
+                          isValidatingCoupon ||
+                          (!couponCode.trim() && !appliedCoupon)
+                        "
+                      >
+                        <span *ngIf="!isValidatingCoupon && !appliedCoupon">
+                          Aplicar
+                        </span>
+                        <span *ngIf="!isValidatingCoupon && appliedCoupon">
+                          Remover
+                        </span>
+                        <span *ngIf="isValidatingCoupon">
+                          <fa-icon
+                            [icon]="faSpinner"
+                            [animation]="'spin'"
+                          ></fa-icon>
+                        </span>
+                      </button>
+                    </div>
+                    <div class="invalid-feedback d-block" *ngIf="couponError">
+                      {{ couponError }}
+                    </div>
+                    <div class="valid-feedback d-block" *ngIf="appliedCoupon">
+                      <fa-icon [icon]="faCheckCircle" class="me-1"></fa-icon>
+                      ¡Cupón aplicado! Descuento de €{{
+                        discountAmount.toFixed(2)
+                      }}
+                      <small class="d-block text-muted mt-1">{{
+                        appliedCoupon.description
+                      }}</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- Payment Information Card -->
             <div class="checkout-card mt-4">
               <div class="card-header">
@@ -207,6 +276,7 @@
                     [(ngModel)]="acceptedTerms"
                     (change)="validateForm()"
                     required
+                    checked
                   />
                   <label class="form-check-label" for="acceptTerms">
                     Acepto los
@@ -235,7 +305,12 @@
               >
                 <span *ngIf="!isProcessing">
                   <fa-icon [icon]="faLock" class="me-2"></fa-icon>
-                  Pagar €{{ bookingData.totalPrice.toFixed(2) }}
+                  Pagar €{{
+                    (appliedCoupon
+                      ? finalPrice
+                      : bookingData.totalPrice
+                    ).toFixed(2)
+                  }}
                 </span>
                 <span *ngIf="isProcessing">
                   <fa-icon
@@ -263,7 +338,9 @@
             (click)="toggleSummary()"
           >
             <fa-icon [icon]="faVanShuttle" class="me-2"></fa-icon>
-            Ver Resumen - €{{ bookingData.totalPrice.toFixed(2) }}
+            Ver Resumen - €{{
+              (appliedCoupon ? finalPrice : bookingData.totalPrice).toFixed(2)
+            }}
           </button>
 
           <!-- Mobile Bottom Sheet Overlay -->
@@ -454,13 +531,41 @@
                 >
               </div>
 
+              <div
+                class="price-item"
+                *ngIf="appliedCoupon && discountAmount > 0"
+              >
+                <span class="price-label text-success">
+                  <fa-icon [icon]="faTicket" class="me-1"></fa-icon>
+                  Descuento ({{ appliedCoupon.code }})
+                </span>
+                <span class="price-value text-success"
+                  >-€{{ discountAmount.toFixed(2) }}</span
+                >
+              </div>
+
               <div class="price-divider"></div>
 
               <div class="price-item price-total">
                 <span class="price-label">Total a Pagar</span>
-                <span class="price-value"
-                  >€{{ bookingData.totalPrice.toFixed(2) }}</span
-                >
+                <span class="price-value">
+                  €{{
+                    (appliedCoupon
+                      ? finalPrice
+                      : bookingData.totalPrice
+                    ).toFixed(2)
+                  }}
+                </span>
+              </div>
+
+              <div
+                class="text-muted small text-center mt-2"
+                *ngIf="appliedCoupon"
+              >
+                <del>€{{ bookingData.totalPrice.toFixed(2) }}</del>
+                <span class="text-success ms-2">
+                  ¡Ahorras €{{ discountAmount.toFixed(2) }}!
+                </span>
               </div>
             </div>
 

@@ -6,7 +6,7 @@ import {
   ViewChild,
   ElementRef,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
 import { takeUntil, distinctUntilChanged } from 'rxjs/operators';
@@ -33,9 +33,12 @@ import {
   faPlane,
   faPlus,
   faMinus,
+  faTicket,
 } from '@fortawesome/free-solid-svg-icons';
 import { Stripe, StripeElements, StripeCardElement } from '@stripe/stripe-js';
 import { StripeService } from '../../../landing/services/stripe.service';
+import { CouponService } from '../../services/coupon.service';
+import { CouponValidationResponse } from '../../models/coupon.model';
 import { LandingActions } from '../../../landing/store/actions';
 import {
   selectReservation,
@@ -50,33 +53,12 @@ import {
   selectBookingError,
 } from '../../store/selectors/van-transfer.selectors';
 import { LoggerService } from '../../services/logger.service';
-
-interface BookingData {
-  transferType: string;
-  transferTypeName: string;
-  destinationId: number | null;
-  destinationName: string;
-  passengerCount: number;
-  isRoundTrip: boolean;
-  requiresWheelchairAccess: boolean;
-  pickupType: string;
-  pickupName?: string;
-  pickupAddress?: string;
-  airportId?: number;
-  airportName?: string;
-  terminalId?: number;
-  terminalName?: string;
-  flightNumber?: string;
-  serviceDate: string;
-  serviceTime: string;
-  returnDate?: string;
-  returnTime?: string;
-  basePrice: number;
-  emergencyFee: number;
-  serviceFee: number;
-  totalPrice: number;
-  isEmergencyBooking: boolean;
-}
+import {
+  decodeBookingData,
+  generateShareableCheckoutUrl,
+  copyCheckoutUrlToClipboard,
+  BookingData,
+} from '../../utils/booking-data.util';
 
 interface CustomerInfo {
   firstName: string;
@@ -120,6 +102,7 @@ export class VanTransferCheckoutComponent
   faPlane = faPlane;
   faPlus = faPlus;
   faMinus = faMinus;
+  faTicket = faTicket;
 
   // Booking data
   bookingData: BookingData | null = null;
@@ -133,6 +116,14 @@ export class VanTransferCheckoutComponent
     country: '',
     specialRequests: '',
   };
+
+  // Coupon information
+  couponCode: string = '';
+  appliedCoupon: any = null;
+  discountAmount: number = 0;
+  finalPrice: number = 0;
+  couponError: string | null = null;
+  isValidatingCoupon: boolean = false;
 
   // Form validation
   formErrors: { [key: string]: string } = {};
@@ -175,20 +166,13 @@ export class VanTransferCheckoutComponent
 
   constructor(
     private router: Router,
+    private activatedRoute: ActivatedRoute,
     private stripeService: StripeService,
+    private couponService: CouponService,
     private store: Store,
     private logger: LoggerService
   ) {
-    // Check if we have booking data in navigation state
-    const navigation = this.router.getCurrentNavigation();
-    if (navigation?.extras?.state?.['bookingData']) {
-      this.bookingData = navigation.extras.state['bookingData'];
-      // Store in sessionStorage to persist on refresh
-      sessionStorage.setItem(
-        'vanTransferBooking',
-        JSON.stringify(this.bookingData)
-      );
-    }
+    // Initialize booking data - will be set in ngOnInit
   }
 
   ngOnInit(): void {
@@ -199,17 +183,20 @@ export class VanTransferCheckoutComponent
     this.checkMobile();
     window.addEventListener('resize', () => this.checkMobile());
 
-    // Try to get booking data from sessionStorage if not in state
+    // Load booking data with priority order: URL params > router state > sessionStorage
+    this.loadBookingData();
+
     if (!this.bookingData) {
-      const stored = sessionStorage.getItem('vanTransferBooking');
-      if (stored) {
-        this.bookingData = JSON.parse(stored);
-      } else {
-        // No booking data, redirect to home
-        this.router.navigate(['/']);
-        return;
-      }
+      // No booking data available, redirect to home
+      this.router.navigate(['/']);
+      return;
     }
+
+    // Store in sessionStorage for refresh persistence (if not already there)
+    sessionStorage.setItem(
+      'vanTransferBooking',
+      JSON.stringify(this.bookingData)
+    );
 
     // Setup store subscriptions
     this.setupStoreSubscriptions();
@@ -220,6 +207,59 @@ export class VanTransferCheckoutComponent
       .subscribe((isEnabled) => {
         this.isTesting = isEnabled;
       });
+  }
+
+  private loadBookingData(): void {
+    // Priority 1: Check URL parameters
+    const encodedData =
+      this.activatedRoute.snapshot.paramMap.get('bookingData');
+    if (encodedData) {
+      try {
+        this.bookingData = decodeBookingData(encodedData);
+        if (this.bookingData) {
+          this.logger.log(
+            '📊 Booking data loaded from URL parameters:',
+            this.bookingData
+          );
+          return;
+        }
+      } catch (error) {
+        this.logger.log('⚠️ Failed to decode booking data from URL:', error);
+      }
+    }
+
+    // Priority 2: Check router navigation state
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation?.extras?.state?.['bookingData']) {
+      this.bookingData = navigation.extras.state['bookingData'];
+      this.logger.log(
+        '📊 Booking data loaded from router state:',
+        this.bookingData
+      );
+      return;
+    }
+
+    // Priority 3: Check sessionStorage
+    const stored = sessionStorage.getItem('vanTransferBooking');
+    if (stored) {
+      try {
+        this.bookingData = JSON.parse(stored);
+        this.logger.log(
+          '📊 Booking data loaded from sessionStorage:',
+          this.bookingData
+        );
+        return;
+      } catch (error) {
+        this.logger.log(
+          '⚠️ Failed to parse booking data from sessionStorage:',
+          error
+        );
+        // Clear corrupted data
+        sessionStorage.removeItem('vanTransferBooking');
+      }
+    }
+
+    this.logger.log('❌ No booking data found in any source');
   }
 
   private setupStoreSubscriptions(): void {
@@ -437,6 +477,7 @@ export class VanTransferCheckoutComponent
           },
         },
         hidePostalCode: true,
+        disableLink: true,
       });
 
       // Mount card element
@@ -582,6 +623,14 @@ export class VanTransferCheckoutComponent
         serviceFee: this.bookingData.serviceFee,
         totalPrice: this.bookingData.totalPrice,
 
+        // Coupon information (if applied)
+        couponId: this.appliedCoupon?.id || null,
+        couponCode: this.appliedCoupon?.code || null,
+        discountAmount: this.discountAmount || 0,
+        finalPrice: this.appliedCoupon
+          ? this.finalPrice
+          : this.bookingData.totalPrice,
+
         // Other
         specialRequests: this.customerInfo.specialRequests,
         stripePaymentMethodId: paymentMethod.id,
@@ -631,9 +680,77 @@ export class VanTransferCheckoutComponent
 
     if (this.bookingData.pickupType === 'airport') {
       return `${this.bookingData.airportName} - ${this.bookingData.terminalName}`;
-    } else {
+    } else if (this.bookingData.pickupType === 'hotel') {
       return this.bookingData.pickupName || '';
+    } else if (this.bookingData.pickupType === 'airbnb') {
+      return this.bookingData.pickupAddress || '';
     }
+    return '';
+  }
+
+  /**
+   * Apply coupon code
+   */
+  applyCoupon(): void {
+    if (!this.couponCode.trim() || !this.bookingData) {
+      return;
+    }
+
+    this.isValidatingCoupon = true;
+    this.couponError = null;
+
+    const totalAmount = this.bookingData.totalPrice;
+
+    this.couponService
+      .validateCoupon({
+        code: this.couponCode.toUpperCase().trim(),
+        totalAmount: totalAmount,
+      })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: CouponValidationResponse) => {
+          this.isValidatingCoupon = false;
+
+          if (
+            response.valid &&
+            response.coupon &&
+            response.discountAmount !== undefined &&
+            response.finalPrice !== undefined
+          ) {
+            this.appliedCoupon = response.coupon;
+            this.discountAmount = response.discountAmount;
+            this.finalPrice = response.finalPrice;
+            this.couponError = null;
+
+            this.logger.log('✅ Coupon applied successfully:', {
+              code: this.appliedCoupon.code,
+              discount: this.discountAmount,
+              finalPrice: this.finalPrice,
+            });
+          } else {
+            this.couponError = response.error || 'Código de cupón inválido';
+            this.logger.log('❌ Invalid coupon:', response.error);
+          }
+        },
+        error: (error) => {
+          this.isValidatingCoupon = false;
+          this.couponError = 'Error al validar el cupón. Intente nuevamente.';
+          this.logger.error('❌ Coupon validation error:', error);
+        },
+      });
+  }
+
+  /**
+   * Remove applied coupon
+   */
+  removeCoupon(): void {
+    this.appliedCoupon = null;
+    this.discountAmount = 0;
+    this.finalPrice = 0;
+    this.couponCode = '';
+    this.couponError = null;
+
+    this.logger.log('🗑️ Coupon removed');
   }
 
   fillTestData(): void {
@@ -663,5 +780,39 @@ export class VanTransferCheckoutComponent
     }
 
     this.logger.log('✅ Test data filled successfully');
+  }
+
+  /**
+   * Generate shareable URL for this checkout
+   */
+  getShareableUrl(): string {
+    if (!this.bookingData) {
+      return '';
+    }
+    return generateShareableCheckoutUrl(this.bookingData);
+  }
+
+  /**
+   * Copy shareable checkout URL to clipboard
+   */
+  async shareCheckout(): Promise<void> {
+    if (!this.bookingData) {
+      return;
+    }
+
+    try {
+      const success = await copyCheckoutUrlToClipboard(this.bookingData);
+      if (success) {
+        this.logger.log('📋 Checkout URL copied to clipboard');
+        // You could show a success message to the user here
+      } else {
+        this.logger.log('❌ Failed to copy to clipboard');
+        // Fallback: show the URL in an alert or modal
+        const url = this.getShareableUrl();
+        alert(`Copy this URL to share: ${url}`);
+      }
+    } catch (error) {
+      this.logger.log('❌ Error copying to clipboard:', error);
+    }
   }
 }

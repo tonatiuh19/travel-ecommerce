@@ -34,6 +34,7 @@ import {
 } from '../../models/van-transfer.models';
 import * as VanTransferActions from '../../store/actions/van-transfer.actions';
 import * as VanTransferSelectors from '../../store/selectors/van-transfer.selectors';
+import { encodeBookingData, BookingData } from '../../utils/booking-data.util';
 
 @Component({
   selector: 'app-van-transfer-hero',
@@ -208,6 +209,11 @@ export class VanTransferHeroComponent implements OnInit, OnDestroy {
     if (transferType) {
       this.isRoundTrip = false;
     }
+
+    // Auto-advance to next step
+    setTimeout(() => {
+      this.nextStep();
+    }, 400);
   }
 
   getAvailableDestinations(): Destination[] {
@@ -245,6 +251,55 @@ export class VanTransferHeroComponent implements OnInit, OnDestroy {
   onAirportChange(): void {
     this.selectedTerminalId = null;
     this.showResults = false;
+  }
+
+  onDestinationChange(): void {
+    this.showResults = false;
+    // Auto-advance to next step
+    setTimeout(() => {
+      this.nextStep();
+    }, 400);
+  }
+
+  onPickupTypeChange(): void {
+    this.showResults = false;
+    // Clear previous pickup details
+    this.pickupName = '';
+    this.pickupAddress = '';
+    this.selectedAirportId = null;
+    this.selectedTerminalId = null;
+    this.flightNumber = '';
+
+    // Auto-advance to next step
+    setTimeout(() => {
+      this.nextStep();
+    }, 400);
+  }
+
+  onRoundTripChange(): void {
+    this.showResults = false;
+    // Auto-advance to next step after a brief delay
+    setTimeout(() => {
+      this.nextStep();
+    }, 400);
+  }
+
+  checkAndAdvancePickupDetails(): void {
+    if (this.isPickupDetailsComplete()) {
+      setTimeout(() => {
+        this.nextStep();
+      }, 300);
+    }
+  }
+
+  checkAndAdvanceServiceDateTime(): void {
+    if (this.serviceDate && this.serviceTime) {
+      setTimeout(() => {
+        if (this.isRoundTrip) {
+          this.nextStep();
+        }
+      }, 300);
+    }
   }
 
   getTerminalsForAirport(): AirportTerminal[] {
@@ -462,10 +517,23 @@ export class VanTransferHeroComponent implements OnInit, OnDestroy {
       isEmergencyBooking: this.priceCalculation.isEmergencyBooking,
     };
 
-    // Navigate to checkout with booking data
-    this.router.navigate(['/van-transfer-checkout'], {
-      state: { bookingData },
-    });
+    try {
+      // Encode booking data for URL parameter
+      const encodedData = encodeBookingData(bookingData);
+
+      // Navigate to checkout with encoded booking data in URL
+      this.router.navigate(['/van-transfer-checkout', encodedData]);
+    } catch (error) {
+      console.error(
+        'Error encoding booking data, using fallback navigation:',
+        error
+      );
+
+      // Fallback to the old method if encoding fails
+      this.router.navigate(['/van-transfer-checkout'], {
+        state: { bookingData },
+      });
+    }
   }
 
   getSelectedTransferTypeName(): string {
@@ -548,6 +616,8 @@ export class VanTransferHeroComponent implements OnInit, OnDestroy {
     // Only allow going to a step if previous steps are complete
     if (step <= this.currentStep + 1 || this.completedSteps.has(step)) {
       this.currentStep = step;
+      // Scroll to the step when clicking on step headers
+      this.scrollToActiveStep();
     }
   }
 
@@ -610,6 +680,9 @@ export class VanTransferHeroComponent implements OnInit, OnDestroy {
       } else {
         this.currentStep++;
       }
+
+      // Scroll to active step on mobile for better UX
+      this.scrollToActiveStep();
     }
   }
 
@@ -625,7 +698,42 @@ export class VanTransferHeroComponent implements OnInit, OnDestroy {
       } else {
         this.currentStep--;
       }
+
+      // Scroll to active step on mobile for better UX
+      this.scrollToActiveStep();
     }
+  }
+
+  scrollToActiveStep(): void {
+    // Add a small delay to ensure DOM has updated
+    setTimeout(() => {
+      const activeStep = document.querySelector('.wizard-step.active');
+      if (activeStep) {
+        const stepHeader = activeStep.querySelector('.step-header');
+        if (stepHeader) {
+          // On mobile, scroll to keep the step nicely in view
+          if (this.isMobile) {
+            // Calculate offset to position step header near top of viewport
+            const offset = 100; // Account for any sticky headers or spacing
+            const elementPosition = stepHeader.getBoundingClientRect().top;
+            const offsetPosition =
+              elementPosition + window.pageYOffset - offset;
+
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth',
+            });
+          } else {
+            // On desktop, just bring into view gently
+            stepHeader.scrollIntoView({
+              behavior: 'smooth',
+              block: 'nearest',
+              inline: 'nearest',
+            });
+          }
+        }
+      }
+    }, 150); // Reduced from 100ms for snappier feel
   }
 
   getTotalSteps(): number {

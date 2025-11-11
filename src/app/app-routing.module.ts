@@ -31,6 +31,17 @@ const routes: Routes = [
     },
   },
   {
+    path: 'van-transfer-checkout/:bookingData',
+    loadChildren: () =>
+      import(
+        './shared/components/van-transfer-checkout/van-transfer-checkout.module'
+      ).then((m) => m.VanTransferCheckoutModule),
+    data: {
+      title: 'Finalizar Reserva - Transfer VIP',
+      description: 'Complete su reserva de transfer desde París',
+    },
+  },
+  {
     path: 'terms-and-conditions',
     component: TermsAndConditionsComponent,
     data: {
@@ -52,6 +63,15 @@ const routes: Routes = [
     data: {
       title: 'Reserva Confirmada',
       description: 'Su reserva ha sido procesada exitosamente',
+    },
+  },
+  {
+    path: 'admin',
+    loadChildren: () =>
+      import('./admin/admin.module').then((m) => m.AdminModule),
+    data: {
+      title: 'Admin Panel',
+      description: 'Manage trips and bookings',
     },
   },
 ];

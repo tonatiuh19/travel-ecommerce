@@ -1,0 +1,363 @@
+<div class="wizard-overlay" (click)="onClose()">
+  <div class="wizard-modal" (click)="$event.stopPropagation()">
+    <div class="wizard-header">
+      <h2>🎯 {{ getTitle() }}</h2>
+      <button class="btn-close" (click)="onClose()">✕</button>
+    </div>
+
+    <div class="wizard-progress">
+      <div class="progress-steps">
+        <div
+          *ngFor="let step of [].constructor(totalSteps); let i = index"
+          class="progress-step"
+          [class.active]="i + 1 <= currentStep"
+          [class.current]="i + 1 === currentStep"
+        >
+          <div class="step-number">{{ i + 1 }}</div>
+        </div>
+      </div>
+      <div class="progress-bar">
+        <div
+          class="progress-fill"
+          [style.width.%]="(currentStep / totalSteps) * 100"
+        ></div>
+      </div>
+    </div>
+
+    <div class="wizard-body">
+      <!-- Transfer Type Forms -->
+      <div *ngIf="entityType === 'transferType'">
+        <div *ngIf="currentStep === 1" class="step-content">
+          <h3>Paso 1: Información Básica</h3>
+          <div class="form-group">
+            <label>Nombre *</label>
+            <input
+              type="text"
+              [(ngModel)]="transferTypeForm.name"
+              (blur)="generateTypeKey(transferTypeForm, 'typeKey')"
+              placeholder="ej., Transfer Privado"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <label>Clave de Tipo *</label>
+            <input
+              type="text"
+              [(ngModel)]="transferTypeForm.typeKey"
+              placeholder="ej., transfer_privado"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <label>Máximo de Pasajeros *</label>
+            <input
+              type="number"
+              [(ngModel)]="transferTypeForm.maxPassengers"
+              min="1"
+              max="50"
+              class="form-control"
+            />
+          </div>
+        </div>
+
+        <div *ngIf="currentStep === 2" class="step-content">
+          <h3>Paso 2: Detalles Adicionales</h3>
+          <div class="form-group">
+            <label>Descripción</label>
+            <textarea
+              [(ngModel)]="transferTypeForm.description"
+              rows="4"
+              placeholder="Describe este tipo de transfer..."
+              class="form-control"
+            ></textarea>
+          </div>
+          <div class="form-group checkbox-group">
+            <label>
+              <input
+                type="checkbox"
+                [(ngModel)]="transferTypeForm.isRoundTripOption"
+              />
+              <span>Permitir Opción de Viaje Redondo</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Destination Forms -->
+      <div *ngIf="entityType === 'destination'">
+        <div *ngIf="currentStep === 1" class="step-content">
+          <h3>Paso 1: Información Básica</h3>
+          <div class="form-group">
+            <label>Nombre *</label>
+            <input
+              type="text"
+              [(ngModel)]="destinationForm.name"
+              (blur)="generateSlug()"
+              placeholder="ej., Disneyland París"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <label>Slug *</label>
+            <input
+              type="text"
+              [(ngModel)]="destinationForm.slug"
+              placeholder="ej., disneyland-paris"
+              class="form-control"
+            />
+          </div>
+        </div>
+
+        <div *ngIf="currentStep === 2" class="step-content">
+          <h3>Paso 2: Detalles del Viaje</h3>
+          <div class="form-group">
+            <label>Duración *</label>
+            <input
+              type="text"
+              [(ngModel)]="destinationForm.duration"
+              placeholder="ej., 1h 30min"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <label>Distancia *</label>
+            <input
+              type="text"
+              [(ngModel)]="destinationForm.distance"
+              placeholder="ej., 45 km"
+              class="form-control"
+            />
+          </div>
+        </div>
+
+        <div *ngIf="currentStep === 3" class="step-content">
+          <h3>Paso 3: Descripción y Opciones</h3>
+          <div class="form-group">
+            <label>Descripción</label>
+            <textarea
+              [(ngModel)]="destinationForm.description"
+              rows="4"
+              placeholder="Describe este destino..."
+              class="form-control"
+            ></textarea>
+          </div>
+          <div class="form-group checkbox-group">
+            <label>
+              <input
+                type="checkbox"
+                [(ngModel)]="destinationForm.isRoundTrip"
+              />
+              <span>Destino de Viaje Redondo</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pricing Tier Forms -->
+      <div *ngIf="entityType === 'pricingTier'">
+        <div *ngIf="currentStep === 1" class="step-content">
+          <h3>Step 1: Transfer Type & Destination</h3>
+          <div class="form-group">
+            <label>Transfer Type *</label>
+            <select
+              [(ngModel)]="pricingTierForm.transferTypeId"
+              class="form-control"
+            >
+              <option value="0" disabled>Select transfer type</option>
+              <option *ngFor="let type of transferTypes" [value]="type.id">
+                {{ type.name }}
+              </option>
+            </select>
+            <small>Select the transfer type for this pricing tier</small>
+          </div>
+          <div class="form-group">
+            <label>Destination (optional)</label>
+            <select
+              [(ngModel)]="pricingTierForm.destinationId"
+              class="form-control"
+            >
+              <option [value]="null">Leave empty for general pricing</option>
+              <option *ngFor="let dest of destinations" [value]="dest.id">
+                {{ dest.name }}
+              </option>
+            </select>
+            <small
+              >Leave empty for general pricing across all destinations</small
+            >
+          </div>
+        </div>
+
+        <div *ngIf="currentStep === 2" class="step-content">
+          <h3>Step 2: Passenger Range</h3>
+          <div class="form-group">
+            <label>Min Passengers *</label>
+            <input
+              type="number"
+              [(ngModel)]="pricingTierForm.minPassengers"
+              min="1"
+              max="50"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <label>Max Passengers *</label>
+            <input
+              type="number"
+              [(ngModel)]="pricingTierForm.maxPassengers"
+              min="1"
+              max="50"
+              class="form-control"
+            />
+          </div>
+        </div>
+
+        <div *ngIf="currentStep === 3" class="step-content">
+          <h3>Step 3: Pricing</h3>
+          <div class="form-group">
+            <label>Price (EUR) *</label>
+            <input
+              type="number"
+              [(ngModel)]="pricingTierForm.priceEur"
+              min="0"
+              step="0.01"
+              placeholder="0.00"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group checkbox-group">
+            <label>
+              <input
+                type="checkbox"
+                [(ngModel)]="pricingTierForm.isSingleTrip"
+              />
+              <span>Single Trip Only</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Airport Forms -->
+      <div *ngIf="entityType === 'airport'">
+        <div *ngIf="currentStep === 1" class="step-content">
+          <h3>Paso 1: Información Básica</h3>
+          <div class="form-group">
+            <label>Código de Aeropuerto *</label>
+            <input
+              type="text"
+              [(ngModel)]="airportForm.code"
+              placeholder="ej., CDG"
+              class="form-control"
+              maxlength="10"
+            />
+          </div>
+          <div class="form-group">
+            <label>Nombre del Aeropuerto *</label>
+            <input
+              type="text"
+              [(ngModel)]="airportForm.name"
+              placeholder="ej., Aeropuerto Charles de Gaulle"
+              class="form-control"
+            />
+          </div>
+        </div>
+
+        <div *ngIf="currentStep === 2" class="step-content">
+          <h3>Paso 2: Ubicación</h3>
+          <div class="form-group">
+            <label>Ciudad *</label>
+            <input
+              type="text"
+              [(ngModel)]="airportForm.city"
+              placeholder="ej., París"
+              class="form-control"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Pickup Type Forms -->
+      <div *ngIf="entityType === 'pickupType'">
+        <div *ngIf="currentStep === 1" class="step-content">
+          <h3>Paso 1: Información Básica</h3>
+          <div class="form-group">
+            <label>Nombre *</label>
+            <input
+              type="text"
+              [(ngModel)]="pickupTypeForm.name"
+              (blur)="generateTypeKey(pickupTypeForm, 'typeKey')"
+              placeholder="ej., Recogida en Hotel"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <label>Clave de Tipo *</label>
+            <input
+              type="text"
+              [(ngModel)]="pickupTypeForm.typeKey"
+              placeholder="ej., hotel"
+              class="form-control"
+            />
+          </div>
+        </div>
+
+        <div *ngIf="currentStep === 2" class="step-content">
+          <h3>Paso 2: Requisitos y Descripción</h3>
+          <div class="form-group">
+            <label>Descripción</label>
+            <textarea
+              [(ngModel)]="pickupTypeForm.description"
+              rows="4"
+              placeholder="Describe este tipo de recogida..."
+              class="form-control"
+            ></textarea>
+          </div>
+          <div class="form-group checkbox-group">
+            <label>
+              <input
+                type="checkbox"
+                [(ngModel)]="pickupTypeForm.requiresAddress"
+              />
+              <span>Requiere Dirección</span>
+            </label>
+          </div>
+          <div class="form-group checkbox-group">
+            <label>
+              <input
+                type="checkbox"
+                [(ngModel)]="pickupTypeForm.requiresAirport"
+              />
+              <span>Requiere Aeropuerto</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wizard-footer">
+      <button
+        *ngIf="currentStep > 1"
+        class="btn-secondary"
+        (click)="prevStep()"
+      >
+        ← Anterior
+      </button>
+      <div class="spacer"></div>
+      <button
+        *ngIf="currentStep < totalSteps"
+        class="btn-primary"
+        [disabled]="!canProceed()"
+        (click)="nextStep()"
+      >
+        Siguiente →
+      </button>
+      <button
+        *ngIf="currentStep === totalSteps"
+        class="btn-success"
+        [disabled]="!canProceed()"
+        (click)="onSubmit()"
+      >
+        ✓ Crear
+      </button>
+    </div>
+  </div>
+</div>

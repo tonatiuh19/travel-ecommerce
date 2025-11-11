@@ -1,0 +1,279 @@
+<div class="admin-container">
+  <header class="admin-header">
+    <div class="header-content">
+      <h1>🎯 Panel de Administración - Gestión de Viajes</h1>
+      <div class="header-actions">
+        <button class="btn-nav" routerLink="/admin/coupons">🎟️ Cupones</button>
+        <span class="username">👤 {{ authService.getUsername() }}</span>
+        <button class="btn-logout" (click)="logout()">Cerrar Sesión</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="admin-content">
+    <div *ngIf="loading$ | async" class="loading-overlay">
+      <div class="spinner"></div>
+      <p>Cargando...</p>
+    </div>
+
+    <div *ngIf="error$ | async as error" class="error-banner">
+      ⚠️ {{ error }}
+    </div>
+
+    <div class="tabs">
+      <button
+        class="tab"
+        [class.active]="activeTab === 'transferTypes'"
+        (click)="setActiveTab('transferTypes')"
+      >
+        🚐 Tipos de Transfer
+      </button>
+      <button
+        class="tab"
+        [class.active]="activeTab === 'destinations'"
+        (click)="setActiveTab('destinations')"
+      >
+        📍 Destinos
+      </button>
+      <button
+        class="tab"
+        [class.active]="activeTab === 'pricingTiers'"
+        (click)="setActiveTab('pricingTiers')"
+      >
+        💰 Tarifas
+      </button>
+      <button
+        class="tab"
+        [class.active]="activeTab === 'airports'"
+        (click)="setActiveTab('airports')"
+      >
+        ✈️ Aeropuertos
+      </button>
+      <button
+        class="tab"
+        [class.active]="activeTab === 'pickupTypes'"
+        (click)="setActiveTab('pickupTypes')"
+      >
+        📦 Tipos de Recogida
+      </button>
+    </div>
+
+    <!-- Transfer Types Tab -->
+    <div *ngIf="activeTab === 'transferTypes'" class="tab-content">
+      <div class="content-header">
+        <h2>Tipos de Transfer</h2>
+        <button class="btn-add" (click)="openWizard('transferType')">
+          ➕ Agregar Tipo de Transfer
+        </button>
+      </div>
+      <div class="grid">
+        <div *ngFor="let type of transferTypes$ | async" class="card">
+          <div class="card-header">
+            <h3>{{ type.name }}</h3>
+            <span class="badge">{{ type.typeKey }}</span>
+          </div>
+          <div class="card-body">
+            <p>{{ type.description }}</p>
+            <div class="card-details">
+              <span>👥 Máx: {{ type.maxPassengers }} pax</span>
+              <span *ngIf="type.isRoundTripOption"
+                >🔄 Viaje redondo disponible</span
+              >
+            </div>
+          </div>
+          <div class="card-actions">
+            <button
+              class="btn-edit"
+              (click)="openEditModal('transferType', type.id)"
+            >
+              ✏️ Editar
+            </button>
+            <button
+              class="btn-delete"
+              (click)="deleteEntity('transferType', type.id, type.name)"
+            >
+              🗑️ Eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Destinations Tab -->
+    <div *ngIf="activeTab === 'destinations'" class="tab-content">
+      <div class="content-header">
+        <h2>Destinos</h2>
+        <button class="btn-add" (click)="openWizard('destination')">
+          ➕ Agregar Destino
+        </button>
+      </div>
+      <div class="grid">
+        <div *ngFor="let dest of destinations$ | async" class="card">
+          <div class="card-header">
+            <h3>{{ dest.name }}</h3>
+            <span class="badge">{{ dest.slug }}</span>
+          </div>
+          <div class="card-body">
+            <p>{{ dest.description }}</p>
+            <div class="card-details">
+              <span>⏱️ {{ dest.duration }}</span>
+              <span>📏 {{ dest.distance }}</span>
+              <span *ngIf="dest.isRoundTrip">🔄 Viaje redondo</span>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button
+              class="btn-edit"
+              (click)="openEditModal('destination', dest.id)"
+            >
+              ✏️ Editar
+            </button>
+            <button
+              class="btn-delete"
+              (click)="deleteEntity('destination', dest.id, dest.name)"
+            >
+              🗑️ Eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pricing Tiers Tab -->
+    <div *ngIf="activeTab === 'pricingTiers'" class="tab-content">
+      <div class="content-header">
+        <h2>Tarifas</h2>
+        <button class="btn-add" (click)="openWizard('pricingTier')">
+          ➕ Agregar Tarifa
+        </button>
+      </div>
+      <div class="list">
+        <div *ngFor="let tier of pricingTiers$ | async" class="list-item">
+          <div class="list-item-content">
+            <span class="list-item-label">
+              {{
+                getPricingTierLabel(
+                  tier,
+                  (transferTypes$ | async) || [],
+                  (destinations$ | async) || []
+                )
+              }}
+            </span>
+            <span *ngIf="tier.isSingleTrip" class="badge">Solo ida</span>
+          </div>
+          <div class="list-item-actions">
+            <button
+              class="btn-edit-sm"
+              (click)="openEditModal('pricingTier', tier.id)"
+            >
+              ✏️
+            </button>
+            <button
+              class="btn-delete-sm"
+              (click)="
+                deleteEntity('pricingTier', tier.id, 'this pricing tier')
+              "
+            >
+              🗑️
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Airports Tab -->
+    <div *ngIf="activeTab === 'airports'" class="tab-content">
+      <div class="content-header">
+        <h2>Aeropuertos</h2>
+        <button class="btn-add" (click)="openWizard('airport')">
+          ➕ Agregar Aeropuerto
+        </button>
+      </div>
+      <div class="grid">
+        <div *ngFor="let airport of airports$ | async" class="card">
+          <div class="card-header">
+            <h3>{{ airport.name }}</h3>
+            <span class="badge">{{ airport.code }}</span>
+          </div>
+          <div class="card-body">
+            <div class="card-details">
+              <span>🏙️ {{ airport.city }}</span>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button
+              class="btn-edit"
+              (click)="openEditModal('airport', airport.id)"
+            >
+              ✏️ Editar
+            </button>
+            <button
+              class="btn-delete"
+              (click)="deleteEntity('airport', airport.id, airport.name)"
+            >
+              🗑️ Eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pickup Types Tab -->
+    <div *ngIf="activeTab === 'pickupTypes'" class="tab-content">
+      <div class="content-header">
+        <h2>Tipos de Recogida</h2>
+        <button class="btn-add" (click)="openWizard('pickupType')">
+          ➕ Agregar Tipo de Recogida
+        </button>
+      </div>
+      <div class="grid">
+        <div *ngFor="let pickup of pickupTypes$ | async" class="card">
+          <div class="card-header">
+            <h3>{{ pickup.name }}</h3>
+            <span class="badge">{{ pickup.typeKey }}</span>
+          </div>
+          <div class="card-body">
+            <p>{{ pickup.description }}</p>
+            <div class="card-details">
+              <span *ngIf="pickup.requiresAddress">📍 Requiere Dirección</span>
+              <span *ngIf="pickup.requiresAirport">✈️ Requiere Aeropuerto</span>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button
+              class="btn-edit"
+              (click)="openEditModal('pickupType', pickup.id)"
+            >
+              ✏️ Editar
+            </button>
+            <button
+              class="btn-delete"
+              (click)="deleteEntity('pickupType', pickup.id, pickup.name)"
+            >
+              🗑️ Eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Wizard Modal -->
+<app-trip-wizard
+  *ngIf="showWizard"
+  [entityType]="wizardEntityType"
+  [transferTypes]="(transferTypes$ | async) || []"
+  [destinations]="(destinations$ | async) || []"
+  (close)="closeWizard()"
+></app-trip-wizard>
+
+<!-- Edit Modal -->
+<app-trip-edit-modal
+  *ngIf="showEditModal"
+  [entityType]="editEntityType"
+  [entityId]="editEntityId"
+  [transferTypes]="(transferTypes$ | async) || []"
+  [destinations]="(destinations$ | async) || []"
+  (close)="closeEditModal()"
+></app-trip-edit-modal>

@@ -33,6 +33,9 @@
           <p class="progress-text">
             Paso {{ currentStep }} de {{ getTotalSteps() }}
           </p>
+          <p class="progress-hint d-md-none small text-muted mb-0 mt-1">
+            Tus selecciones avanzan automáticamente
+          </p>
         </div>
 
         <!-- Step 1: Transfer Type Selection -->
@@ -102,17 +105,6 @@
                 </div>
               </div>
             </div>
-
-            <div class="step-actions">
-              <button
-                type="button"
-                class="btn btn-primary"
-                (click)="nextStep()"
-                [disabled]="!canProceedToNextStep(1)"
-              >
-                Siguiente <fa-icon [icon]="faCheck" class="ms-2"></fa-icon>
-              </button>
-            </div>
           </div>
         </div>
 
@@ -147,12 +139,16 @@
           </div>
 
           <div class="step-content" *ngIf="isStepActive(2)">
+            <p class="text-center text-muted mb-4">
+              <fa-icon [icon]="faMapMarkerAlt" class="me-2"></fa-icon>
+              Elige tu destino para avanzar
+            </p>
             <div class="destination-grid">
               <div
                 *ngFor="let dest of getAvailableDestinations()"
                 class="destination-card"
                 [class.active]="selectedDestinationId === dest.id"
-                (click)="selectedDestinationId = dest.id; showResults = false"
+                (click)="selectedDestinationId = dest.id; onDestinationChange()"
               >
                 <h4>{{ dest.name }}</h4>
                 <div class="destination-info">
@@ -179,18 +175,10 @@
             <div class="step-actions">
               <button
                 type="button"
-                class="btn btn-outline-secondary me-2"
+                class="btn btn-outline-secondary"
                 (click)="previousStep()"
               >
                 <fa-icon [icon]="faExchangeAlt" class="me-2"></fa-icon> Anterior
-              </button>
-              <button
-                type="button"
-                class="btn btn-primary"
-                (click)="nextStep()"
-                [disabled]="!canProceedToNextStep(2)"
-              >
-                Siguiente <fa-icon [icon]="faCheck" class="ms-2"></fa-icon>
               </button>
             </div>
           </div>
@@ -293,10 +281,10 @@
               </button>
               <button
                 type="button"
-                class="btn btn-primary"
+                class="btn btn-primary btn-lg px-5"
                 (click)="nextStep()"
               >
-                Siguiente <fa-icon [icon]="faCheck" class="ms-2"></fa-icon>
+                Continuar <fa-icon [icon]="faCheck" class="ms-2"></fa-icon>
               </button>
             </div>
           </div>
@@ -333,13 +321,17 @@
           </div>
 
           <div class="step-content" *ngIf="isStepActive(4)">
+            <p class="text-center text-muted mb-4">
+              <fa-icon [icon]="faExchangeAlt" class="me-2"></fa-icon>
+              Selecciona si deseas ida y vuelta
+            </p>
             <div class="checkbox-card">
               <label class="checkbox-label">
                 <input
                   type="checkbox"
                   [(ngModel)]="isRoundTrip"
                   name="roundTrip"
-                  (change)="showResults = false"
+                  (change)="onRoundTripChange()"
                 />
                 <span class="checkbox-custom"></span>
                 <div class="checkbox-content">
@@ -361,17 +353,10 @@
             <div class="step-actions">
               <button
                 type="button"
-                class="btn btn-outline-secondary me-2"
+                class="btn btn-outline-secondary"
                 (click)="previousStep()"
               >
                 <fa-icon [icon]="faExchangeAlt" class="me-2"></fa-icon> Anterior
-              </button>
-              <button
-                type="button"
-                class="btn btn-primary"
-                (click)="nextStep()"
-              >
-                Siguiente <fa-icon [icon]="faCheck" class="ms-2"></fa-icon>
               </button>
             </div>
           </div>
@@ -405,11 +390,15 @@
           </div>
 
           <div class="step-content" *ngIf="isStepActive(5)">
+            <p class="text-center text-muted mb-4">
+              <fa-icon [icon]="faMapMarkerAlt" class="me-2"></fa-icon>
+              ¿Dónde te recogemos?
+            </p>
             <div class="pickup-type-grid">
               <div
                 class="pickup-type-card"
                 [class.active]="pickupType === 'hotel'"
-                (click)="pickupType = 'hotel'; showResults = false"
+                (click)="pickupType = 'hotel'; onPickupTypeChange()"
               >
                 <fa-icon [icon]="faHotel" size="2x"></fa-icon>
                 <span>Hotel</span>
@@ -418,7 +407,7 @@
               <div
                 class="pickup-type-card"
                 [class.active]="pickupType === 'airport'"
-                (click)="pickupType = 'airport'; showResults = false"
+                (click)="pickupType = 'airport'; onPickupTypeChange()"
               >
                 <fa-icon [icon]="faPlane" size="2x"></fa-icon>
                 <span>Aeropuerto</span>
@@ -427,7 +416,7 @@
               <div
                 class="pickup-type-card"
                 [class.active]="pickupType === 'airbnb'"
-                (click)="pickupType = 'airbnb'; showResults = false"
+                (click)="pickupType = 'airbnb'; onPickupTypeChange()"
               >
                 <fa-icon [icon]="faHome" size="2x"></fa-icon>
                 <span>Airbnb</span>
@@ -437,18 +426,10 @@
             <div class="step-actions">
               <button
                 type="button"
-                class="btn btn-outline-secondary me-2"
+                class="btn btn-outline-secondary"
                 (click)="previousStep()"
               >
                 <fa-icon [icon]="faExchangeAlt" class="me-2"></fa-icon> Anterior
-              </button>
-              <button
-                type="button"
-                class="btn btn-primary"
-                (click)="nextStep()"
-                [disabled]="!canProceedToNextStep(5)"
-              >
-                Siguiente <fa-icon [icon]="faCheck" class="ms-2"></fa-icon>
               </button>
             </div>
           </div>
@@ -490,6 +471,10 @@
           </div>
 
           <div class="step-content" *ngIf="isStepActive(6)">
+            <p class="text-center text-muted mb-4">
+              <fa-icon [icon]="faMapMarkerAlt" class="me-2"></fa-icon>
+              Completa todos los campos para continuar
+            </p>
             <!-- Hotel/Airbnb Details -->
             <div *ngIf="pickupType === 'hotel' || pickupType === 'airbnb'">
               <div class="row g-3">
@@ -512,6 +497,7 @@
                       (pickupType === 'hotel' ? 'hotel' : 'Airbnb')
                     "
                     (input)="showResults = false"
+                    (blur)="checkAndAdvancePickupDetails()"
                     required
                   />
                 </div>
@@ -528,6 +514,7 @@
                     name="pickupAddress"
                     placeholder="Calle, número, código postal, ciudad"
                     (input)="showResults = false"
+                    (blur)="checkAndAdvancePickupDetails()"
                     required
                   />
                 </div>
@@ -594,6 +581,7 @@
                     name="flightNumber"
                     placeholder="Ej: AF1234"
                     (input)="showResults = false"
+                    (blur)="checkAndAdvancePickupDetails()"
                     required
                   />
                 </div>
@@ -662,7 +650,9 @@
                   [(ngModel)]="serviceDate"
                   name="serviceDate"
                   [min]="minDate"
-                  (change)="showResults = false"
+                  (change)="
+                    showResults = false; checkAndAdvanceServiceDateTime()
+                  "
                   required
                 />
               </div>
@@ -677,7 +667,9 @@
                   class="form-control"
                   [(ngModel)]="serviceTime"
                   name="serviceTime"
-                  (change)="showResults = false"
+                  (change)="
+                    showResults = false; checkAndAdvanceServiceDateTime()
+                  "
                   required
                 />
               </div>
@@ -699,15 +691,6 @@
               >
                 <fa-icon [icon]="faSearch" class="me-2"></fa-icon> Buscar
                 Transfers Disponibles
-              </button>
-              <button
-                *ngIf="isRoundTrip"
-                type="button"
-                class="btn btn-primary"
-                (click)="nextStep()"
-                [disabled]="!canProceedToNextStep(7)"
-              >
-                Siguiente <fa-icon [icon]="faCheck" class="ms-2"></fa-icon>
               </button>
             </div>
           </div>
