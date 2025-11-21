@@ -11,7 +11,8 @@
     [class.is-invalid]="errorMessage && isTouched"
     [class.open]="isDropdownOpen"
     [class.has-value]="selectedCountry"
-    (click)="toggleDropdown()"
+    (mousedown)="onButtonClick($event)"
+    (click)="$event.preventDefault(); $event.stopPropagation()"
   >
     <div class="selected-country">
       <span class="country-flag" *ngIf="selectedCountry">{{
@@ -36,58 +37,76 @@
     ></fa-icon>
   </div>
 
-  <!-- Dropdown Menu -->
+  <!-- Error Message -->
+  <div class="invalid-feedback d-block" *ngIf="errorMessage && isTouched">
+    {{ errorMessage }}
+  </div>
+</div>
+
+<!-- Country Picker Modal Overlay (Rendered at root level) -->
+<div
+  class="country-modal-overlay"
+  *ngIf="isDropdownOpen"
+  (mousedown)="onBackdropClick($event)"
+>
   <div
-    class="country-picker-dropdown"
-    *ngIf="isDropdownOpen"
-    (click)="$event.stopPropagation()"
+    class="country-modal"
+    (mousedown)="$event.stopPropagation(); $event.preventDefault()"
   >
+    <div class="modal-header">
+      <h5 class="modal-title">
+        <fa-icon [icon]="faGlobe" class="me-2"></fa-icon>
+        Seleccionar País
+      </h5>
+      <button
+        type="button"
+        class="btn-close-modal"
+        (mousedown)="onBackdropClick($event)"
+      >
+        ×
+      </button>
+    </div>
+
     <!-- Search Input -->
-    <div class="dropdown-search">
+    <div class="modal-search">
       <fa-icon [icon]="faSearch" class="search-icon"></fa-icon>
       <input
         type="text"
-        class="form-control form-control-sm"
+        class="form-control"
         [(ngModel)]="searchQuery"
         (input)="filterCountries()"
         placeholder="Buscar país..."
-        (click)="$event.stopPropagation()"
+        (mousedown)="$event.stopPropagation()"
+        autofocus
       />
     </div>
 
     <!-- Country List -->
-    <div class="country-list">
-      <div
-        *ngFor="let country of filteredCountries"
+    <div class="modal-countries-list">
+      <button
+        type="button"
         class="country-item"
+        *ngFor="let country of filteredCountries"
+        (mousedown)="onCountrySelect($event, country)"
         [class.selected]="selectedCountry?.code === country.code"
-        (click)="selectCountry(country)"
       >
-        <span class="country-flag">{{ country.flag }}</span>
-        <span class="country-name">{{ country.name }}</span>
+        <span class="country-flag-large">{{ country.flag }}</span>
+        <div class="country-info">
+          <div class="country-name-text">{{ country.name }}</div>
+          <div class="country-code-text">{{ country.code }}</div>
+        </div>
         <fa-icon
           *ngIf="selectedCountry?.code === country.code"
           [icon]="faCheck"
           class="check-icon"
         ></fa-icon>
-      </div>
+      </button>
 
       <!-- No results -->
       <div *ngIf="filteredCountries.length === 0" class="no-results">
-        No se encontraron países
+        <fa-icon [icon]="faGlobe" size="2x" class="text-muted mb-2"></fa-icon>
+        <p class="text-muted">No se encontraron países</p>
       </div>
     </div>
   </div>
-
-  <!-- Error Message -->
-  <div class="invalid-feedback d-block" *ngIf="errorMessage && isTouched">
-    {{ errorMessage }}
-  </div>
-
-  <!-- Overlay for closing dropdown -->
-  <div
-    class="country-picker-overlay"
-    *ngIf="isDropdownOpen"
-    (click)="toggleDropdown()"
-  ></div>
 </div>

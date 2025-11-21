@@ -1,5 +1,5 @@
 <!-- Phone Input Picker Component -->
-<div class="phone-input-picker" (document:click)="onDocumentClick($event)">
+<div class="phone-input-picker">
   <!-- Label -->
   <label *ngIf="label" class="form-label">
     {{ label }}
@@ -8,14 +8,15 @@
 
   <!-- Phone Input Container -->
   <div class="phone-input-container" [class.disabled]="disabled">
-    <!-- Country Dropdown -->
-    <div class="country-selector" [class.open]="isDropdownOpen">
+    <!-- Country Selector Button -->
+    <div class="country-selector">
       <button
         type="button"
         class="country-button"
         [class]="'country-button-' + size"
         [disabled]="disabled"
-        (click)="toggleDropdown()"
+        (mousedown)="onButtonClick($event)"
+        (click)="$event.preventDefault(); $event.stopPropagation()"
       >
         <span class="country-flag">{{ selectedCountry.flag }}</span>
         <span class="country-code">{{ selectedCountry.dialCode }}</span>
@@ -25,58 +26,6 @@
           [class.rotated]="isDropdownOpen"
         ></fa-icon>
       </button>
-
-      <!-- Dropdown Menu -->
-      <div
-        class="dropdown-menu"
-        *ngIf="isDropdownOpen"
-        (click)="$event.stopPropagation()"
-      >
-        <!-- Search Input -->
-        <div class="dropdown-search">
-          <input
-            type="text"
-            class="form-control form-control-sm"
-            placeholder="Buscar país..."
-            [value]="searchQuery"
-            (input)="onCountrySearch($event)"
-            (click)="$event.stopPropagation()"
-          />
-        </div>
-
-        <!-- Countries List -->
-        <div class="dropdown-list">
-          <button
-            type="button"
-            class="dropdown-item"
-            *ngFor="
-              let country of filteredCountries;
-              trackBy: trackByCountryCode
-            "
-            (click)="selectCountry(country)"
-            [class.selected]="country.code === selectedCountry.code"
-          >
-            <span class="country-option">
-              <span class="country-flag">{{ country.flag }}</span>
-              <span class="country-name">{{ country.name }}</span>
-              <span class="country-dial">{{ country.dialCode }}</span>
-              <fa-icon
-                [icon]="faCheck"
-                class="check-icon"
-                *ngIf="country.code === selectedCountry.code"
-              ></fa-icon>
-            </span>
-          </button>
-
-          <!-- No results message -->
-          <div
-            class="dropdown-no-results"
-            *ngIf="filteredCountries.length === 0"
-          >
-            <small class="text-muted">No se encontraron países</small>
-          </div>
-        </div>
-      </div>
     </div>
 
     <!-- Phone Number Input -->
@@ -128,5 +77,72 @@
     <small class="text-muted">
       Formato: {{ selectedCountry.dialCode }} 123 456 789
     </small>
+  </div>
+</div>
+
+<!-- Country Picker Modal Overlay (Rendered at root level) -->
+<div
+  class="country-picker-overlay"
+  *ngIf="isDropdownOpen"
+  (mousedown)="onBackdropClick($event)"
+>
+  <div
+    class="country-picker-modal"
+    (mousedown)="$event.stopPropagation(); $event.preventDefault()"
+  >
+    <div class="modal-header">
+      <h5 class="modal-title">
+        <fa-icon [icon]="faGlobe" class="me-2"></fa-icon>
+        Seleccionar País
+      </h5>
+      <button
+        type="button"
+        class="btn-close-modal"
+        (mousedown)="onBackdropClick($event)"
+      >
+        ×
+      </button>
+    </div>
+
+    <!-- Search Input -->
+    <div class="modal-search">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Buscar país..."
+        [value]="searchQuery"
+        (input)="onCountrySearch($event)"
+        (mousedown)="$event.stopPropagation()"
+        autofocus
+      />
+    </div>
+
+    <!-- Countries List -->
+    <div class="modal-countries-list">
+      <button
+        type="button"
+        class="country-item"
+        *ngFor="let country of filteredCountries; trackBy: trackByCountryCode"
+        (mousedown)="onCountrySelect($event, country)"
+        [class.selected]="country.code === selectedCountry.code"
+      >
+        <span class="country-flag-large">{{ country.flag }}</span>
+        <div class="country-info">
+          <div class="country-name">{{ country.name }}</div>
+          <div class="country-dial">{{ country.dialCode }}</div>
+        </div>
+        <fa-icon
+          [icon]="faCheck"
+          class="check-icon"
+          *ngIf="country.code === selectedCountry.code"
+        ></fa-icon>
+      </button>
+
+      <!-- No results message -->
+      <div class="no-results" *ngIf="filteredCountries.length === 0">
+        <fa-icon [icon]="faGlobe" size="2x" class="text-muted mb-2"></fa-icon>
+        <p class="text-muted">No se encontraron países</p>
+      </div>
+    </div>
   </div>
 </div>

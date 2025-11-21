@@ -6,6 +6,9 @@ import {
   OnInit,
   forwardRef,
   OnDestroy,
+  ElementRef,
+  HostListener,
+  HostBinding,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import {
@@ -54,6 +57,10 @@ export class PhoneInputPickerComponent
 
   @Output() phoneChange = new EventEmitter<PhoneValue>();
   @Output() validationChange = new EventEmitter<boolean>();
+
+  @HostBinding('class.dropdown-open') get dropdownOpen() {
+    return this.isDropdownOpen;
+  }
 
   // FontAwesome Icons
   faPhone = faPhone;
@@ -114,6 +121,8 @@ export class PhoneInputPickerComponent
   // ControlValueAccessor implementation
   private onChange: (value: any) => void = () => {};
   private onTouched: () => void = () => {};
+
+  constructor(private elementRef: ElementRef) {}
 
   ngOnInit(): void {
     this.filteredCountries = [...this.countries];
@@ -183,12 +192,34 @@ export class PhoneInputPickerComponent
   }
 
   // Country selection methods
+  onButtonClick(event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.toggleDropdown();
+  }
+
+  onBackdropClick(event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDropdownOpen = false;
+  }
+
   toggleDropdown(): void {
     if (!this.disabled) {
       this.isDropdownOpen = !this.isDropdownOpen;
-      this.searchQuery = '';
-      this.filteredCountries = [...this.countries];
+
+      if (this.isDropdownOpen) {
+        // Reset search when opening
+        this.searchQuery = '';
+        this.filteredCountries = [...this.countries];
+      }
     }
+  }
+
+  onCountrySelect(event: MouseEvent, country: CountryCode): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.selectCountry(country);
   }
 
   selectCountry(country: CountryCode): void {
@@ -274,11 +305,11 @@ export class PhoneInputPickerComponent
   }
 
   // Click outside handler
+  @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event): void {
-    const target = event.target as HTMLElement;
-    const dropdown = document.querySelector('.phone-input-picker');
+    const clickedInside = this.elementRef.nativeElement.contains(event.target);
 
-    if (dropdown && !dropdown.contains(target)) {
+    if (!clickedInside && this.isDropdownOpen) {
       this.isDropdownOpen = false;
       this.searchQuery = '';
       this.filteredCountries = [...this.countries];

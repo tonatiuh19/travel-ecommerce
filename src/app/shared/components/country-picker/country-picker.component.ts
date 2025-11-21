@@ -166,6 +166,18 @@ export class CountryPickerComponent
   }
 
   // Component methods
+  onButtonClick(event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.toggleDropdown();
+  }
+
+  onBackdropClick(event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDropdownOpen = false;
+  }
+
   toggleDropdown(): void {
     if (!this.disabled) {
       this.isDropdownOpen = !this.isDropdownOpen;
@@ -178,6 +190,12 @@ export class CountryPickerComponent
         );
       }
     }
+  }
+
+  onCountrySelect(event: MouseEvent, country: Country): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.selectCountry(country);
   }
 
   selectCountry(country: Country): void {
