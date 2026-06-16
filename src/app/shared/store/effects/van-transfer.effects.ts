@@ -50,9 +50,10 @@ export class VanTransferEffects {
             const serviceFee = bookingRequest.serviceFee * exchangeRate;
             const totalPrice = bookingRequest.totalPrice * exchangeRate;
 
-            // Create updated booking request with MXN prices
+            // Create updated booking request with MXN prices and original EUR price
             const updatedBookingRequest = {
               ...bookingRequest,
+              totalPriceEur: bookingRequest.totalPrice,
               basePrice: Math.round(basePrice * 100) / 100, // Round to 2 decimals
               emergencyFee: Math.round(emergencyFee * 100) / 100,
               serviceFee: Math.round(serviceFee * 100) / 100,
@@ -77,9 +78,12 @@ export class VanTransferEffects {
                       },
                     });
                   }
-                  // Success case
+                  // Success case - include EUR price in response
                   return VanTransferActions.processVanTransferBookingSuccess({
-                    response,
+                    response: {
+                      ...response,
+                      totalPriceEur: updatedBookingRequest.totalPriceEur,
+                    },
                   });
                 }),
                 catchError((error) => {

@@ -50,6 +50,7 @@ export interface BookingDetails {
 
   // Pricing
   totalPrice?: number;
+  totalPriceEur?: number; // Original EUR price for display
   serviceFee?: number;
   urgencyFee?: number;
   grandTotal?: number;
@@ -226,6 +227,7 @@ export class ThankYouComponent implements OnInit, OnDestroy {
               passengers: response.booking.passenger_count,
               isRoundTrip: response.booking.is_round_trip,
               totalPrice: response.booking.total_price,
+              totalPriceEur: response.totalPriceEur, // EUR price for display
             };
 
             this.userInfo = {

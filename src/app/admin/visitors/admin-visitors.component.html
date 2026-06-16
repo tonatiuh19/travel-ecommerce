@@ -1,0 +1,164 @@
+<div class="admin-visitors-container">
+  <header class="admin-header">
+    <div class="header-content">
+      <div class="d-flex align-items-center gap-3">
+        <button
+          class="btn-back"
+          routerLink="/admin/trips"
+          title="Volver a Viajes"
+        >
+          ← Viajes
+        </button>
+        <h1 class="mb-0">
+          📊 Panel de Administración - Análisis de Visitantes
+        </h1>
+      </div>
+      <div class="header-actions">
+        <button class="btn-nav" routerLink="/admin/coupons">🎟️ Cupones</button>
+        <button class="btn-logout" (click)="logout()">Cerrar Sesión</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="admin-content">
+    <!-- Date Range Filter -->
+    <div class="date-range-filter">
+      <div class="date-inputs">
+        <div class="input-group">
+          <label for="dateFrom">
+            <fa-icon [icon]="faCalendar"></fa-icon>
+            Desde:
+          </label>
+          <input
+            type="date"
+            id="dateFrom"
+            [(ngModel)]="dateFrom"
+            (change)="onDateRangeChange()"
+          />
+        </div>
+        <div class="input-group">
+          <label for="dateTo">
+            <fa-icon [icon]="faCalendar"></fa-icon>
+            Hasta:
+          </label>
+          <input
+            type="date"
+            id="dateTo"
+            [(ngModel)]="dateTo"
+            (change)="onDateRangeChange()"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container">
+      <fa-icon [icon]="faSpinner" [animation]="'spin'" size="3x"></fa-icon>
+      <p>Cargando análisis...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error && !isLoading" class="error-container">
+      <p>{{ error }}</p>
+      <button class="btn btn-primary" (click)="loadData()">Reintentar</button>
+    </div>
+
+    <!-- Analytics Dashboard -->
+    <div *ngIf="!isLoading && !error" class="analytics-dashboard">
+      <!-- Summary Cards -->
+      <div class="summary-cards">
+        <div class="summary-card">
+          <div class="card-icon">
+            <fa-icon [icon]="faUsers" size="2x"></fa-icon>
+          </div>
+          <div class="card-content">
+            <h3>Total Visitors</h3>
+            <p class="card-value">{{ totalVisitors }}</p>
+          </div>
+        </div>
+
+        <div class="summary-card" *ngFor="let stat of deviceStats">
+          <div class="card-icon">
+            <fa-icon
+              [icon]="stat.device === 'mobile' ? faMobileAlt : faDesktop"
+              size="2x"
+            ></fa-icon>
+          </div>
+          <div class="card-content">
+            <h3>{{ stat.device | titlecase }} Visitors</h3>
+            <p class="card-value">{{ stat.count }}</p>
+            <p class="card-percentage">
+              {{ getDevicePercentage(stat.device) }}%
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Device Statistics -->
+      <div class="stats-section">
+        <h2>Device Distribution</h2>
+        <div class="stats-list">
+          <div class="stat-item" *ngFor="let stat of deviceStats">
+            <div class="stat-label">
+              <fa-icon
+                [icon]="stat.device === 'mobile' ? faMobileAlt : faDesktop"
+              ></fa-icon>
+              {{ stat.device | titlecase }}
+            </div>
+            <div class="stat-value">{{ stat.count }} visits</div>
+            <div class="stat-bar">
+              <div
+                class="stat-bar-fill"
+                [style.width.%]="getDevicePercentage(stat.device)"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section Statistics -->
+      <div class="stats-section">
+        <h2>Page Sections</h2>
+        <div class="stats-list">
+          <div class="stat-item" *ngFor="let stat of sectionStats">
+            <div class="stat-label">{{ stat.section | titlecase }}</div>
+            <div class="stat-value">{{ stat.count }} visits</div>
+            <div class="stat-bar">
+              <div
+                class="stat-bar-fill"
+                [style.width.%]="getSectionPercentage(stat.section)"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Daily Statistics Graph -->
+      <div class="stats-section">
+        <h2>Daily Visitors Trend</h2>
+        <div class="daily-stats-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Total</th>
+                <th>Mobile</th>
+                <th>Desktop</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let stat of dailyStats">
+                <td>{{ stat.date }}</td>
+                <td>
+                  <strong>{{ stat.visitors }}</strong>
+                </td>
+                <td>{{ stat.mobile }}</td>
+                <td>{{ stat.desktop }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

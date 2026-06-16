@@ -4,6 +4,9 @@
       <h1>🎯 Panel de Administración - Gestión de Viajes</h1>
       <div class="header-actions">
         <button class="btn-nav" routerLink="/admin/coupons">🎟️ Cupones</button>
+        <button class="btn-nav" routerLink="/admin/visitors">
+          📊 Visitantes
+        </button>
         <span class="username">👤 {{ authService.getUsername() }}</span>
         <button class="btn-logout" (click)="logout()">Cerrar Sesión</button>
       </div>

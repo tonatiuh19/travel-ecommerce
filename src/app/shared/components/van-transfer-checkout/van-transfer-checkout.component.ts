@@ -449,8 +449,8 @@ export class VanTransferCheckoutComponent
 
   private async setupStripe(): Promise<void> {
     try {
-      // Get Stripe instance (use test mode for now)
-      this.stripe = await this.stripeService.getStripe(true);
+      // Get Stripe instance based on testing mode
+      this.stripe = await this.stripeService.getStripe(this.isTesting);
 
       if (!this.stripe) {
         throw new Error('Failed to load Stripe');

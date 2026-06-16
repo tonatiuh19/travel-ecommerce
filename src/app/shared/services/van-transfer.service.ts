@@ -48,6 +48,7 @@ export interface VanTransferBookingRequest {
   emergencyFee?: number;
   serviceFee: number;
   totalPrice: number;
+  totalPriceEur?: number; // Original EUR price for display
 
   // Other
   specialRequests?: string;
@@ -63,6 +64,7 @@ export interface VanTransferBookingResponse {
   payment_status: string;
   stripe_payment_intent_id: string;
   booking: any;
+  totalPriceEur?: number; // Original EUR price for display
   error?: string;
   message?: string;
   type?: string;

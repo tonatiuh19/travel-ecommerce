@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { AdminLoginComponent } from './login/admin-login.component';
 import { AdminTripsComponent } from './trips/admin-trips.component';
 import { AdminCouponsComponent } from './coupons/admin-coupons.component';
+import { AdminVisitorsComponent } from './visitors/admin-visitors.component';
 import { AdminAuthGuard } from './guards/admin-auth.guard';
 
 const routes: Routes = [
@@ -18,6 +19,11 @@ const routes: Routes = [
   {
     path: 'coupons',
     component: AdminCouponsComponent,
+    canActivate: [AdminAuthGuard],
+  },
+  {
+    path: 'visitors',
+    component: AdminVisitorsComponent,
     canActivate: [AdminAuthGuard],
   },
   {

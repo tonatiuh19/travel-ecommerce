@@ -525,7 +525,7 @@
               </div>
               <div class="card-body">
                 <div class="price-breakdown">
-                  <div class="price-item">
+                  <!-- <div class="price-item">
                     <span class="price-label">Servicio base:</span>
                     <span class="price-value">{{
                       formatCurrency(bookingDetails?.totalPrice || 0)
@@ -556,7 +556,7 @@
                     <span class="price-value"
                       >-{{ formatCurrency(bookingDetails?.savings || 0) }}</span
                     >
-                  </div>
+                  </div> -->
                   <hr class="my-3" />
                   <div class="price-total">
                     <span class="total-label"
@@ -569,11 +569,14 @@
                       [class.text-danger]="!paymentSuccessful"
                     >
                       {{
-                        formatCurrency(
-                          bookingDetails?.grandTotal ||
-                            bookingDetails?.totalPrice ||
-                            0
-                        )
+                        bookingDetails?.totalPriceEur
+                          ? "€" +
+                            (bookingDetails?.totalPriceEur || 0).toFixed(2)
+                          : formatCurrency(
+                              bookingDetails?.grandTotal ||
+                                bookingDetails?.totalPrice ||
+                                0
+                            )
                       }}
                     </span>
                   </div>
